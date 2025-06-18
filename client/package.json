@@ -1,0 +1,32 @@
+{
+  "name": "bun-react-template",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.tsx",
+  "module": "src/index.tsx",
+  "scripts": {
+    "dev": "bun --hot src/index.tsx",
+    "start": "NODE_ENV=production bun src/index.tsx",
+    "build": "bun run build.ts"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
+    "animejs": "^4.0.2",
+    "axios": "^1.10.0",
+    "bun-plugin-tailwind": "^0.0.14",
+    "dotenv": "^16.5.0",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-hook-form": "^7.58.1",
+    "react-router-dom": "^7.6.2",
+    "react-toastify": "^11.0.5",
+    "tailwindcss": "^4.0.6",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  }
+}
