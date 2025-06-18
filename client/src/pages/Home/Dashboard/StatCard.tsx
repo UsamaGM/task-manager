@@ -56,7 +56,7 @@ function StatCard({ index, stat, description }: PropTypes) {
     <div
       onMouseEnter={enterAnimation}
       onMouseLeave={leaveAnimation}
-      className="relative flex flex-col items-start justify-center flex-1 bg-blue-50 rounded-2xl p-8 overflow-hidden z-0"
+      className="relative flex flex-col items-start justify-center flex-1 bg-white border border-gray-300 rounded-2xl p-8 overflow-hidden z-0"
     >
       <div
         className={`styled-bg-${index} opacity-0 absolute left-0 top-0 w-[200%] h-[200%] bg-gradient-to-br from-[#FA6F5E] via-[#9387F0] to-[#FEFFFF]`}

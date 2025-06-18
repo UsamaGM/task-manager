@@ -5,7 +5,7 @@ interface PropTypes {
   index: number;
   icon: React.ReactNode;
   title: string;
-  subtitle: string;
+  subtitle: string | React.ReactNode;
   onClick: () => void;
 }
 
@@ -28,7 +28,7 @@ function ActionItem({ index, icon, title, subtitle, onClick }: PropTypes) {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={onClick}
-      className="flex items-center space-x-3 shadow border border-gray-300 rounded-2xl bg-white hover: backdrop-blur-lg px-4 py-2 w-full overflow-hidden cursor-pointer"
+      className="action-item translate-y-6 opacity-0 flex items-center space-x-3 min-w-[30%] shadow border border-gray-300 rounded-2xl bg-white px-4 py-2 w-full overflow-hidden cursor-pointer"
     >
       <div className="flex items-center justify-center bg-blue-200 rounded-lg p-2 min-w-10 h-10 text-blue-700">
         {icon}

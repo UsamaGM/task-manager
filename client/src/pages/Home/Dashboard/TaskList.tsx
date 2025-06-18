@@ -1,24 +1,14 @@
-import {
-  CheckIcon,
-  ClockIcon,
-  FlagIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { TaskType } from "@/config/type";
+import { CheckIcon, ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface PropTypes {
   title: string;
-  tasks: Array<{
-    name: string;
-    project: string;
-    dueDate: string;
-    priority: "low" | "medium" | "high";
-    status: "todo" | "in-progress" | "done";
-  }>;
+  tasks: Array<TaskType>;
 }
 
 function TaskList({ title, tasks }: PropTypes) {
   return (
-    <div className="flex-1 gap-2 border border-gray-300 shadow rounded-lg p-4 bg-white">
+    <div className="flex-1 gap-2 border border-gray-300 shadow rounded-2xl p-4 bg-white">
       <h2 className="text-gray-700 font-bold mb-4">{title}</h2>
       <table className="min-w-full text-left">
         <thead className="text-sm text-gray-500">
@@ -32,26 +22,38 @@ function TaskList({ title, tasks }: PropTypes) {
           {tasks.map((task, index) => {
             const statusIcon =
               task.status === "done" ? (
-                <CheckIcon className="size-5 text-[#447A65] stroke-3 rotate-10" />
+                <CheckIcon
+                  title="done"
+                  className="size-5 text-[#447A65] stroke-3 rotate-10"
+                />
               ) : task.status === "in-progress" ? (
-                <ClockIcon className="size-5 stroke-3 text-yellow-500" />
+                <ClockIcon
+                  title="in-progress"
+                  className="size-5 stroke-3 text-yellow-500"
+                />
               ) : (
-                <XMarkIcon className="size-5 stroke-3 text-red-500" />
+                <XMarkIcon
+                  title="todo"
+                  className="size-5 stroke-3 text-red-500"
+                />
               );
 
-            const flagColor =
+            const dotColor =
               task.priority === "high"
-                ? "text-red-700"
+                ? "bg-red-600"
                 : task.priority === "medium"
-                ? "text-yellow-500"
-                : "text-gray-400";
+                ? "bg-yellow-500"
+                : "bg-blue-400";
 
             return (
               <tr className="border-t border-gray-300 h-2" key={index}>
-                <td className="py-3 flex space-x-2">
+                <td className="py-3 flex items-center space-x-2">
                   {statusIcon}
                   <span>{task.name}</span>
-                  <FlagIcon className={`size-5 ${flagColor}`} />
+                  <div
+                    title={"Priority: " + task.priority}
+                    className={`size-3 rounded-full ${dotColor} hover:scale-110 transition-transform duration-300`}
+                  />
                 </td>
                 <td className="py-3">{task.project}</td>
                 <td className="py-3">{task.dueDate}</td>
