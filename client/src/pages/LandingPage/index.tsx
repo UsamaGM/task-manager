@@ -1,7 +1,6 @@
-import Card from "../../components/Card";
-import Header from "./Header";
+import { Card, Header } from "@/components";
 
-function Dashboard() {
+function LandingPage() {
   return (
     <div className="bg-[#F7F7F7] min-h-screen flex flex-col space-y-10 p-6">
       <Header />
@@ -55,4 +54,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default LandingPage;

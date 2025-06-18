@@ -1,11 +1,11 @@
+import AppRouter from "./routes/AppRouter";
 import { ToastContainer } from "react-toastify";
 import "./index.css";
-import AppRouter from "./routes/AppRouter";
 
 function App() {
   return (
     <div>
-      <AppRouter />;
+      <AppRouter />
       <ToastContainer />
     </div>
   );

@@ -1,7 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "../pages/Auth/Login";
-import Register from "../pages/Auth/Register";
-import Dashboard from "../pages/Dashboard";
+import { Login, Register, Dashboard, LandingPage, Home } from "@/pages";
 
 function AppRouter() {
   return (
@@ -9,8 +7,11 @@ function AppRouter() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="*" element={<Navigate to="/dashboard" />} />
+        <Route path="/home" element={<Home />}>
+          <Route path="/home/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="*" element={<Navigate to="/home/dashboard" />} />
       </Routes>
     </BrowserRouter>
   );
