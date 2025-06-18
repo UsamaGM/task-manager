@@ -6,12 +6,12 @@ function Card({ children }: { children: ReactNode }) {
     const rootAnimation = animate(".base", {
       opacity: [0, 1],
       duration: 1000,
-      easing: "easeOutExpo",
+      ease: "inOutExpo",
     });
     const contentAnimation = animate(".content > *", {
       translateY: ["-100px", "0%"],
       duration: 1000,
-      easing: "easeOutExpo",
+      ease: "inOutExpo",
     });
 
     return () => {

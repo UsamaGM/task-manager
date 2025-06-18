@@ -1,6 +1,8 @@
 import Card from "@/components/Card";
 import api from "@/config/api";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { animate } from "animejs";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,6 +24,12 @@ function Register() {
     defaultValues: { username: "", email: "", password: "" },
   });
 
+  useEffect(() => {
+    errors.username && toast.error(errors.username.message);
+    errors.email && toast.error(errors.email.message);
+    errors.password && toast.error(errors.password.message);
+  }, [errors]);
+
   const navigate = useNavigate();
   const onSubmit = async (data: formDataTypes) => {
     try {
@@ -32,6 +40,11 @@ function Register() {
       }
     } catch (error: any) {
       toast.error(error.response.data.message);
+      animate(".form-container", {
+        translateX: [25, 0, -25, 0, 25, 0, -25, 0],
+        duration: 300,
+        ease: "inOutExpo",
+      });
     }
   };
 
@@ -40,7 +53,7 @@ function Register() {
       <div className="w-full h-screen flex flex-col space-y-6 items-center justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col space-y-3 bg-white/30 p-8 rounded-xl shadow-md w-full max-w-md"
+          className="form-container flex flex-col space-y-3 bg-white/30 p-8 rounded-xl shadow-md w-full max-w-md"
         >
           <h2 className="text-2xl font-bold mb-6 text-purple-700 text-center">
             Register
@@ -53,11 +66,6 @@ function Register() {
             className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 ease-in-out"
             {...register("username")}
           />
-          {errors.username && (
-            <span className="text-red-500 text-sm -mt-2">
-              {errors.username.message}
-            </span>
-          )}
           <input
             type="email"
             placeholder="Email"
@@ -65,11 +73,6 @@ function Register() {
             className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 ease-in-out"
             {...register("email")}
           />
-          {errors.email && (
-            <span className="text-red-500 text-sm -mt-2">
-              {errors.email.message}
-            </span>
-          )}
           <input
             type="password"
             placeholder="Password"
@@ -77,11 +80,6 @@ function Register() {
             className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 ease-in-out"
             {...register("password")}
           />
-          {errors.password && (
-            <span className="text-red-500 text-sm -mt-2">
-              {errors.password.message}
-            </span>
-          )}
           <button
             type="submit"
             className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition"

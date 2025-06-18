@@ -6,7 +6,6 @@ export function setCookie(
   const d = new Date();
   d.setTime(d.getTime() + options.maxAge * 1000);
   const expires = "expires=" + d.toUTCString();
-  cvalue = encodeURIComponent(cvalue);
 
   document.cookie =
     cname + "=" + cvalue + "; " + expires + "; path=" + options.path;
