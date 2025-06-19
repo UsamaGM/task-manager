@@ -6,17 +6,15 @@ function Card({ children }: { children: ReactNode }) {
     const rootAnimation = animate(".base", {
       opacity: [0, 1],
       duration: 1000,
-      ease: "inOutExpo",
     });
     const contentAnimation = animate(".content > *", {
       translateY: ["-100px", "0%"],
       duration: 1000,
-      ease: "inOutExpo",
     });
 
     return () => {
-      rootAnimation.pause();
-      contentAnimation.pause();
+      rootAnimation.cancel();
+      contentAnimation.cancel();
     };
   }, []);
 

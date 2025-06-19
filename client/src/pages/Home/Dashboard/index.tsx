@@ -10,6 +10,7 @@ import TaskList from "./TaskList";
 import { useEffect } from "react";
 import { stagger, Timeline } from "animejs";
 import { ProjectType, TaskType } from "@/config/type";
+import { useNavigate } from "react-router-dom";
 
 const thisWeekTasks: Array<TaskType> = [
   {
@@ -109,6 +110,8 @@ const projects: Array<ProjectType> = [
 ];
 
 function Dashboard() {
+  const navigate = useNavigate();
+
   useEffect(() => {
     const tl = new Timeline({
       duration: 300,
@@ -125,27 +128,27 @@ function Dashboard() {
   });
 
   return (
-    <div className="flex flex-col gap-6 w-full">
-      <div className="flex w-full space-x-6">
+    <div className="flex flex-col space-y-6 w-full p-6">
+      <div className="flex w-full space-x-3">
         <StatCard index={0} stat={10} description="Projects" />
         <StatCard index={1} stat={139} description="Total Tasks" />
         <StatCard index={2} stat={10} description="Assigned Tasks" />
         <StatCard index={3} stat={52} description="Finished Tasks" />
       </div>
-      <div className="flex w-full space-x-6">
+      <div className="flex w-full space-x-3">
         <ActionItem
           index={0}
           icon={<CubeIcon />}
           title="Create Project"
           subtitle="Create a new project with AI"
-          onClick={() => console.log("Create Project")}
+          onClick={() => navigate("/home/new-project")}
         />
         <ActionItem
           index={1}
           icon={<ClipboardIcon />}
           title="Create Task"
           subtitle="Create a new task for a project"
-          onClick={() => console.log("Create Task")}
+          onClick={() => navigate("/home/new-task")}
         />
         <ActionItem
           index={2}
@@ -155,11 +158,11 @@ function Dashboard() {
           onClick={() => console.log("Invite Team")}
         />
       </div>
-      <div className="flex w-full space-x-6">
+      <div className="flex w-full space-x-3">
         <TaskList title="To do this week" tasks={thisWeekTasks} />
         <TaskList title="To review" tasks={toReviewTasks} />
       </div>
-      <div className="flex w-full space-x-6 overflow-x-scroll pb-2">
+      <div className="flex w-full space-x-3 overflow-x-scroll pb-2">
         {projects.map((project, index) => {
           const totalTasks = project.tasks.length;
           const done = project.tasks.filter(
