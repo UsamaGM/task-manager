@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import api from "@/config/api";
 import { setCookie } from "@/config/cookie";
 import { animate } from "animejs";
-import { useEffect } from "react";
+import { formErrorsHandler } from "@/helpers/errorHandler";
 
 function Login() {
   const formSchema = z.object({
@@ -22,12 +22,9 @@ function Login() {
   } = useForm<formDataTypes>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
-
-  useEffect(() => {
-    errors.email && toast.error(errors.email.message);
-    errors.password && toast.error(errors.password.message);
-  }, [errors]);
 
   const navigate = useNavigate();
   const onSubmit = async (data: formDataTypes) => {
@@ -57,13 +54,15 @@ function Login() {
     }
   };
 
+  const isError = formErrorsHandler(errors);
+
   return (
     <Card>
       <div className="form-container w-full h-screen flex flex-col space-y-4 items-center justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={`flex flex-col bg-white/30 p-8 rounded-xl shadow-md w-full max-w-md ${
-            (errors.email || errors.password) && "border-red-400 border-2"
+            isError && "border-red-400 border-2"
           }`}
         >
           <h2 className="text-2xl font-bold mb-6 text-purple-700 text-center">

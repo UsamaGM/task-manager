@@ -87,31 +87,33 @@ function NewProject() {
               {...register("description")}
             />
           </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="startDate" className="text-sm font-semibold">
-              Start Date
-            </label>
-            <input
-              id="startDate"
-              type="date"
-              placeholder="Start Date"
-              title="Select a start date"
-              className="w-full px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
-              {...register("startDate")}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="endDate" className="text-sm font-semibold">
-              End Date
-            </label>
-            <input
-              id="endDate"
-              type="date"
-              placeholder="End Date"
-              title="Select an end date"
-              className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
-              {...register("endDate")}
-            />
+          <div className="flex space-x-6">
+            <div className="flex flex-col flex-1 gap-2">
+              <label htmlFor="startDate" className="text-sm font-semibold">
+                Start Date
+              </label>
+              <input
+                id="startDate"
+                type="date"
+                placeholder="Start Date"
+                title="Select a start date"
+                className="w-full px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
+                {...register("startDate")}
+              />
+            </div>
+            <div className="flex flex-col flex-1 gap-2">
+              <label htmlFor="endDate" className="text-sm font-semibold">
+                End Date
+              </label>
+              <input
+                id="endDate"
+                type="date"
+                placeholder="End Date"
+                title="Select an end date"
+                className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
+                {...register("endDate")}
+              />
+            </div>
           </div>
           <button
             type="submit"

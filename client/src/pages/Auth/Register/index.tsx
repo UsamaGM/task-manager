@@ -1,8 +1,8 @@
 import Card from "@/components/Card";
 import api from "@/config/api";
+import { formErrorsHandler } from "@/helpers/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,13 +22,9 @@ function Register() {
   } = useForm<formDataTypes>({
     resolver: zodResolver(formSchema),
     defaultValues: { username: "", email: "", password: "" },
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
-
-  useEffect(() => {
-    errors.username && toast.error(errors.username.message);
-    errors.email && toast.error(errors.email.message);
-    errors.password && toast.error(errors.password.message);
-  }, [errors]);
 
   const navigate = useNavigate();
   const onSubmit = async (data: formDataTypes) => {
@@ -48,12 +44,16 @@ function Register() {
     }
   };
 
+  const isError = formErrorsHandler(errors);
+
   return (
     <Card>
       <div className="w-full h-screen flex flex-col space-y-6 items-center justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="form-container flex flex-col space-y-3 bg-white/30 p-8 rounded-xl shadow-md w-full max-w-md"
+          className={`flex flex-col bg-white/30 p-8 rounded-xl shadow-md w-full max-w-md ${
+            isError && "border-red-400 border-2"
+          }`}
         >
           <h2 className="text-2xl font-bold mb-6 text-purple-700 text-center">
             Register

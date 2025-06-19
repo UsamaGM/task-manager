@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from "@heroicons/react/24/solid";
+import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { animate } from "animejs";
 
 interface PropTypes {
@@ -37,7 +37,9 @@ function ActionItem({ index, icon, title, subtitle, onClick }: PropTypes) {
         <h2 className="text-gray-800">{title}</h2>
         <h4 className="text-gray-700 text-sm">{subtitle}</h4>
       </div>
-      <ArrowRightIcon className={`go-to-icon-${index} size-6 translate-x-8`} />
+      <ChevronRightIcon
+        className={`go-to-icon-${index} size-6 translate-x-8`}
+      />
     </button>
   );
 }
