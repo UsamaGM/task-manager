@@ -73,14 +73,15 @@ function NewTask() {
               Associated Project
             </label>
             <Dropdown
+              name="project"
               placeholder="Select a project"
               options={[
-                { title: "Project Alpha" },
-                { title: "Project Beta" },
-                { title: "Project Gamma" },
-                { title: "Project Delta" },
+                { _id: "1", title: "Project Alpha" },
+                { _id: "2", title: "Project Beta" },
+                { _id: "3", title: "Project Gamma" },
+                { _id: "4", title: "Project Delta" },
               ]}
-              {...register("project")}
+              register={register}
             />
           </div>
           <div className="flex flex-col gap-2">
