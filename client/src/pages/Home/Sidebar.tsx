@@ -31,19 +31,12 @@ function Sidebar() {
       opacity: [0, 1],
       duration: 500,
     });
-
-    const tlNavigation = new anime.Timeline({
+    anime.animate(".sidebar-item", {
+      translateX: [-50, 0],
+      opacity: [0, 1],
       duration: 300,
+      delay: anime.stagger(100),
     });
-    const classes = [0, 1, 2, 3, 4].map((v) => "#sidebar-item-" + v).join(", ");
-    tlNavigation.add(
-      classes,
-      {
-        translateX: [-50, 0],
-        opacity: [0, 1],
-      },
-      anime.stagger(100)
-    );
   }, []);
 
   const navigate = useNavigate();
@@ -112,31 +105,26 @@ function Sidebar() {
       </div>
       <div className="flex-1 space-y-2">
         <SidebarItem
-          index={0}
           icon={<HomeIcon />}
           title="Dashboard"
           navigateTo="/home/dashboard"
         />
         <SidebarItem
-          index={2}
           icon={<UserGroupIcon />}
           title="Team View"
           navigateTo="/home/team"
         />
         <SidebarItem
-          index={3}
           icon={<UserIcon />}
           title="My Tasks"
           navigateTo="/home/my-tasks"
         />
         <SidebarItem
-          index={1}
           icon={<CubeIcon />}
           title="New Project"
           navigateTo="/home/new-project"
         />
         <SidebarItem
-          index={1}
           icon={<ClipboardIcon />}
           title="New Task"
           navigateTo="/home/new-task"
@@ -144,7 +132,6 @@ function Sidebar() {
       </div>
       <div>
         <SidebarItem
-          index={4}
           icon={<Cog6ToothIcon />}
           title="Settings"
           navigateTo="/settings"

@@ -1,23 +1,24 @@
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { animate } from "animejs";
+import { useRef } from "react";
 
 interface PropTypes {
-  index: number;
   icon: React.ReactNode;
   title: string;
   subtitle: string | React.ReactNode;
   onClick: () => void;
 }
 
-function ActionItem({ index, icon, title, subtitle, onClick }: PropTypes) {
+function ActionItem({ icon, title, subtitle, onClick }: PropTypes) {
+  const iconRef = useRef<SVGSVGElement>(null);
   function onMouseEnter() {
-    animate(`.go-to-icon-${index}`, {
+    animate(iconRef.current!, {
       translateX: [0, "-2rem"],
       duration: 500,
     });
   }
   function onMouseLeave() {
-    animate(`.go-to-icon-${index}`, {
+    animate(iconRef.current!, {
       translateX: ["-2rem", 0],
       duration: 500,
     });
@@ -37,9 +38,7 @@ function ActionItem({ index, icon, title, subtitle, onClick }: PropTypes) {
         <h2 className="text-gray-800">{title}</h2>
         <h4 className="text-gray-700 text-sm">{subtitle}</h4>
       </div>
-      <ChevronRightIcon
-        className={`go-to-icon-${index} size-6 translate-x-8`}
-      />
+      <ChevronRightIcon ref={iconRef} className="size-6 translate-x-8" />
     </button>
   );
 }

@@ -8,8 +8,13 @@ import StatCard from "./StatCard";
 import ActionItem from "./ActionItem";
 import TaskList from "./TaskList";
 import { useEffect } from "react";
-import { stagger, Timeline } from "animejs";
-import { ProjectType, TaskType } from "@/config/type";
+import { animate, stagger, Timeline } from "animejs";
+import {
+  ProjectType,
+  TaskPriorityType,
+  TaskStatusType,
+  TaskType,
+} from "@/config/type";
 import { useNavigate } from "react-router-dom";
 
 const thisWeekTasks: Array<TaskType> = [
@@ -17,8 +22,8 @@ const thisWeekTasks: Array<TaskType> = [
     name: "Task 1",
     project: "Project Alpha",
     dueDate: "2023-10-31",
-    status: "done",
-    priority: "low",
+    status: TaskStatusType.DONE,
+    priority: TaskPriorityType.HIGH,
   },
   {
     name: "Task 2",
@@ -113,45 +118,38 @@ function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const tl = new Timeline({
+    const animation = {
+      translateY: [0, "-1.5rem"],
+      opacity: 1,
       duration: 300,
-    });
-
-    tl.add(
-      ".action-item",
-      {
-        translateY: [0, "-1.5rem"],
-        opacity: [0, 1],
-      },
-      stagger(150)
-    );
-  });
+      delay: stagger(100),
+    };
+    animate(".actions-container > .action-item", animation);
+    animate(".projects-container > .action-item", animation);
+  }, []);
 
   return (
     <div className="flex flex-col space-y-6 w-full p-6">
       <div className="flex w-full space-x-3">
-        <StatCard index={0} stat={10} description="Projects" />
-        <StatCard index={1} stat={139} description="Total Tasks" />
-        <StatCard index={2} stat={10} description="Assigned Tasks" />
-        <StatCard index={3} stat={52} description="Finished Tasks" />
+        <StatCard stat={10} description="Projects" />
+        <StatCard stat={139} description="Total Tasks" />
+        <StatCard stat={10} description="Assigned Tasks" />
+        <StatCard stat={52} description="Finished Tasks" />
       </div>
-      <div className="flex w-full space-x-3">
+      <div className="actions-container flex w-full space-x-3">
         <ActionItem
-          index={0}
           icon={<CubeIcon />}
           title="Create Project"
           subtitle="Create a new project with AI"
           onClick={() => navigate("/home/new-project")}
         />
         <ActionItem
-          index={1}
           icon={<ClipboardIcon />}
           title="Create Task"
           subtitle="Create a new task for a project"
           onClick={() => navigate("/home/new-task")}
         />
         <ActionItem
-          index={2}
           icon={<UsersIcon />}
           title="Invite Team"
           subtitle="Invite team members for tasks"
@@ -162,7 +160,7 @@ function Dashboard() {
         <TaskList title="To do this week" tasks={thisWeekTasks} />
         <TaskList title="To review" tasks={toReviewTasks} />
       </div>
-      <div className="flex w-full space-x-3 overflow-x-scroll pb-2">
+      <div className="projects-container flex w-full space-x-3 overflow-x-scroll pb-2">
         {projects.map((project, index) => {
           const totalTasks = project.tasks.length;
           const done = project.tasks.filter(
@@ -172,7 +170,6 @@ function Dashboard() {
           return (
             <ActionItem
               key={index}
-              index={index + 3}
               icon={<KeyIcon />}
               title={project.name}
               subtitle={
