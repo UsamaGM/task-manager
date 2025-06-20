@@ -107,7 +107,7 @@ function Sidebar() {
           index={4}
           icon={<Cog6ToothIcon />}
           title="Settings"
-          navigateTo="/home/settings"
+          navigateTo="/settings"
         />
         <button
           onClick={() => console.log("Log the user out")}

@@ -5,15 +5,5 @@ import LandingPage from "./LandingPage";
 import Dashboard from "./Home/Dashboard";
 import NewProject from "./Home/NewProject";
 import NewTask from "./Home/NewTask";
-import Settings from "./Home/Settings";
 
-export {
-  Login,
-  Register,
-  LandingPage,
-  Home,
-  Dashboard,
-  NewProject,
-  NewTask,
-  Settings,
-};
+export { Login, Register, Home, Dashboard, NewProject, NewTask, LandingPage };
