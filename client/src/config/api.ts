@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getCookie } from "./cookie";
 
 const isProduction = process.env.NODE_ENV === "production";
 const baseURL = isProduction
@@ -11,5 +12,10 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+const token = getCookie("token");
+if (token) {
+  api.defaults.headers.common.Authorization = `Bearer ${token}`;
+}
 
 export default api;

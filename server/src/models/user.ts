@@ -1,10 +1,17 @@
 import { CryptoHasher } from "bun";
-import { Schema, Types, model } from "mongoose";
+import mongoose, { type ObjectId } from "mongoose";
 import * as bcrypt from "bcrypt";
+import type { ProjectType } from "./project";
 
-const userSchema = new Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    email: {
       type: String,
       required: true,
       unique: true,
@@ -15,11 +22,10 @@ const userSchema = new Schema(
       required: true,
       trim: true,
     },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
+    projects: {
+      type: Array<mongoose.Types.ObjectId>,
+      ref: "Projects",
+      default: [],
     },
   },
   {
@@ -50,14 +56,15 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-const User = model("User", userSchema);
+const User = mongoose.model("Users", userSchema);
 export default User;
 
 export interface UserType {
-  _id: Types.ObjectId;
+  _id: ObjectId;
   username: string;
   email: string;
   password: string;
+  projects: Array<ProjectType | ObjectId>;
   createdAt: Date;
   updatedAt: Date;
   matchPassword: (enteredPassword: string) => Promise<boolean>;

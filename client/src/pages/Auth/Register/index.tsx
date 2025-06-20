@@ -1,6 +1,6 @@
 import Card from "@/components/Card";
 import api from "@/config/api";
-import { formErrorsHandler } from "@/helpers/errorHandler";
+import { apiErrorHandler, formErrorsHandler } from "@/helpers/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
 import { useForm } from "react-hook-form";
@@ -34,8 +34,8 @@ function Register() {
         toast.success("Registration successful! Please log in.");
         navigate("/login");
       }
-    } catch (error: any) {
-      toast.error(error.response.data.message);
+    } catch (error) {
+      apiErrorHandler(error);
       animate(".form-container", {
         translateX: [25, 0, -25, 0, 25, 0, -25, 0],
         duration: 300,

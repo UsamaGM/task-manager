@@ -1,6 +1,14 @@
 import { FieldError, Message } from "react-hook-form";
 
+export interface UserType {
+  _id: string;
+  username: string;
+  email: string;
+  projects: Array<ProjectType>;
+}
+
 export interface ProjectType {
+  _id: string;
   name: string;
   description: string;
   startDate: string;
@@ -10,6 +18,7 @@ export interface ProjectType {
 }
 
 export interface TaskType {
+  _id: string;
   name: string;
   project: string;
   dueDate: string;
