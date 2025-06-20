@@ -7,23 +7,40 @@ export interface UserType {
   projects: Array<ProjectType>;
 }
 
+export enum ProjectStatusType {
+  ACTIVE = "active",
+  COMPLETED = "completed",
+  ON_HOLD = "on-hold",
+}
+
 export interface ProjectType {
   _id: string;
   name: string;
   description: string;
   startDate: string;
   endDate: string;
-  status: "active" | "completed" | "on-hold";
+  status: ProjectStatusType;
   tasks: Array<TaskType>;
 }
 
+export enum TaskPriorityType {
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+}
+export enum TaskStatusType {
+  TODO = "todo",
+  IN_PROGRESS = "in-progress",
+  DONE = "done",
+}
 export interface TaskType {
   _id: string;
   name: string;
-  project: string;
+  description: string;
   dueDate: string;
-  priority: "low" | "medium" | "high";
-  status: "todo" | "in-progress" | "done";
+  priority: TaskPriorityType;
+  status: TaskStatusType;
+  assignedTo: UserType | undefined;
 }
 
 export type ErrorType =

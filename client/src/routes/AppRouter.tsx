@@ -1,4 +1,8 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import {
   Login,
   Register,
@@ -10,41 +14,42 @@ import {
 } from "@/pages";
 import { useAuth } from "@/contexts/AuthContext";
 import Loader from "@/components/Loader";
+import { newTaskDataLoader } from "./loaders";
 
-function AuthRouter() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/*" element={<Login />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
+const authRoutes = [
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
+  { path: "/", element: <LandingPage /> },
+  { path: "/*", element: <Navigate to="/login" /> },
+];
 
-function AuthenticatedRouter() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/home" element={<Home />}>
-          <Route path="/home/dashboard" element={<Dashboard />} />
-          <Route path="/home/new-project" element={<NewProject />} />
-          <Route path="/home/new-task" element={<NewTask />} />
-        </Route>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="*" element={<Navigate to="/home/dashboard" />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
+const authenticatedRoutes = [
+  {
+    path: "/home",
+    element: <Home />,
+    children: [
+      { path: "/home/dashboard", element: <Dashboard /> },
+      { path: "/home/new-project", element: <NewProject /> },
+      {
+        path: "/home/new-task",
+        element: <NewTask />,
+        loader: newTaskDataLoader,
+        hydrateFallbackElement: <Loader />,
+      },
+    ],
+  },
+  { path: "/", element: <LandingPage /> },
+  { path: "/*", element: <Navigate to="/home/dashboard" /> },
+];
 
-function AppRouter() {
+function AppRouterProvider() {
   const { loading, isAuthenticated } = useAuth();
   if (loading) return <Loader fullscreen />;
 
-  return isAuthenticated ? <AuthenticatedRouter /> : <AuthRouter />;
+  const router = createBrowserRouter(
+    isAuthenticated ? authenticatedRoutes : authRoutes
+  );
+  return <RouterProvider router={router} />;
 }
 
-export default AppRouter;
+export default AppRouterProvider;
