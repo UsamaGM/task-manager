@@ -7,7 +7,8 @@ import { toast } from "react-toastify";
 import api from "@/config/api";
 import { setCookie } from "@/config/cookie";
 import { animate } from "animejs";
-import { formErrorsHandler } from "@/helpers/errorHandler";
+import { apiErrorHandler, formErrorsHandler } from "@/helpers/errorHandler";
+import { useAuth } from "@/contexts/AuthContext";
 
 function Login() {
   const formSchema = z.object({
@@ -26,32 +27,21 @@ function Login() {
     reValidateMode: "onSubmit",
   });
 
+  const { login } = useAuth();
   const navigate = useNavigate();
-  const onSubmit = async (data: formDataTypes) => {
-    try {
-      const response = await api.post("/auth/login", data);
-      if (response.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        localStorage.setItem("token", response.data.token);
-        setCookie("token", response.data.token, {
-          maxAge: 3600,
-          path: "/",
-        });
-        api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${response.data.token}`;
 
-        toast.success("Login successful!");
-        navigate("/dashboard");
-      }
-    } catch (error: any) {
-      toast.error(error.response.data.message);
+  const onSubmit = async (data: formDataTypes) => {
+    const loggedIn = await login(data);
+
+    if (loggedIn) {
+      toast.success("Login successful!");
+      navigate("/home/dashboard");
+    } else
       animate(".form-container", {
         translateX: [25, 0, -25, 0, 25, 0, -25, 0],
         duration: 300,
         ease: "inOutExpo",
       });
-    }
   };
 
   const isError = formErrorsHandler(errors);

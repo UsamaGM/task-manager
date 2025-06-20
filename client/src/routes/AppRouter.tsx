@@ -8,13 +8,26 @@ import {
   NewProject,
   NewTask,
 } from "@/pages";
+import { useAuth } from "@/contexts/AuthContext";
+import Loader from "@/components/Loader";
 
-function AppRouter() {
+function AuthRouter() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/*" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+function AuthenticatedRouter() {
+  return (
+    <BrowserRouter>
+      <Routes>
         <Route path="/home" element={<Home />}>
           <Route path="/home/dashboard" element={<Dashboard />} />
           <Route path="/home/new-project" element={<NewProject />} />
@@ -25,6 +38,13 @@ function AppRouter() {
       </Routes>
     </BrowserRouter>
   );
+}
+
+function AppRouter() {
+  const { loading, isAuthenticated } = useAuth();
+  if (loading) return <Loader fullscreen />;
+
+  return isAuthenticated ? <AuthenticatedRouter /> : <AuthRouter />;
 }
 
 export default AppRouter;

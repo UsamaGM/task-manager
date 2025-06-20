@@ -1,7 +1,8 @@
 import { Card } from "@/components";
 import Dropdown from "@/components/Dropdown";
+import api from "@/config/api";
 import { formattedDateToday } from "@/helpers/date-formatter";
-import { formErrorsHandler } from "@/helpers/errorHandler";
+import { apiErrorHandler, formErrorsHandler } from "@/helpers/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -33,6 +34,11 @@ function NewTask() {
   });
 
   async function onSubmit(formData: projectDataType) {
+    try {
+      await api.get("/project");
+    } catch (error) {
+      apiErrorHandler(error);
+    }
     // TODO: Handle form submission logic here
     // This could involve sending the data to an API or updating the state
     // For now, we'll just log the data to the console
@@ -75,10 +81,42 @@ function NewTask() {
             <Dropdown
               placeholder="Select a project"
               options={[
-                { title: "Project Alpha" },
-                { title: "Project Beta" },
-                { title: "Project Gamma" },
-                { title: "Project Delta" },
+                {
+                  _id: "1",
+                  name: "Project Alpha",
+                  description: "",
+                  endDate: "",
+                  startDate: "",
+                  status: "active",
+                  tasks: [],
+                },
+                {
+                  _id: "2",
+                  name: "Project Beta",
+                  description: "",
+                  endDate: "",
+                  startDate: "",
+                  status: "active",
+                  tasks: [],
+                },
+                {
+                  _id: "3",
+                  name: "Project Gamma",
+                  description: "",
+                  endDate: "",
+                  startDate: "",
+                  status: "active",
+                  tasks: [],
+                },
+                {
+                  _id: "4",
+                  name: "Project Delta",
+                  description: "",
+                  endDate: "",
+                  startDate: "",
+                  status: "active",
+                  tasks: [],
+                },
               ]}
               {...register("project")}
             />

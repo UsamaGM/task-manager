@@ -1,10 +1,11 @@
+import { ProjectType } from "@/config/type";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { animate } from "animejs";
 import { useEffect, useState } from "react";
 
 interface DropdownPropTypes {
   placeholder: string;
-  options: Array<any>;
+  options: Array<ProjectType>;
 }
 
 function Dropdown({ placeholder, options }: DropdownPropTypes) {
@@ -50,7 +51,7 @@ function Dropdown({ placeholder, options }: DropdownPropTypes) {
                 className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-150"
                 role="menuitem"
               >
-                {option.title}
+                {option.name}
               </button>
             ))}
           </div>

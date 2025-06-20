@@ -1,11 +1,12 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import Project from "../models/project";
+import type { AuthRequest } from "../middlewares/auth.middleware";
 
-async function getAllProjects(req: Request, res: Response) {
-  res.status(200).json([]);
+async function getAllProjects(req: AuthRequest, res: Response) {
+  console.log(req.user);
 }
 
-async function createProject(req: Request, res: Response) {
+async function createProject(req: AuthRequest, res: Response) {
   const { name, description, startDate, endDate } = req.body;
   try {
     const newProject = await Project.create({
