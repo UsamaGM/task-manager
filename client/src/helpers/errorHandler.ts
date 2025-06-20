@@ -1,19 +1,6 @@
-import { FieldError, Message } from "react-hook-form";
+import { ErrorType } from "@/config/type";
+import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-
-type ErrorType =
-  | FieldError
-  | (Record<
-      string,
-      Partial<{
-        type: string | number;
-        message: Message;
-      }>
-    > &
-      Partial<{
-        type: string | number;
-        message: Message;
-      }>);
 
 export function formErrorsHandler(errors: ErrorType) {
   const errorEntries = Object.entries(errors);
@@ -25,4 +12,17 @@ export function formErrorsHandler(errors: ErrorType) {
     });
   }
   return errorEntries.length;
+}
+
+export function apiErrorHandler(error: any) {
+  let errorMessage;
+  if (error instanceof AxiosError) {
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      console.error("Error status:", error.response.status);
+      console.error("Error headers:", error.response.headers);
+      errorMessage = error.response.data.message || "Error with server request";
+    }
+  }
+  toast.error(errorMessage || error.message);
 }
