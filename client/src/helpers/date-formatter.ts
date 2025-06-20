@@ -7,3 +7,7 @@ export function getFormattedDateNDaysLater(days: number) {
 export function formattedDateToday() {
   return new Date().toISOString().split("T")[0];
 }
+
+export function getFormattedDate(date: string) {
+  return date.split("T")[0];
+}

@@ -1,7 +1,7 @@
-import { type ObjectId, Schema, Types, model } from "mongoose";
+import mongoose from "mongoose";
 import type { UserType } from "./user";
 
-const taskSchema = new Schema({
+const taskSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -13,18 +13,19 @@ const taskSchema = new Schema({
     trim: true,
   },
   user: {
-    type: Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: "User",
     required: true,
   },
 });
 
-const Task = model("Task", taskSchema);
+const Task = mongoose.model("Tasks", taskSchema);
 
 export default Task;
 
 export interface TaskType {
+  _id: string;
   title: string;
   subtitle: string;
-  user: UserType | ObjectId;
+  user: UserType | string;
 }

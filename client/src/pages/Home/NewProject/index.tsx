@@ -1,11 +1,14 @@
 import { Card } from "@/components";
+import api from "@/config/api";
 import {
   formattedDateToday,
   getFormattedDateNDaysLater,
 } from "@/helpers/date-formatter";
-import { formErrorsHandler } from "@/helpers/errorHandler";
+import { apiErrorHandler, formErrorsHandler } from "@/helpers/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { animate } from "animejs";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 function NewProject() {
@@ -25,6 +28,7 @@ function NewProject() {
     handleSubmit,
     register,
     formState: { errors },
+    reset,
   } = useForm<projectDataType>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
@@ -33,18 +37,26 @@ function NewProject() {
       startDate: today,
       endDate: weekLater,
     },
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
 
   async function onSubmit(formData: projectDataType) {
-    // TODO: Handle form submission logic here
-    // This could involve sending the data to an API or updating the state
-    // For now, we'll just log the data to the console
-    // You can replace this with your actual submission logic
     if (formData.startDate > formData.endDate) {
-      console.error("Start date cannot be after end date");
+      toast.error("Start date cannot be after end date");
       return;
     }
-    console.log("Lets submit the form!", formData);
+    try {
+      await api.post("/project", formData);
+      toast.success("Project Created");
+      reset();
+    } catch (error) {
+      apiErrorHandler(error);
+      animate(".form-container", {
+        translateX: [-12, 12, -12, 12, 0],
+        duration: 500,
+      });
+    }
   }
 
   const isError = formErrorsHandler(errors);
