@@ -8,7 +8,7 @@ import StatCard from "./StatCard";
 import ActionItem from "./ActionItem";
 import TaskList from "./TaskList";
 import { useEffect } from "react";
-import { animate, stagger, Timeline } from "animejs";
+import { animate, stagger } from "animejs";
 import {
   ProjectType,
   TaskPriorityType,

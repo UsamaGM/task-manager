@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
 import User, { type UserType } from "../models/user";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
+import { type ObjectId } from "mongoose";
 
-function generateToken(id: mongoose.Types.ObjectId) {
+function generateToken(id: ObjectId) {
   return jwt.sign({ id }, process.env.JWT_SECRET || "default", {
     expiresIn: "30d",
   });
