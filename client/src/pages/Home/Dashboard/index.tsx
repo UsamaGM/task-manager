@@ -14,7 +14,7 @@ import {
   TaskPriorityType,
   TaskStatusType,
   TaskType,
-} from "@/config/type";
+} from "@/helpers/types";
 import { useNavigate } from "react-router-dom";
 
 const thisWeekTasks: Array<TaskType> = [

@@ -1,4 +1,4 @@
-import { ProjectType, TaskPriorityType } from "@/config/type";
+import { ProjectType, TaskPriorityType } from "@/helpers/types";
 import { getFormattedDate } from "@/helpers/date-formatter";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { animate } from "animejs";

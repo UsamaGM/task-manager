@@ -1,6 +1,6 @@
 import api from "@/config/api";
 import { deleteCookie, getCookie, setCookie } from "@/config/cookie";
-import { UserType } from "@/config/type";
+import { UserType } from "@/helpers/types";
 import { apiErrorHandler } from "@/helpers/errorHandler";
 import {
   createContext,

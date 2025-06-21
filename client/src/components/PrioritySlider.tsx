@@ -1,4 +1,4 @@
-import { TaskPriorityType } from "@/config/type";
+import { TaskPriorityType } from "@/helpers/types";
 import { forwardRef, useEffect, useState } from "react";
 
 interface PrioritySliderProps {

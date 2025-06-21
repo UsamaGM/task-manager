@@ -2,7 +2,7 @@ import { Card } from "@/components";
 import Dropdown from "@/components/Dropdown";
 import PrioritySlider from "@/components/PrioritySlider";
 import api from "@/config/api";
-import { ProjectType, TaskPriorityType } from "@/config/type";
+import { ProjectType, TaskPriorityType } from "@/helpers/types";
 import { formattedDateToday, getFormattedDate } from "@/helpers/date-formatter";
 import { apiErrorHandler, formErrorsHandler } from "@/helpers/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";

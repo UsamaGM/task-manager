@@ -1,4 +1,4 @@
-import { ErrorType } from "@/config/type";
+import { ErrorType } from "@/helpers/types";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 

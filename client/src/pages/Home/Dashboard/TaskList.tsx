@@ -1,4 +1,4 @@
-import { TaskType } from "@/config/type";
+import { TaskType } from "@/helpers/types";
 import { CheckIcon, ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface PropTypes {
