@@ -16,6 +16,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import Loader from "@/components/Loader";
 import { myTasksDataLoader, newTaskDataLoader } from "./loaders";
+import { TaskProvider } from "@/contexts/TaskContext";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -32,7 +33,11 @@ const authenticatedRoutes = [
       { path: "/home/dashboard", element: <Dashboard /> },
       {
         path: "/home/my-tasks",
-        element: <MyTasks />,
+        element: (
+          <TaskProvider>
+            <MyTasks />
+          </TaskProvider>
+        ),
         loader: myTasksDataLoader,
         hydrateFallbackElement: <Loader />,
       },

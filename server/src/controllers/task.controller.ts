@@ -1,7 +1,10 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/auth.middleware";
-import Task, { type TaskStatusType } from "../models/task";
-import Project, { type ProjectType } from "../models/project";
+import Task, {
+  type TaskPriorityType,
+  type TaskStatusType,
+} from "../models/task";
+import Project from "../models/project";
 import User from "../models/user";
 import type { ObjectId } from "mongoose";
 
@@ -13,9 +16,7 @@ async function getUserTasks(req: AuthRequest, res: Response) {
 
     const projects = await Project.find({
       _id: { $in: user?.projects },
-    })
-      .select("tasks")
-      .lean();
+    }).lean();
 
     const projectMap: Map<string, any> = new Map();
     const allTasks: ObjectId[] = [];
@@ -87,6 +88,12 @@ async function createTask(req: AuthRequest, res: Response) {
       { new: true }
     );
 
+    if (!project) {
+      await Task.findByIdAndDelete(newTask._id);
+      res.status(400).json({ message: "Invalid project provided" });
+      return;
+    }
+
     res.status(201).json({ newTask, updatedProject });
   } catch (error) {
     console.log("Error:", error);
@@ -94,4 +101,61 @@ async function createTask(req: AuthRequest, res: Response) {
   }
 }
 
-export { getUserTasks, createTask };
+async function updateTask(req: AuthRequest, res: Response) {
+  const { id, name, description, priority, status, dueDate } = req.body;
+
+  if (!id) {
+    res.status(400).json({ message: "Id not provided" });
+    return;
+  }
+
+  let updatedData: {
+    name?: string;
+    description?: string;
+    priority?: TaskPriorityType;
+    status?: TaskStatusType;
+    dueDate?: string;
+  } = {};
+  if (name) updatedData.name = name;
+  if (description) updatedData.description = description;
+  if (priority) updatedData.priority = priority;
+  if (status) updatedData.status = status;
+  if (dueDate) updatedData.dueDate = dueDate;
+
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
+
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+}
+
+async function deleteTask(req: AuthRequest, res: Response) {
+  const { taskId, projectId } = req.params;
+
+  try {
+    const deletedTask = await Task.findByIdAndDelete(taskId);
+    if (!deletedTask) {
+      res.status(400).json({
+        message: "Invalid Request, the provided task ID was not found",
+      });
+      return;
+    }
+
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        $pull: { tasks: taskId },
+      },
+      { new: true }
+    );
+
+    res.status(201).json({ message: "Success" });
+  } catch (error) {}
+}
+
+export { getUserTasks, createTask, updateTask, deleteTask };

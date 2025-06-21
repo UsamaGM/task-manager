@@ -1,10 +1,11 @@
-import { GroupedTasksListType } from "@/helpers/types";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { Link, useLoaderData } from "react-router-dom";
-import TaskGroupList from "./TaskGroupList";
+import { Link } from "react-router-dom";
+import TaskListContainer from "./TaskListContainer";
+import TaskListItem from "./TaskListItem";
+import { useTask } from "@/contexts/TaskContext";
 
 function MyTasks() {
-  const groupedTasks: GroupedTasksListType = useLoaderData();
+  const { tasks } = useTask();
 
   return (
     <div className="flex flex-col space-y-6 h-[calc(100vh-5rem)] p-6">
@@ -18,22 +19,26 @@ function MyTasks() {
           <span className="text-sm font-semibold">Create Task</span>
         </Link>
       </div>
+
       <div className="flex flex-1 h-full space-x-6">
-        <TaskGroupList
-          title="To Do"
-          count={groupedTasks.todo.count}
-          tasks={groupedTasks.todo.tasks}
-        />
-        <TaskGroupList
+        <TaskListContainer title="To Do" count={tasks.todo.count}>
+          {tasks.todo.tasks.map((task) => (
+            <TaskListItem key={task._id} task={task} />
+          ))}
+        </TaskListContainer>
+        <TaskListContainer
           title="In Progress"
-          count={groupedTasks["in-progress"].count}
-          tasks={groupedTasks["in-progress"].tasks}
-        />
-        <TaskGroupList
-          title="Done"
-          count={groupedTasks.done.count}
-          tasks={groupedTasks.done.tasks}
-        />
+          count={tasks["in-progress"].count}
+        >
+          {tasks["in-progress"].tasks.map((task) => (
+            <TaskListItem key={task._id} task={task} />
+          ))}
+        </TaskListContainer>
+        <TaskListContainer title="Done" count={tasks.done.count}>
+          {tasks.done.tasks.map((task) => (
+            <TaskListItem key={task._id} task={task} />
+          ))}
+        </TaskListContainer>
       </div>
     </div>
   );
