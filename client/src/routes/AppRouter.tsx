@@ -11,10 +11,11 @@ import {
   Home,
   NewProject,
   NewTask,
+  MyTasks,
 } from "@/pages";
 import { useAuth } from "@/contexts/AuthContext";
 import Loader from "@/components/Loader";
-import { newTaskDataLoader } from "./loaders";
+import { myTasksDataLoader, newTaskDataLoader } from "./loaders";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -29,6 +30,12 @@ const authenticatedRoutes = [
     element: <Home />,
     children: [
       { path: "/home/dashboard", element: <Dashboard /> },
+      {
+        path: "/home/my-tasks",
+        element: <MyTasks />,
+        loader: myTasksDataLoader,
+        hydrateFallbackElement: <Loader />,
+      },
       { path: "/home/new-project", element: <NewProject /> },
       {
         path: "/home/new-task",

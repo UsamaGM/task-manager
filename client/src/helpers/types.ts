@@ -43,6 +43,25 @@ export interface TaskType {
   assignedTo: UserType | undefined;
 }
 
+export interface TaskWithProjectType extends TaskType {
+  project: ProjectType;
+}
+
+export interface GroupedTasksListType {
+  todo: {
+    tasks: TaskWithProjectType[];
+    count: number;
+  };
+  "in-progress": {
+    tasks: TaskWithProjectType[];
+    count: number;
+  };
+  done: {
+    tasks: TaskWithProjectType[];
+    count: number;
+  };
+}
+
 export type ErrorType =
   | FieldError
   | (Record<
