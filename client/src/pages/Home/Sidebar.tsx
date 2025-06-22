@@ -115,6 +115,11 @@ function Sidebar() {
           navigateTo="/home/team"
         />
         <SidebarItem
+          icon={<CubeIcon />}
+          title="My Projects"
+          navigateTo="/home/my-projects"
+        />
+        <SidebarItem
           icon={<UserIcon />}
           title="My Tasks"
           navigateTo="/home/my-tasks"

@@ -15,8 +15,14 @@ import {
 } from "@/pages";
 import { useAuth } from "@/contexts/AuthContext";
 import Loader from "@/components/Loader";
-import { myTasksDataLoader, newTaskDataLoader } from "./loaders";
+import {
+  myProjectsDataLoader,
+  myTasksDataLoader,
+  newTaskDataLoader,
+} from "./loaders";
 import { TaskProvider } from "@/contexts/TaskContext";
+import MyProjects from "@/pages/Home/MyProjects";
+import ProjectProvider from "@/contexts/ProjectContext";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -31,6 +37,16 @@ const authenticatedRoutes = [
     element: <Home />,
     children: [
       { path: "/home/dashboard", element: <Dashboard /> },
+      {
+        path: "/home/my-projects",
+        element: (
+          <ProjectProvider>
+            <MyProjects />
+          </ProjectProvider>
+        ),
+        loader: myProjectsDataLoader,
+        hydrateFallbackElement: <Loader />,
+      },
       {
         path: "/home/my-tasks",
         element: (

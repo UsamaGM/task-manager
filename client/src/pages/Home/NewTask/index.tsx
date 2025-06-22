@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 function NewTask() {
-  const { projects }: { projects: Array<ProjectType> } = useLoaderData();
+  const projects: Array<ProjectType> = useLoaderData();
 
   const projectSchema = z.object({
     name: z.string().min(3, "Name must be 3 characters or more"),

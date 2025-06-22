@@ -12,19 +12,8 @@ import {
 } from "@heroicons/react/24/solid";
 import { MouseEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import EditForm from "./EditForm";
+import TaskEditForm from "./TaskEditForm";
 import { useTask } from "@/contexts/TaskContext";
-
-function getDateColor(dueDate: string) {
-  if (!dueDate) return "text-gray-700";
-  const now = new Date();
-  const due = new Date(dueDate);
-  const diffMs = due.getTime() - now.getTime();
-  const diffDays = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-  const severity = Math.max(0, 5 - diffDays);
-
-  return `text-red-${severity * 100}`;
-}
 
 function TaskListItem({ task }: { task: TaskWithProjectType }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +33,7 @@ function TaskListItem({ task }: { task: TaskWithProjectType }) {
     e.stopPropagation();
 
     const id = toast.warn(
-      <EditForm
+      <TaskEditForm
         task={task}
         onUpdate={updateTask}
         onClose={() => toast.dismiss(id)}
@@ -76,18 +65,20 @@ function TaskListItem({ task }: { task: TaskWithProjectType }) {
       : task.priority === TaskPriorityType.MEDIUM
       ? { title: "Medium", color: "text-yellow-500" }
       : { title: "High", color: "text-red-500" };
+  const hasDueDatePassed =
+    getFormattedDate(task.dueDate) <=
+    getFormattedDate(new Date().toISOString());
 
   return (
-    <div
-      key={task._id}
-      className="task-list-item -translate-x-32 flex flex-col shrink-0 space-y-2 bg-white border border-gray-300 shadow rounded-xl p-3"
-    >
+    <div className="list-container-item -translate-x-32 flex flex-col shrink-0 space-y-2 mr-1 bg-white border border-gray-300 shadow rounded-xl p-3">
       <div className="flex justify-between items-start">
         <div>
           <h3 className="font-bold text-gray-800">{task.name}</h3>
           <h4 className="font-semibold text-gray-600 text-sm">
             Due{" "}
-            <span className={getDateColor(task.dueDate)}>
+            <span
+              className={hasDueDatePassed ? "text-red-600" : "text-gray-600"}
+            >
               {getFormattedDate(task.dueDate)}
             </span>
           </h4>
@@ -106,7 +97,9 @@ function TaskListItem({ task }: { task: TaskWithProjectType }) {
           <EllipsisVerticalIcon className="size-5 text-gray-900" />
         </button>
       </div>
-      <p className="text-gray-700 text-sm">{task.description}</p>
+      <p className="text-gray-700 text-sm line-clamp-4 min-h-1/4">
+        {task.description}
+      </p>
 
       <h3
         className={`font-bold ${
