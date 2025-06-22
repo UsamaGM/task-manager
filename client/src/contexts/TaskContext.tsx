@@ -45,7 +45,7 @@ export function useTask() {
   return context;
 }
 
-export function TaskProvider({ children }: { children: ReactNode }) {
+export default function TaskProvider({ children }: { children: ReactNode }) {
   const groupedTasks: GroupedTasksListType = useLoaderData();
   const [tasks, setTasks] = useState(groupedTasks);
 

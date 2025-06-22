@@ -3,26 +3,32 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+
 import {
   Login,
   Register,
-  Dashboard,
   LandingPage,
   Home,
+  Dashboard,
+  MyTeams,
+  MyProjects,
+  MyTasks,
   NewProject,
   NewTask,
-  MyTasks,
 } from "@/pages";
-import { useAuth } from "@/contexts/AuthContext";
 import Loader from "@/components/Loader";
+
 import {
   myProjectsDataLoader,
   myTasksDataLoader,
+  myTeamsDataLoader,
   newTaskDataLoader,
-} from "./loaders";
-import { TaskProvider } from "@/contexts/TaskContext";
-import MyProjects from "@/pages/Home/MyProjects";
+} from "./dataLoaders";
+
+import { useAuth } from "@/contexts/AuthContext";
+import TaskProvider from "@/contexts/TaskContext";
 import ProjectProvider from "@/contexts/ProjectContext";
+import TeamProvider from "@/contexts/TeamContext";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -37,6 +43,16 @@ const authenticatedRoutes = [
     element: <Home />,
     children: [
       { path: "/home/dashboard", element: <Dashboard /> },
+      {
+        path: "/home/my-teams",
+        element: (
+          <TeamProvider>
+            <MyTeams />
+          </TeamProvider>
+        ),
+        loader: myTeamsDataLoader,
+        hydrateFallbackElement: <Loader />,
+      },
       {
         path: "/home/my-projects",
         element: (
