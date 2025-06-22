@@ -81,7 +81,7 @@ function ProjectListItem({ project }: { project: ProjectType }) {
   return (
     <div className="list-container-item -translate-x-32 flex flex-col shrink-0 mr-1 space-y-2 bg-white border border-gray-300 shadow rounded-xl p-3">
       <div className="flex justify-between items-start">
-        <div>
+        <div className="min-h-16">
           <h3 className="font-bold text-gray-800">{project.name}</h3>
           {project.status !== ProjectStatusType.ACTIVE && (
             <h4 className="font-semibold text-gray-600 text-sm">
@@ -108,7 +108,9 @@ function ProjectListItem({ project }: { project: ProjectType }) {
           <EllipsisVerticalIcon className="size-5 stroke-3 text-gray-900" />
         </button>
       </div>
-      <p className="text-gray-700 text-sm">{project.description}</p>
+      <p className="text-gray-700 text-sm line-clamp-4">
+        {project.description}
+      </p>
 
       {isOpen && (
         <div className="flex flex-col absolute top-10 right-5 min-w-36 py-2 rounded-lg bg-white border border-gray-300 shadow">

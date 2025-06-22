@@ -19,9 +19,9 @@ function MyProjects() {
   );
 
   return (
-    <div className="flex flex-col space-y-6 p-6">
+    <div className="flex flex-col space-y-6 h-[calc(100vh-5rem)] p-6">
       <div className="flex justify-between items-center">
-        <h3 className="font-bold text-2xl">My Projects</h3>
+        <h3 className="font-bold text-2xl text-gray-800">My Projects</h3>
         <Link
           to="/home/new-project"
           className="flex space-x-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 shadow p-3 transition-colors duration-300"
@@ -30,7 +30,7 @@ function MyProjects() {
           <span className="text-sm font-bold">Create Project</span>
         </Link>
       </div>
-      <div className="flex space-x-6">
+      <div className="flex flex-1 h-full space-x-6">
         <TaskListContainer title={`Active (${activeProjects.length})`}>
           {activeProjects.map((project) => (
             <ProjectListItem key={project._id} project={project} />

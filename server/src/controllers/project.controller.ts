@@ -67,15 +67,15 @@ async function updateProject(req: AuthRequest, res: Response) {
 }
 
 async function deleteProject(req: AuthRequest, res: Response) {
-  const { projectId } = req.params;
+  const { id } = req.params;
 
-  if (!projectId) {
+  if (!id) {
     res.status(400).json({ message: "No Project ID provided" });
     return;
   }
 
   try {
-    const deletedProject = await Project.findByIdAndDelete(projectId).lean();
+    const deletedProject = await Project.findByIdAndDelete(id).lean();
     if (!deletedProject) {
       res.status(400).json({ message: "Invalid Project ID" });
       return;
@@ -92,4 +92,4 @@ async function deleteProject(req: AuthRequest, res: Response) {
   }
 }
 
-export { getAllProjects, createProject, updateProject };
+export { getAllProjects, createProject, updateProject, deleteProject };
