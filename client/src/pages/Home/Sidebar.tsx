@@ -111,8 +111,8 @@ function Sidebar() {
         />
         <SidebarItem
           icon={<UserGroupIcon />}
-          title="Team View"
-          navigateTo="/home/team"
+          title="My Teams"
+          navigateTo="/home/my-teams"
         />
         <SidebarItem
           icon={<CubeIcon />}

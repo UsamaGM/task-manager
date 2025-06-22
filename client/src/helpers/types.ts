@@ -4,7 +4,19 @@ export interface UserType {
   _id: string;
   username: string;
   email: string;
-  projects: Array<ProjectType>;
+  projects: ProjectType[];
+  teams: TeamType[];
+}
+
+export interface TeamType {
+  _id: string;
+  name: string;
+  description: string;
+  members: {
+    user: UserType;
+    role: string;
+  }[];
+  projects: ProjectType[];
 }
 
 export enum ProjectStatusType {
@@ -20,7 +32,7 @@ export interface ProjectType {
   startDate: string;
   endDate: string;
   status: ProjectStatusType;
-  tasks: Array<TaskType>;
+  tasks: TaskType[];
 }
 
 export enum TaskPriorityType {
