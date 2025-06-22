@@ -1,6 +1,6 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
-import TaskListContainer from "./TaskListContainer";
+import TaskListContainer from "../../../components/ListContainer";
 import TaskListItem from "./TaskListItem";
 import { useTask } from "@/contexts/TaskContext";
 
@@ -21,20 +21,19 @@ function MyTasks() {
       </div>
 
       <div className="flex flex-1 h-full space-x-6">
-        <TaskListContainer title="To Do" count={tasks.todo.count}>
+        <TaskListContainer title={`To Do (${tasks.todo.count})`}>
           {tasks.todo.tasks.map((task) => (
             <TaskListItem key={task._id} task={task} />
           ))}
         </TaskListContainer>
         <TaskListContainer
-          title="In Progress"
-          count={tasks["in-progress"].count}
+          title={`In Progress (${tasks["in-progress"].count})`}
         >
           {tasks["in-progress"].tasks.map((task) => (
             <TaskListItem key={task._id} task={task} />
           ))}
         </TaskListContainer>
-        <TaskListContainer title="Done" count={tasks.done.count}>
+        <TaskListContainer title={`Done (${tasks.done.count})`}>
           {tasks.done.tasks.map((task) => (
             <TaskListItem key={task._id} task={task} />
           ))}

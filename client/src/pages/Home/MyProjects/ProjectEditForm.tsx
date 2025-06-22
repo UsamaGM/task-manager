@@ -1,32 +1,26 @@
 import PrioritySlider from "@/components/PrioritySlider";
-import api from "@/config/api";
-import { useTask } from "@/contexts/TaskContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { apiErrorHandler, formErrorsHandler } from "@/helpers/errorHandler";
-import {
-  TaskPriorityType,
-  TaskType,
-  TaskWithProjectType,
-} from "@/helpers/types";
+import { formErrorsHandler } from "@/helpers/errorHandler";
+import { ProjectType } from "@/helpers/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
 interface PropTypes {
-  task: TaskWithProjectType;
+  project: ProjectType;
   onClose: () => void;
-  onUpdate: (taskId: string, formData: any) => Promise<void>;
+  onUpdate: (projectId: string, formData: any) => Promise<void>;
 }
 
-function EditForm({ task, onClose, onUpdate }: PropTypes) {
+function ProjectEditForm({ project, onClose, onUpdate }: PropTypes) {
   const projectSchema = z.object({
     name: z.string().min(3, "Name must be 3 characters or more"),
     description: z
       .string()
       .min(20, "Description must be 20 characters or more"),
-    dueDate: z.string().regex(/([0-9]{3})-[0-1][0-9]-[0-3][0-9]/g),
-    priority: z.custom<TaskPriorityType>(),
+    startDate: z.string(),
+    endDate: z.string(),
   });
 
   type projectDataType = z.infer<typeof projectSchema>;
@@ -38,9 +32,10 @@ function EditForm({ task, onClose, onUpdate }: PropTypes) {
   } = useForm<projectDataType>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
-      name: task.name,
-      description: task.description,
-      dueDate: getFormattedDate(task.dueDate),
+      name: project.name,
+      description: project.description,
+      startDate: getFormattedDate(project.startDate),
+      endDate: getFormattedDate(project.endDate),
     },
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -48,26 +43,17 @@ function EditForm({ task, onClose, onUpdate }: PropTypes) {
 
   async function onSubmit(formData: projectDataType) {
     const isUpdated =
-      formData.name !== task.name ||
-      formData.description !== task.description ||
-      formData.dueDate !== getFormattedDate(task.dueDate) ||
-      formData.priority !== task.priority;
+      formData.name !== project.name ||
+      formData.description !== project.description ||
+      formData.startDate !== getFormattedDate(project.startDate) ||
+      formData.endDate !== getFormattedDate(project.endDate);
 
     if (!isUpdated) {
       toast.error("You did not change anything!");
       return;
     }
 
-    const isDateInvalid =
-      formData.dueDate < getFormattedDate(task.project.startDate) ||
-      formData.dueDate > getFormattedDate(task.project.endDate);
-
-    if (isDateInvalid) {
-      toast.error("Select a date in the range of project lifetime.");
-      return;
-    }
-
-    await onUpdate(task._id, formData);
+    await onUpdate(project._id, formData);
     onClose();
   }
 
@@ -81,16 +67,11 @@ function EditForm({ task, onClose, onUpdate }: PropTypes) {
       }`}
     >
       <h2 className="text-2xl font-bold mb-6 text-blue-700 text-center">
-        Edit Task
+        Edit Project
       </h2>
-      <h3 className="font-semibold">
-        Project: {task.project.name} (Starts{" "}
-        {getFormattedDate(task.project.startDate)}, Ends{" "}
-        {getFormattedDate(task.project.endDate)})
-      </h3>
       <div className="flex flex-col gap-2">
         <label htmlFor="name" className="text-sm font-semibold">
-          Task Name
+          Project Name
         </label>
         <input
           id="name"
@@ -103,7 +84,7 @@ function EditForm({ task, onClose, onUpdate }: PropTypes) {
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="description" className="text-sm font-semibold">
-          Task Description
+          Project Description
         </label>
         <textarea
           id="description"
@@ -116,34 +97,41 @@ function EditForm({ task, onClose, onUpdate }: PropTypes) {
       </div>
       <div className="flex space-x-6 w-full">
         <div className="flex flex-col flex-1 gap-2">
-          <label htmlFor="dueDate" className="text-sm font-semibold">
-            Due Date
+          <label htmlFor="startDate" className="text-sm font-semibold">
+            Start Date
           </label>
           <input
-            id="dueDate"
+            id="startDate"
             type="date"
-            placeholder="Due Date"
-            title="Select the due date"
+            placeholder="Start Date"
+            title="Select the start date"
             className="w-full px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
-            {...register("dueDate")}
+            {...register("startDate")}
           />
         </div>
         <div className="flex flex-col flex-1 gap-2">
-          <label htmlFor="priority" className="text-sm font-semibold">
-            Priority
+          <label htmlFor="endDate" className="text-sm font-semibold">
+            Start Date
           </label>
-          <PrioritySlider value={task.priority} {...register("priority")} />
+          <input
+            id="endDate"
+            type="date"
+            placeholder="End Date"
+            title="Select the end date"
+            className="w-full px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
+            {...register("endDate")}
+          />
         </div>
       </div>
       <div className="flex justify-end space-x-2">
         <button
           onClick={onClose}
           type="button"
-          className="bg-red-200 text-red-800 py-2 px-4 rounded-lg font-bold hover:bg-red-300 transition-all duration-300 cursor-pointer"
+          className=" text-red-800 py-2 px-4 rounded-lg font-bold hover:bg-red-300 transition-all duration-300 cursor-pointer"
         >
           Cancel
         </button>
-        <button className="bg-green-200 text-green-800 py-2 px-4 rounded-lg font-bold hover:bg-green-300 transition-all duration-300 cursor-pointer">
+        <button className="text-green-800 py-2 px-4 rounded-lg font-bold hover:bg-green-300 transition-all duration-300 cursor-pointer">
           Update
         </button>
       </div>
@@ -151,4 +139,4 @@ function EditForm({ task, onClose, onUpdate }: PropTypes) {
   );
 }
 
-export default EditForm;
+export default ProjectEditForm;
