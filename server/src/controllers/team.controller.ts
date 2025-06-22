@@ -5,13 +5,15 @@ import Team from "../models/team";
 async function getUserTeams(req: AuthRequest, res: Response) {
   try {
     const userProjects = await Team.find({
-      members: req.user?._id,
+      "members.user": req.user?._id,
     })
-      .populate("members", "-password")
+      .populate("members.user", "-password")
+      .populate("projects")
       .lean();
 
-    res.status(200).json(userProjects || []);
+    res.status(200).json(userProjects);
   } catch (error) {
+    console.log(error);
     res.sendStatus(500);
   }
 }
@@ -31,12 +33,16 @@ async function createTeam(req: AuthRequest, res: Response) {
   }
 
   try {
-    const newTeam = await Team.create({
+    const team = await Team.create({
       name,
       description,
-      members: [req.user?._id, ...members],
+      members: [{ user: req.user?._id, role: "admin" }, ...members],
       projects,
     });
+
+    const newTeam = await (
+      await team.populate("members.user", "-password")
+    ).populate("projects");
 
     res.status(201).json(newTeam);
   } catch (error) {
