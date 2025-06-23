@@ -9,7 +9,10 @@ interface TeamContextType {
   teams: TeamType[];
   createTeam: (name: string, description: string) => Promise<void>;
   updateTeamData: (teamId: string, updatedData: any) => Promise<void>;
-  addMember: (teamId: string, userId: string) => Promise<void>;
+  addMember: (
+    teamId: string,
+    members: { user: string; role: string }[]
+  ) => Promise<void>;
   removeMember: (teamId: string, userId: string) => Promise<void>;
   deleteTeam: (teamId: string) => Promise<void>;
 }
@@ -60,7 +63,22 @@ function TeamProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function addMember(teamId: string, userId: string) {}
+  async function addMember(
+    teamId: string,
+    members: { user: string; role: string }[]
+  ) {
+    try {
+      const { data }: { data: TeamType } = await api.put("/team/add-member", {
+        teamId,
+        members,
+      });
+      setTeams((prev) =>
+        prev.map((team) => (team._id === data._id ? data : team))
+      );
+    } catch (error) {
+      apiErrorHandler(error);
+    }
+  }
 
   async function removeMember(teamId: string, userId: string) {}
 

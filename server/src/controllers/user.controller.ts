@@ -4,18 +4,19 @@ import User from "../models/user";
 
 async function getQueriedUsers(req: AuthRequest, res: Response) {
   const { query } = req.params;
-  const isEmail = query?.includes("@") && query.length > 1;
+  const isEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(
+    query?.toLowerCase() || ""
+  );
 
   try {
-    const users = await User.find(
-      isEmail
-        ? {
-            email: { $regex: query, $options: "i" },
-          }
-        : {
-            username: { $regex: query, $options: "i" },
-          }
-    )
+    const users = await User.find({
+      $and: [
+        { _id: { $ne: req.user?._id } },
+        isEmail
+          ? { email: { $regex: query, $options: "i" } }
+          : { username: { $regex: query, $options: "i" } },
+      ],
+    })
       .limit(10)
       .select("_id username email")
       .lean();

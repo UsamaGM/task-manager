@@ -24,8 +24,6 @@ function MyTeams() {
     });
   }, []);
 
-  console.log(showAddMemberModal);
-
   return (
     <div className="relative flex flex-col space-y-6 h-screen p-6">
       <Headline
@@ -38,7 +36,6 @@ function MyTeams() {
           <TeamListItem
             key={team._id}
             handleAddMember={() => {
-              console.log("Method called");
               setShowAddMemberModal(true);
               setSelectedTeam(team);
             }}

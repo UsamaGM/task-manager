@@ -75,6 +75,59 @@ async function updateTeam(req: AuthRequest, res: Response) {
   }
 }
 
+async function addMember(req: AuthRequest, res: Response) {
+  const {
+    teamId,
+    members,
+  }: { teamId: string; members: { user: string; role: string }[] } = req.body;
+
+  if (!teamId) {
+    res.status(400).json({ message: "Team ID not provided" });
+    return;
+  }
+
+  try {
+    const team = await Team.findById(teamId);
+
+    if (!team) {
+      res.status(404).json({
+        message: "Invalid Team ID provided, check if the team exists",
+      });
+      return;
+    }
+
+    if (
+      !team.members.some(
+        (u) =>
+          u.user.toString() === req.user?._id.toString() && u.role === "admin"
+      )
+    ) {
+      res
+        .status(401)
+        .json({ message: "Unauthorized. Only admins can add new members" });
+      return;
+    }
+
+    const updatedTeam = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $push: { members },
+      },
+      { new: true }
+    )
+      .populate("members.user", "-password")
+      .populate("projects")
+      .lean();
+
+    console.log(updatedTeam);
+
+    res.status(200).json(updatedTeam);
+  } catch (error) {
+    console.error("Add member error:", error);
+    res.sendStatus(500);
+  }
+}
+
 async function deleteTeam(req: AuthRequest, res: Response) {
   const { id } = req.params;
 
@@ -97,4 +150,4 @@ async function deleteTeam(req: AuthRequest, res: Response) {
   }
 }
 
-export { getUserTeams, createTeam, updateTeam, deleteTeam };
+export { getUserTeams, createTeam, updateTeam, addMember, deleteTeam };
