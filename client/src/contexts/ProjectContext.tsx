@@ -1,6 +1,6 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
-import { ProjectStatusType, ProjectType } from "@/helpers/types";
+import { ProjectType } from "@/helpers/types";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -21,9 +21,10 @@ export function useProject() {
 
   return context;
 }
-
 function ProjectProvider({ children }: { children: ReactNode }) {
-  const userProjects: ProjectType[] = useLoaderData();
+  const { projects: userProjects }: { projects: ProjectType[] } =
+    useLoaderData();
+
   const [projects, setProjects] = useState(userProjects);
 
   async function updateProject(projectId: string, updatedData: any) {

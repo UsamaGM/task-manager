@@ -19,7 +19,7 @@ async function getUserTeams(req: AuthRequest, res: Response) {
 }
 
 async function createTeam(req: AuthRequest, res: Response) {
-  const { name, description, members, projects } = req.body;
+  const { name, description } = req.body;
 
   if (!name) {
     res.status(400).json({ message: "No name provided! Name is required" });
@@ -36,8 +36,7 @@ async function createTeam(req: AuthRequest, res: Response) {
     const team = await Team.create({
       name,
       description,
-      members: [{ user: req.user?._id, role: "admin" }, ...members],
-      projects,
+      members: [{ user: req.user?._id, role: "admin" }],
     });
 
     const newTeam = await (

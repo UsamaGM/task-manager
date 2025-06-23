@@ -1,37 +1,17 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
 
-export async function myTeamsDataLoader() {
+export async function dataLoader() {
   try {
-    const response = await api.get("/team");
-    return response.data;
-  } catch (error) {
-    apiErrorHandler(error);
-  }
-}
+    const taskResponse = await api.get("/task");
+    const projectsResponse = await api.get("/project");
+    const teamsResponse = await api.get("/team");
 
-export async function myProjectsDataLoader() {
-  try {
-    const response = await api.get("/project");
-    return response.data;
-  } catch (error) {
-    apiErrorHandler(error);
-  }
-}
-
-export async function myTasksDataLoader() {
-  try {
-    const response = await api.get("/task");
-    return response.data;
-  } catch (error) {
-    apiErrorHandler(error);
-  }
-}
-
-export async function newTaskDataLoader() {
-  try {
-    const response = await api.get("/project");
-    return response.data;
+    return {
+      tasks: taskResponse.data,
+      projects: projectsResponse.data,
+      teams: teamsResponse.data,
+    };
   } catch (error) {
     apiErrorHandler(error);
   }

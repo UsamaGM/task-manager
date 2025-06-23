@@ -2,33 +2,38 @@ import { TaskPriorityType } from "@/helpers/types";
 import { forwardRef, useEffect, useState } from "react";
 
 interface PrioritySliderProps {
+  label: string;
   value?: TaskPriorityType;
   onChange?: (event: { target: { value: string; name?: string } }) => void;
   onBlur?: (event: { target: { value: string; name?: string } }) => void;
   name?: string;
 }
 
-const PrioritySlider = forwardRef<HTMLInputElement, PrioritySliderProps>(
-  ({ value = TaskPriorityType.MEDIUM, onChange, onBlur, name }, ref) => {
-    const priorities = Object.values(TaskPriorityType);
-    const [selectedPriority, setSelectedPriority] =
-      useState<TaskPriorityType>(value);
+const PrioritySelectorWithLabel = forwardRef<
+  HTMLInputElement,
+  PrioritySliderProps
+>(({ label, value = TaskPriorityType.MEDIUM, onChange, onBlur, name }, ref) => {
+  const priorities = Object.values(TaskPriorityType);
+  const [selectedPriority, setSelectedPriority] =
+    useState<TaskPriorityType>(value);
 
-    useEffect(() => {
-      setSelectedPriority(value);
-    }, [value]);
+  useEffect(() => {
+    setSelectedPriority(value);
+  }, [value]);
 
-    const handlePriorityChange = (priority: TaskPriorityType) => {
-      setSelectedPriority(priority);
-      onChange?.({
-        target: {
-          value: priority,
-          name: name,
-        },
-      });
-    };
+  const handlePriorityChange = (priority: TaskPriorityType) => {
+    setSelectedPriority(priority);
+    onChange?.({
+      target: {
+        value: priority,
+        name: name,
+      },
+    });
+  };
 
-    return (
+  return (
+    <div className="flex flex-col flex-1 gap-2">
+      <label className="text-sm font-semibold">{label}</label>
       <div className="w-full">
         <input
           ref={ref}
@@ -67,10 +72,10 @@ const PrioritySlider = forwardRef<HTMLInputElement, PrioritySliderProps>(
           ))}
         </div>
       </div>
-    );
-  }
-);
+    </div>
+  );
+});
 
-PrioritySlider.displayName = "PrioritySlider";
+PrioritySelectorWithLabel.displayName = "PrioritySlider";
 
-export default PrioritySlider;
+export default PrioritySelectorWithLabel;

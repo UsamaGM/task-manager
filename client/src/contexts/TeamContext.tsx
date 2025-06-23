@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 interface TeamContextType {
   teams: TeamType[];
+  createTeam: (name: string, description: string) => Promise<void>;
   updateTeamData: (teamId: string, updatedData: any) => Promise<void>;
   addMember: (teamId: string, userId: string) => Promise<void>;
   removeMember: (teamId: string, userId: string) => Promise<void>;
@@ -24,8 +25,23 @@ export function useTeam() {
 }
 
 function TeamProvider({ children }: { children: ReactNode }) {
-  const data: TeamType[] = useLoaderData();
-  const [teams, setTeams] = useState(data);
+  const { teams: userTeams }: { teams: TeamType[] } = useLoaderData();
+  const [teams, setTeams] = useState(userTeams);
+
+  async function createTeam(name: string, description: string) {
+    try {
+      const { data }: { data: TeamType } = await api.post("/team", {
+        name,
+        description,
+      });
+
+      setTeams((prev) => [data, ...prev]);
+
+      toast.success(`Created team: "${data.name}"`);
+    } catch (error) {
+      apiErrorHandler(error);
+    }
+  }
 
   async function updateTeamData(teamId: string, updatedData: any) {
     try {
@@ -54,6 +70,7 @@ function TeamProvider({ children }: { children: ReactNode }) {
     <TeamContext.Provider
       value={{
         teams,
+        createTeam,
         updateTeamData,
         addMember,
         removeMember,

@@ -9,14 +9,13 @@ import {
   MagnifyingGlassIcon,
   CubeIcon,
   ClipboardIcon,
-  ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 import SidebarItem from "./SidebarItem";
 import { useEffect } from "react";
 import * as anime from "animejs";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Id, toast } from "react-toastify";
 
 function Sidebar() {
   const { logout, user } = useAuth();
@@ -41,13 +40,14 @@ function Sidebar() {
 
   const navigate = useNavigate();
   function handleLogout() {
+    let toastId: Id;
     const logoutConfirmationDialog = (
       <div className="w-full">
         <h2>Confirm logout</h2>
         <h4>Do you really want to log out?</h4>
         <div className="flex justify-end space-x-2 w-full text-sm font-semibold mt-4">
           <button
-            onClick={() => toast.dismiss()}
+            onClick={() => toast.dismiss(toastId)}
             className="bg-blue-300 text-blue-900 rounded-lg p-2 shadow cursor-pointer hover:bg-blue-200"
           >
             Cancel
@@ -65,7 +65,7 @@ function Sidebar() {
         </div>
       </div>
     );
-    const logoutToast = toast.warn(logoutConfirmationDialog, {
+    toastId = toast.warn(logoutConfirmationDialog, {
       autoClose: false,
       closeButton: false,
       position: "bottom-left",

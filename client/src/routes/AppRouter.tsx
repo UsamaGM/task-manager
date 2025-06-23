@@ -15,15 +15,11 @@ import {
   MyTasks,
   NewProject,
   NewTask,
+  NewTeam,
 } from "@/pages";
 import Loader from "@/components/Loader";
 
-import {
-  myProjectsDataLoader,
-  myTasksDataLoader,
-  myTeamsDataLoader,
-  newTaskDataLoader,
-} from "./dataLoaders";
+import { dataLoader } from "./dataLoaders";
 
 import { useAuth } from "@/contexts/AuthContext";
 import TaskProvider from "@/contexts/TaskContext";
@@ -40,45 +36,39 @@ const authRoutes = [
 const authenticatedRoutes = [
   {
     path: "/home",
-    element: <Home />,
+    element: (
+      <TaskProvider>
+        <ProjectProvider>
+          <TeamProvider>
+            <Home />
+          </TeamProvider>
+        </ProjectProvider>
+      </TaskProvider>
+    ),
+    loader: dataLoader,
+    hydrateFallbackElement: <Loader />,
     children: [
       { path: "/home/dashboard", element: <Dashboard /> },
       {
         path: "/home/my-teams",
-        element: (
-          <TeamProvider>
-            <MyTeams />
-          </TeamProvider>
-        ),
-        loader: myTeamsDataLoader,
-        hydrateFallbackElement: <Loader />,
+        element: <MyTeams />,
       },
       {
         path: "/home/my-projects",
-        element: (
-          <ProjectProvider>
-            <MyProjects />
-          </ProjectProvider>
-        ),
-        loader: myProjectsDataLoader,
-        hydrateFallbackElement: <Loader />,
+        element: <MyProjects />,
       },
       {
         path: "/home/my-tasks",
-        element: (
-          <TaskProvider>
-            <MyTasks />
-          </TaskProvider>
-        ),
-        loader: myTasksDataLoader,
-        hydrateFallbackElement: <Loader />,
+        element: <MyTasks />,
+      },
+      {
+        path: "/home/new-team",
+        element: <NewTeam />,
       },
       { path: "/home/new-project", element: <NewProject /> },
       {
         path: "/home/new-task",
         element: <NewTask />,
-        loader: newTaskDataLoader,
-        hydrateFallbackElement: <Loader />,
       },
     ],
   },
