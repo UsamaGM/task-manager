@@ -15,7 +15,6 @@ import {
   MyTasks,
   NewProject,
   NewTask,
-  NewTeam,
 } from "@/pages";
 import Loader from "@/components/Loader";
 
@@ -46,7 +45,7 @@ const authenticatedRoutes = [
       </TaskProvider>
     ),
     loader: dataLoader,
-    hydrateFallbackElement: <Loader />,
+    hydrateFallbackElement: <Loader fullscreen />,
     children: [
       { path: "/home/dashboard", element: <Dashboard /> },
       {
@@ -60,10 +59,6 @@ const authenticatedRoutes = [
       {
         path: "/home/my-tasks",
         element: <MyTasks />,
-      },
-      {
-        path: "/home/new-team",
-        element: <NewTeam />,
       },
       { path: "/home/new-project", element: <NewProject /> },
       {

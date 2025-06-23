@@ -9,25 +9,30 @@ import {
 import { CubeIcon } from "@heroicons/react/24/solid";
 import React, { ReactElement } from "react";
 
-function TeamListItem({ team }: { team: TeamType }) {
+interface PropTypes {
+  team: TeamType;
+  handleAddMember: () => void;
+}
+
+function TeamListItem({ team, handleAddMember }: PropTypes) {
   const { user } = useAuth();
   const userRole = team.members.find((u) => u.user._id === user?._id)?.role;
 
   return (
-    <div className="flex flex-col space-y-5 w-full h-fit rounded-2xl border border-gray-300 shadow sm:p-3 md:p-5">
+    <div className="team-list-item scale-90 -translate-y-32 opacity-0 flex flex-col space-y-5 w-full h-fit rounded-2xl border border-gray-300 shadow sm:p-3 md:p-5">
       <div className="flex justify-between items-center">
         <h2 className="font-bold text-lg">{team.name}</h2>
         {userRole === "admin" ? (
           <div className="flex space-x-3 items-center">
-            <IconButton>
+            <IconButton onClick={handleAddMember}>
               <UserPlusIcon />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => {}}>
               <Cog6ToothIcon />
             </IconButton>
           </div>
         ) : (
-          <IconButton>
+          <IconButton onClick={() => {}}>
             <UserMinusIcon />
           </IconButton>
         )}
@@ -40,7 +45,10 @@ function TeamListItem({ team }: { team: TeamType }) {
               (team.members.length > 1 ? " Members" : " Member")}
           </span>
           {team.members.map((member) => (
-            <div className="flex items-center space-x-2">
+            <div
+              key={`${member.user._id}-${team._id}`}
+              className="flex items-center space-x-2"
+            >
               <UserIcon className="size-4 stroke-3" />
               <h3 className="flex-1 text-gray-800 font-bold text-sm">
                 {member.user._id === user?._id ? "You" : member.user.username}
@@ -56,7 +64,10 @@ function TeamListItem({ team }: { team: TeamType }) {
           </span>
           {team.projects.length ? (
             team.projects.map((project) => (
-              <div className="flex space-x-2">
+              <div
+                key={`${project._id}-${team._id}`}
+                className="flex space-x-2"
+              >
                 <CubeIcon className="size-4 stroke-3" />
                 <h3>{project.name}</h3>
                 <h4>{project.status}</h4>
@@ -76,9 +87,17 @@ function TeamListItem({ team }: { team: TeamType }) {
 
 export default TeamListItem;
 
-function IconButton({ children }: { children: ReactElement }) {
+interface ButtonPropTypes {
+  children: ReactElement;
+  onClick: () => void;
+}
+
+function IconButton({ children, onClick }: ButtonPropTypes) {
   return (
-    <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg border border-gray-300 shadow p-1 transition-colors duration-300 cursor-pointer">
+    <button
+      onClick={onClick}
+      className="bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg border border-gray-300 shadow p-1 transition-colors duration-300 cursor-pointer"
+    >
       {React.createElement(children.type, {
         className: "size-5 stroke-2",
       })}

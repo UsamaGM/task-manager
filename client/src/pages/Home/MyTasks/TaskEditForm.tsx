@@ -1,4 +1,4 @@
-import PrioritySlider from "@/components/PrioritySlider";
+import PrioritySelectorWithLabel from "@/components/PrioritySelectorWithLabel";
 import { getFormattedDate } from "@/helpers/date-formatter";
 import { formErrorsHandler } from "@/helpers/errorHandler";
 import { TaskPriorityType, TaskWithProjectType } from "@/helpers/types";
@@ -126,7 +126,10 @@ function TaskEditForm({ task, onClose, onUpdate }: PropTypes) {
           <label htmlFor="priority" className="text-sm font-semibold">
             Priority
           </label>
-          <PrioritySlider value={task.priority} {...register("priority")} />
+          <PrioritySelectorWithLabel
+            value={task.priority}
+            {...register("priority")}
+          />
         </div>
       </div>
       <div className="flex justify-end space-x-2">

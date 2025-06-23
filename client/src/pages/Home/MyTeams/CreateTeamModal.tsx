@@ -49,12 +49,6 @@ function CreateTeamModal({ isOpen, onClose }: PropTypes) {
       translateY: 25,
       duration: 500,
     });
-    return () => {
-      animate(".form-container", {
-        translateY: -25,
-        duration: 500,
-      });
-    };
   }, [isOpen]);
 
   async function onSubmit(formData: any) {
