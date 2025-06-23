@@ -11,7 +11,7 @@ function FormContainer({ onSubmit, isError, title, children }: PropTypes) {
   return (
     <form
       onSubmit={onSubmit}
-      className={`flex flex-col space-y-4 bg-white p-8 rounded-xl shadow border border-gray-500 w-full max-w-2xl ${
+      className={`form-container flex flex-col space-y-4 bg-white p-8 rounded-xl shadow border border-gray-500 w-full max-w-2xl ${
         isError && "border-red-400 border-2"
       }`}
     >

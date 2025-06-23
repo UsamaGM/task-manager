@@ -7,6 +7,8 @@ import {
 import { useTeam } from "@/contexts/TeamContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { animate } from "animejs";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -41,6 +43,19 @@ function CreateTeamModal({ isOpen, onClose }: PropTypes) {
     mode: "onSubmit",
     reValidateMode: "onSubmit",
   });
+
+  useEffect(() => {
+    animate(".form-container", {
+      translateY: 25,
+      duration: 500,
+    });
+    return () => {
+      animate(".form-container", {
+        translateY: -25,
+        duration: 500,
+      });
+    };
+  }, [isOpen]);
 
   async function onSubmit(formData: any) {
     await createTeam(formData.name, formData.description);
