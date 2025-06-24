@@ -1,18 +1,19 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/auth.middleware";
 import Team from "../models/team";
+import { toEditorSettings } from "typescript";
 
 async function getUserTeams(req: AuthRequest, res: Response) {
   try {
-    const userProjects = await Team.find({
-      $or: [{ admin: req.user?._id }, { members: req.user?._id }],
+    const userTeams = await Team.find({
+      $or: [{ admin: req.user?._id }, { members: req.user?._id.toString() }],
     })
       .populate("admin", "-password")
       .populate("members", "-password")
       .populate("projects")
       .lean();
 
-    res.status(200).json(userProjects);
+    res.status(200).json(userTeams);
   } catch (error) {
     console.error("GET: /team:", error);
     res.sendStatus(500);
@@ -40,12 +41,11 @@ async function createTeam(req: AuthRequest, res: Response) {
       admin: req.user?._id,
     });
 
-    const newTeam = await (
-      await (
-        await team.populate("admin", "-password")
-      ).populate("members", "-password")
-    ).populate("projects");
-
+    const newTeam = await Team.populate(team, {
+      path: "admin members projects",
+      select: "-password -projects",
+    });
+    console.log(newTeam);
     res.status(201).json(newTeam);
   } catch (error) {
     console.error("POST: /team:", error);
@@ -64,7 +64,11 @@ async function updateTeam(req: AuthRequest, res: Response) {
   try {
     const updatedTeam = await Team.findByIdAndUpdate(teamId, updatedData, {
       new: true,
-    }).lean();
+    })
+      .populate("admin")
+      .populate("members", "-password")
+      .populate("projects")
+      .lean();
 
     if (!updatedTeam) {
       res
@@ -144,7 +148,7 @@ async function removeMember(req: AuthRequest, res: Response) {
       return;
     }
 
-    if (team.admin !== req.user?._id) {
+    if (team.admin.toString() !== req.user?._id.toString()) {
       res
         .status(401)
         .json({ message: "Unauthorized. Only admins can remove members" });
@@ -154,14 +158,47 @@ async function removeMember(req: AuthRequest, res: Response) {
     const updatedTeam = await Team.findByIdAndUpdate(
       teamId,
       {
-        $pull: { members: { $each: members } },
+        $pull: { members: { $in: members } },
       },
       { new: true }
-    ).lean();
+    )
+      .populate("admin", "-password")
+      .populate("members", "-password")
+      .populate("projects")
+      .lean();
 
     res.status(200).json(updatedTeam);
   } catch (error) {
     console.error("PUT /team/remove-member:", error);
+    res.sendStatus(500);
+  }
+}
+
+async function leaveTeam(req: AuthRequest, res: Response) {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).json({ message: "Team ID not provided" });
+    return;
+  }
+
+  try {
+    const leftTeam = await Team.findByIdAndUpdate(
+      id,
+      {
+        $pull: { members: req.user?._id.toString() },
+      },
+      { new: true }
+    );
+
+    if (!leftTeam) {
+      res.status(404).json({ message: "Team not found, check if it exists" });
+      return;
+    }
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("PUT /team/leave:", error);
     res.sendStatus(500);
   }
 }
@@ -182,7 +219,7 @@ async function deleteTeam(req: AuthRequest, res: Response) {
       return;
     }
 
-    res.status(200).json(deletedTeam);
+    res.sendStatus(200);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -194,5 +231,6 @@ export {
   updateTeam,
   addMember,
   removeMember,
+  leaveTeam,
   deleteTeam,
 };

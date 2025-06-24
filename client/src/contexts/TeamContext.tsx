@@ -10,8 +10,9 @@ interface TeamContextType {
   createTeam: (name: string, description: string) => Promise<void>;
   updateTeamData: (teamId: string, updatedData: any) => Promise<void>;
   addMember: (teamId: string, members: string[]) => Promise<void>;
-  removeMember: (teamId: string, userId: string) => Promise<void>;
-  deleteTeam: (teamId: string) => Promise<void>;
+  removeMember: (teamId: string, members: string[]) => Promise<void>;
+  leaveTeam: (teamId: string) => Promise<boolean>;
+  deleteTeam: (teamId: string) => Promise<boolean>;
 }
 
 const TeamContext = createContext<TeamContextType | null>(null);
@@ -27,8 +28,6 @@ export function useTeam() {
 function TeamProvider({ children }: { children: ReactNode }) {
   const { teams: userTeams }: { teams: TeamType[] } = useLoaderData();
   const [teams, setTeams] = useState(userTeams);
-
-  console.log(teams);
 
   async function createTeam(name: string, description: string) {
     try {
@@ -53,7 +52,7 @@ function TeamProvider({ children }: { children: ReactNode }) {
       });
 
       setTeams((prev) =>
-        prev.map((team) => (team._id === teamId ? { ...team, ...data } : team))
+        prev.map((team) => (team._id === teamId ? data : team))
       );
 
       toast.success("Team Data Updated");
@@ -69,16 +68,58 @@ function TeamProvider({ children }: { children: ReactNode }) {
         members,
       });
       setTeams((prev) =>
-        prev.map((team) => (team._id === data._id ? data : team))
+        prev.map((team) => (team._id === teamId ? data : team))
       );
+      toast.success(`New members added to team ${data.name}`);
     } catch (error) {
       apiErrorHandler(error);
     }
   }
 
-  async function removeMember(teamId: string, userId: string) {}
+  async function removeMember(teamId: string, members: string[]) {
+    try {
+      const { data }: { data: TeamType } = await api.put(
+        "/team/remove-member",
+        {
+          teamId,
+          members,
+        }
+      );
+      setTeams((prev) =>
+        prev.map((team) => (team._id === teamId ? data : team))
+      );
+      toast.success(`Members removed from team ${data.name}`);
+    } catch (error) {
+      apiErrorHandler(error);
+    }
+  }
 
-  async function deleteTeam(teamId: string) {}
+  async function leaveTeam(teamId: string) {
+    try {
+      await api.put(`/team/leave/${teamId}`);
+      setTeams((prev) => prev.filter((t) => t._id !== teamId));
+      return true;
+    } catch (error) {
+      apiErrorHandler(error);
+      return false;
+    }
+  }
+
+  async function deleteTeam(teamId: string) {
+    if (!teamId) {
+      toast.error("Team ID not provided");
+      return false;
+    }
+
+    try {
+      await api.delete(`/team/${teamId}`);
+      setTeams((prev) => prev.filter((team) => team._id !== teamId));
+      return true;
+    } catch (error) {
+      apiErrorHandler(error);
+      return false;
+    }
+  }
 
   return (
     <TeamContext.Provider
@@ -88,6 +129,7 @@ function TeamProvider({ children }: { children: ReactNode }) {
         updateTeamData,
         addMember,
         removeMember,
+        leaveTeam,
         deleteTeam,
       }}
     >
