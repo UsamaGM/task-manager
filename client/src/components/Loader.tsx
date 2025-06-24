@@ -1,8 +1,28 @@
 import { animate, stagger } from "animejs";
 import { useEffect } from "react";
 
-function Loader({ fullscreen = false }: { fullscreen?: boolean }) {
+interface PropTypes {
+  fullscreen?: boolean;
+  size?: "small" | "medium" | "large";
+}
+
+function Loader({ fullscreen = false, size = "medium" }: PropTypes) {
   //TODO: Improve with modern design
+
+  let dotSize;
+  switch (size) {
+    case "small":
+      dotSize = 2;
+      break;
+    case "medium":
+      dotSize = 3;
+      break;
+    case "large":
+      dotSize = 4;
+      break;
+    default:
+      dotSize = 3;
+  }
 
   useEffect(() => {
     animate(".loader-dot", {
@@ -16,10 +36,18 @@ function Loader({ fullscreen = false }: { fullscreen?: boolean }) {
 
   const loader = (
     <div className="flex justify-center items-center space-x-3 w-full h-full">
-      <div className="loader-dot bg-red-500 rounded-full size-3" />
-      <div className="loader-dot bg-yellow-500 rounded-full size-3" />
-      <div className="loader-dot bg-green-500 rounded-full size-3" />
-      <div className="loader-dot bg-blue-500 rounded-full size-3" />
+      <div
+        className={`loader-dot bg-red-500 rounded-full ${"size-" + dotSize}`}
+      />
+      <div
+        className={`loader-dot bg-yellow-500 rounded-full ${"size-" + dotSize}`}
+      />
+      <div
+        className={`loader-dot bg-green-500 rounded-full ${"size-" + dotSize}`}
+      />
+      <div
+        className={`loader-dot bg-blue-500 rounded-full ${"size-" + dotSize}`}
+      />
     </div>
   );
 
