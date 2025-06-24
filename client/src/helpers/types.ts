@@ -8,6 +8,15 @@ export interface UserType {
   teams: TeamType[];
 }
 
+export interface ModalPropTypes {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface TeamModalPropTypes extends ModalPropTypes {
+  team: TeamType;
+}
+
 export interface TeamType {
   _id: string;
   name: string;

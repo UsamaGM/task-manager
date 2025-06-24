@@ -91,7 +91,7 @@ function CreateTeamModal({ isOpen, onClose }: PropTypes) {
           <button
             type="button"
             onClick={handleClose}
-            className="hover:bg-red-200 hover:text-red-800 px-3 py-2 rounded-lg hover:shadow cursor-pointer"
+            className="w-full hover:bg-red-200 hover:text-red-800 px-3 py-2 rounded-lg hover:shadow cursor-pointer"
           >
             Cancel
           </button>

@@ -6,11 +6,19 @@ import CreateTeamModal from "./CreateTeamModal";
 import { animate, stagger } from "animejs";
 import AddMemberModal from "./AddMemberModal";
 import { TeamType } from "@/helpers/types";
+import RemoveMemberModal from "./RemoveMemberModal";
+import EditTeamModal from "./EditTeamModal";
+import DeleteTeamModal from "./DeleteTeamModal";
+import LeaveTeamModal from "./LeaveTeamModal";
 
 function MyTeams() {
   const [selectedTeam, setSelectedTeam] = useState<TeamType | null>(null);
   const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [showRemoveMemberModal, setShowRemoveMemberModal] = useState(false);
+  const [showEditTeamModal, setShowEditTeamModal] = useState(false);
+  const [showDeleteTeamModal, setShowDeleteTeamModal] = useState(false);
+  const [showLeaveTeamModal, setShowLeaveTeamModal] = useState(false);
 
   const { teams } = useTeam();
 
@@ -22,7 +30,7 @@ function MyTeams() {
       duration: 400,
       delay: stagger(100),
     });
-  }, []);
+  }, [teams]);
 
   return (
     <div className="relative flex flex-col space-y-6 h-screen p-6">
@@ -39,6 +47,22 @@ function MyTeams() {
               setShowAddMemberModal(true);
               setSelectedTeam(team);
             }}
+            handleRemoveMember={() => {
+              setShowRemoveMemberModal(true);
+              setSelectedTeam(team);
+            }}
+            handleEditTeam={() => {
+              setShowEditTeamModal(true);
+              setSelectedTeam(team);
+            }}
+            handleDeleteTeam={() => {
+              setShowDeleteTeamModal(true);
+              setSelectedTeam(team);
+            }}
+            handleLeaveTeam={() => {
+              setShowLeaveTeamModal(true);
+              setSelectedTeam(team);
+            }}
             team={team}
           />
         ))}
@@ -49,8 +73,28 @@ function MyTeams() {
       />
       <AddMemberModal
         isOpen={showAddMemberModal}
-        team={selectedTeam}
+        team={selectedTeam!}
         onClose={() => setShowAddMemberModal(false)}
+      />
+      <RemoveMemberModal
+        isOpen={showRemoveMemberModal}
+        team={selectedTeam!}
+        onClose={() => setShowRemoveMemberModal(false)}
+      />
+      <EditTeamModal
+        isOpen={showEditTeamModal}
+        team={selectedTeam!}
+        onClose={() => setShowEditTeamModal(false)}
+      />
+      <DeleteTeamModal
+        isOpen={showDeleteTeamModal}
+        team={selectedTeam!}
+        onClose={() => setShowDeleteTeamModal(false)}
+      />
+      <LeaveTeamModal
+        isOpen={showLeaveTeamModal}
+        team={selectedTeam!}
+        onClose={() => setShowLeaveTeamModal(false)}
       />
     </div>
   );
