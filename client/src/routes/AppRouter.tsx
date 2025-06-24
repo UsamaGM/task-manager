@@ -3,26 +3,27 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+
 import {
   Login,
   Register,
-  Dashboard,
   LandingPage,
   Home,
+  Dashboard,
+  MyTeams,
+  MyProjects,
+  MyTasks,
   NewProject,
   NewTask,
-  MyTasks,
 } from "@/pages";
-import { useAuth } from "@/contexts/AuthContext";
 import Loader from "@/components/Loader";
-import {
-  myProjectsDataLoader,
-  myTasksDataLoader,
-  newTaskDataLoader,
-} from "./loaders";
-import { TaskProvider } from "@/contexts/TaskContext";
-import MyProjects from "@/pages/Home/MyProjects";
+
+import { dataLoader } from "./dataLoaders";
+
+import { useAuth } from "@/contexts/AuthContext";
+import TaskProvider from "@/contexts/TaskContext";
 import ProjectProvider from "@/contexts/ProjectContext";
+import TeamProvider from "@/contexts/TeamContext";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -34,35 +35,35 @@ const authRoutes = [
 const authenticatedRoutes = [
   {
     path: "/home",
-    element: <Home />,
+    element: (
+      <TaskProvider>
+        <ProjectProvider>
+          <TeamProvider>
+            <Home />
+          </TeamProvider>
+        </ProjectProvider>
+      </TaskProvider>
+    ),
+    loader: dataLoader,
+    hydrateFallbackElement: <Loader fullscreen />,
     children: [
       { path: "/home/dashboard", element: <Dashboard /> },
       {
+        path: "/home/my-teams",
+        element: <MyTeams />,
+      },
+      {
         path: "/home/my-projects",
-        element: (
-          <ProjectProvider>
-            <MyProjects />
-          </ProjectProvider>
-        ),
-        loader: myProjectsDataLoader,
-        hydrateFallbackElement: <Loader />,
+        element: <MyProjects />,
       },
       {
         path: "/home/my-tasks",
-        element: (
-          <TaskProvider>
-            <MyTasks />
-          </TaskProvider>
-        ),
-        loader: myTasksDataLoader,
-        hydrateFallbackElement: <Loader />,
+        element: <MyTasks />,
       },
       { path: "/home/new-project", element: <NewProject /> },
       {
         path: "/home/new-task",
         element: <NewTask />,
-        loader: newTaskDataLoader,
-        hydrateFallbackElement: <Loader />,
       },
     ],
   },

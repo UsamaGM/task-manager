@@ -45,8 +45,9 @@ export function useTask() {
   return context;
 }
 
-export function TaskProvider({ children }: { children: ReactNode }) {
-  const groupedTasks: GroupedTasksListType = useLoaderData();
+export default function TaskProvider({ children }: { children: ReactNode }) {
+  const { tasks: groupedTasks }: { tasks: GroupedTasksListType } =
+    useLoaderData();
   const [tasks, setTasks] = useState(groupedTasks);
 
   const updateTask = useCallback(

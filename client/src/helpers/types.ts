@@ -4,7 +4,26 @@ export interface UserType {
   _id: string;
   username: string;
   email: string;
-  projects: Array<ProjectType>;
+  projects: ProjectType[];
+  teams: TeamType[];
+}
+
+export interface ModalPropTypes {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface TeamModalPropTypes extends ModalPropTypes {
+  team: TeamType;
+}
+
+export interface TeamType {
+  _id: string;
+  name: string;
+  description: string;
+  admin: UserType;
+  members: UserType[];
+  projects: ProjectType[];
 }
 
 export enum ProjectStatusType {
@@ -20,7 +39,7 @@ export interface ProjectType {
   startDate: string;
   endDate: string;
   status: ProjectStatusType;
-  tasks: Array<TaskType>;
+  tasks: TaskType[];
 }
 
 export enum TaskPriorityType {

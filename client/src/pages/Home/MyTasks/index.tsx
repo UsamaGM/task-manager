@@ -1,24 +1,18 @@
-import { PlusIcon } from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
 import TaskListContainer from "../../../components/ListContainer";
 import TaskListItem from "./TaskListItem";
 import { useTask } from "@/contexts/TaskContext";
+import Headline from "@/components/Headline";
 
 function MyTasks() {
   const { tasks } = useTask();
 
   return (
     <div className="flex flex-col space-y-6 h-[calc(100vh-5rem)] p-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Tasks</h2>
-        <Link
-          to="/home/new-task"
-          className="flex items-center space-x-1 p-3 shadow bg-blue-500 text-white hover:bg-blue-400 rounded-lg cursor-pointer transition-colors duration-500"
-        >
-          <PlusIcon className="size-5 stroke-2" />
-          <span className="text-sm font-semibold">Create Task</span>
-        </Link>
-      </div>
+      <Headline
+        title="My Tasks"
+        rightLinkTitle="Create Task"
+        rightLinkTo="/home/new-task"
+      />
 
       <div className="flex flex-1 h-full space-x-6">
         <TaskListContainer title={`To Do (${tasks.todo.count})`}>

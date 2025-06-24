@@ -1,4 +1,4 @@
-import PrioritySlider from "@/components/PrioritySlider";
+import PrioritySelectorWithLabel from "@/components/PrioritySelectorWithLabel";
 import { getFormattedDate } from "@/helpers/date-formatter";
 import { formErrorsHandler } from "@/helpers/errorHandler";
 import { ProjectType } from "@/helpers/types";
