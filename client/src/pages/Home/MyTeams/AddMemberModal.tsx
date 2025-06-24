@@ -21,7 +21,6 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<UserType[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
-  const [selectedRole, setSelectedRole] = useState("member");
 
   const { addMember } = useTeam();
 
@@ -66,14 +65,11 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
     if (selectedUsers.length === 0) return;
 
     try {
-      const newMembers = selectedUsers.map((user) => ({
-        user: user._id,
-        role: selectedRole,
-      }));
-
-      await addMember(team!._id, newMembers);
+      await addMember(
+        team!._id,
+        selectedUsers.map((u) => u._id)
+      );
       setSelectedUsers([]);
-      setSelectedRole("member");
       setIsLoading(false);
       onClose();
     } catch (error) {
@@ -85,7 +81,6 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
     setQuery("");
     setSearchResults([]);
     setSelectedUsers([]);
-    setSelectedRole("member");
     onClose();
   }
 
@@ -93,10 +88,10 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
 
   const filteredSearchResults = searchResults
     .filter((u) => !selectedUsers.some((s) => s._id === u._id))
-    .filter((u) => !team?.members.some((s) => s.user._id === u._id));
+    .filter((u) => !team?.members.some((s) => s._id === u._id));
 
   return (
-    <div className="absolute inset-0 bg-black/25 flex items-center justify-center z-50 p-4">
+    <div className="absolute inset-0 bg-black/25 backdrop-blur-xs flex items-center justify-center z-50 p-4">
       <div className="base-container flex flex-col space-y-2 max-w-xl h-4/5 grow rounded-xl bg-white text-gray-800 border border-gray-500 shadow p-5">
         <h3 className="text-center text-xl font-bold">
           Add member(s) to {team?.name}
@@ -140,18 +135,18 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
           )}
         </div>
 
-        {selectedUsers.length > 0 && (
-          <div>
-            <label className="text-sm font-medium text-gray-700">
-              Selected Users ({selectedUsers.length})
-            </label>
+        <div className="flex flex-wrap items-center space-x-3">
+          <label className="text-sm font-medium text-gray-700">
+            Selected Users ({selectedUsers.length})
+          </label>
+          {selectedUsers.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {selectedUsers.map((user) => (
                 <div
                   key={user._id}
-                  className="flex space-x-2 items-center justify-between p-2 bg-gray-50 rounded-md"
+                  className="flex space-x-2 items-center justify-between p-2 bg-gray-100 rounded-md"
                 >
-                  <span className="text-sm text-gray-700">{user.username}</span>
+                  <span className="text-sm text-gray-800">{user.username}</span>
                   <button
                     onClick={() => removeUserFromSelection(user._id)}
                     className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
@@ -161,22 +156,7 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Role
-          </label>
-          <select
-            value={selectedRole}
-            onChange={(e) => setSelectedRole(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-gray-700"
-          >
-            <option value="member">Member</option>
-            <option value="admin">Admin</option>
-            <option value="viewer">Viewer</option>
-          </select>
+          )}
         </div>
 
         <div className="flex gap-3">

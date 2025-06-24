@@ -5,15 +5,16 @@ import Team from "../models/team";
 async function getUserTeams(req: AuthRequest, res: Response) {
   try {
     const userProjects = await Team.find({
-      "members.user": req.user?._id,
+      $or: [{ admin: req.user?._id }, { members: req.user?._id }],
     })
-      .populate("members.user", "-password")
+      .populate("admin", "-password")
+      .populate("members", "-password")
       .populate("projects")
       .lean();
 
     res.status(200).json(userProjects);
   } catch (error) {
-    console.log(error);
+    console.error("GET: /team:", error);
     res.sendStatus(500);
   }
 }
@@ -36,15 +37,18 @@ async function createTeam(req: AuthRequest, res: Response) {
     const team = await Team.create({
       name,
       description,
-      members: [{ user: req.user?._id, role: "admin" }],
+      admin: req.user?._id,
     });
 
     const newTeam = await (
-      await team.populate("members.user", "-password")
+      await (
+        await team.populate("admin", "-password")
+      ).populate("members", "-password")
     ).populate("projects");
 
     res.status(201).json(newTeam);
   } catch (error) {
+    console.error("POST: /team:", error);
     res.sendStatus(500);
   }
 }
@@ -75,11 +79,13 @@ async function updateTeam(req: AuthRequest, res: Response) {
   }
 }
 
+interface MemberRequestType {
+  teamId: string;
+  members: string[];
+}
+
 async function addMember(req: AuthRequest, res: Response) {
-  const {
-    teamId,
-    members,
-  }: { teamId: string; members: { user: string; role: string }[] } = req.body;
+  const { teamId, members }: MemberRequestType = req.body;
 
   if (!teamId) {
     res.status(400).json({ message: "Team ID not provided" });
@@ -96,12 +102,7 @@ async function addMember(req: AuthRequest, res: Response) {
       return;
     }
 
-    if (
-      !team.members.some(
-        (u) =>
-          u.user.toString() === req.user?._id.toString() && u.role === "admin"
-      )
-    ) {
+    if (team.admin.toString() !== req.user?._id.toString()) {
       res
         .status(401)
         .json({ message: "Unauthorized. Only admins can add new members" });
@@ -111,19 +112,56 @@ async function addMember(req: AuthRequest, res: Response) {
     const updatedTeam = await Team.findByIdAndUpdate(
       teamId,
       {
-        $push: { members },
+        $addToSet: { members: { $each: members } },
       },
       { new: true }
     )
-      .populate("members.user", "-password")
+      .populate("admin", "-password")
+      .populate("members", "-password")
       .populate("projects")
       .lean();
 
-    console.log(updatedTeam);
+    res.status(200).json(updatedTeam);
+  } catch (error) {
+    console.error("PUT /team/add-member:", error);
+    res.sendStatus(500);
+  }
+}
+
+async function removeMember(req: AuthRequest, res: Response) {
+  const { teamId, members }: MemberRequestType = req.body;
+
+  if (!teamId) {
+    res.status(400).json({ message: "Team ID not provided" });
+    return;
+  }
+
+  try {
+    const team = await Team.findById(teamId);
+
+    if (!team) {
+      res.status(404).json({ message: "Team not found, check if team exists" });
+      return;
+    }
+
+    if (team.admin !== req.user?._id) {
+      res
+        .status(401)
+        .json({ message: "Unauthorized. Only admins can remove members" });
+      return;
+    }
+
+    const updatedTeam = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $pull: { members: { $each: members } },
+      },
+      { new: true }
+    ).lean();
 
     res.status(200).json(updatedTeam);
   } catch (error) {
-    console.error("Add member error:", error);
+    console.error("PUT /team/remove-member:", error);
     res.sendStatus(500);
   }
 }
@@ -150,4 +188,11 @@ async function deleteTeam(req: AuthRequest, res: Response) {
   }
 }
 
-export { getUserTeams, createTeam, updateTeam, addMember, deleteTeam };
+export {
+  getUserTeams,
+  createTeam,
+  updateTeam,
+  addMember,
+  removeMember,
+  deleteTeam,
+};

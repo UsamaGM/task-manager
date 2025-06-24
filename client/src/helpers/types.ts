@@ -12,10 +12,8 @@ export interface TeamType {
   _id: string;
   name: string;
   description: string;
-  members: {
-    user: UserType;
-    role: string;
-  }[];
+  admin: UserType;
+  members: UserType[];
   projects: ProjectType[];
 }
 
