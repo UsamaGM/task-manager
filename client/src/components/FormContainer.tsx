@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 interface PropTypes {
   onSubmit: (e: any) => void;
   isError: boolean;
-  title: string;
+  title?: string;
   children: ReactNode;
 }
 
@@ -15,9 +15,11 @@ function FormContainer({ onSubmit, isError, title, children }: PropTypes) {
         isError && "border-red-400 border-2"
       }`}
     >
-      <h2 className="text-2xl font-bold mb-6 text-blue-700 text-center">
-        {title}
-      </h2>
+      {title && (
+        <h2 className="text-2xl font-bold mb-6 text-blue-700 text-center">
+          {title}
+        </h2>
+      )}
       {children}
     </form>
   );

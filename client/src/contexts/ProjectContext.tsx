@@ -7,8 +7,9 @@ import { toast } from "react-toastify";
 
 interface ProjectContextType {
   projects: ProjectType[];
+  createProject: (data: ProjectType) => Promise<void>;
   updateProject: (projectId: string, updatedData: any) => Promise<void>;
-  deleteProject: (projectId: string) => Promise<void>;
+  deleteProject: (projectId: string) => Promise<boolean>;
 }
 
 const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -27,6 +28,20 @@ function ProjectProvider({ children }: { children: ReactNode }) {
 
   const [projects, setProjects] = useState(userProjects);
 
+  async function createProject(project: ProjectType) {
+    try {
+      const { data }: { data: ProjectType } = await api.post(
+        "/project",
+        project
+      );
+
+      setProjects((prev) => [data, ...prev]);
+      toast.success(`Created the project "${data.name}"`);
+    } catch (error) {
+      apiErrorHandler(error);
+    }
+  }
+
   async function updateProject(projectId: string, updatedData: any) {
     try {
       const { data }: { data: ProjectType } = await api.put("/project", {
@@ -38,7 +53,8 @@ function ProjectProvider({ children }: { children: ReactNode }) {
         prev.map((p) => (p._id === data._id ? { ...p, ...data } : p))
       );
 
-      if (!data.status) toast.success("Project Data Updated");
+      if (!updatedData.status)
+        toast.success(`Data Updated for Project "${data.name}"`);
     } catch (error) {
       apiErrorHandler(error);
     }
@@ -46,20 +62,21 @@ function ProjectProvider({ children }: { children: ReactNode }) {
 
   async function deleteProject(projectId: string) {
     try {
-      const {
-        data: { deletedProject },
-      } = await api.delete(`/project/${projectId}`);
+      await api.delete(`/project/${projectId}`);
 
       setProjects((prev) => prev.filter((p) => p._id !== projectId));
 
-      toast.success(`Project ${deletedProject.name} deleted`);
+      return true;
     } catch (error) {
       apiErrorHandler(error);
+      return false;
     }
   }
 
   return (
-    <ProjectContext.Provider value={{ projects, updateProject, deleteProject }}>
+    <ProjectContext.Provider
+      value={{ projects, createProject, updateProject, deleteProject }}
+    >
       {children}
     </ProjectContext.Provider>
   );

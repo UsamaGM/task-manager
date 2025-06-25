@@ -12,7 +12,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { MouseEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import TaskEditForm from "./TaskEditForm";
+import TaskForm from "./TaskForm";
 import { useTask } from "@/contexts/TaskContext";
 
 function TaskListItem({ task }: { task: TaskWithProjectType }) {
@@ -31,24 +31,6 @@ function TaskListItem({ task }: { task: TaskWithProjectType }) {
 
   const handleEdit = useCallback(function (e: MouseEvent) {
     e.stopPropagation();
-
-    const id = toast.warn(
-      <TaskEditForm
-        task={task}
-        onUpdate={updateTask}
-        onClose={() => toast.dismiss(id)}
-      />,
-      {
-        icon: false,
-        autoClose: false,
-        position: "bottom-center",
-        role: "Edit Dialog",
-        style: {
-          border: "1px solid gray",
-          minWidth: "40rem",
-        },
-      }
-    );
   }, []);
 
   const handleChangeStatus = useCallback(async (newStatus: TaskStatusType) => {

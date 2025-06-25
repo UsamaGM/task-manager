@@ -13,8 +13,6 @@ import {
   MyTeams,
   MyProjects,
   MyTasks,
-  NewProject,
-  NewTask,
 } from "@/pages";
 import Loader from "@/components/Loader";
 
@@ -59,11 +57,6 @@ const authenticatedRoutes = [
       {
         path: "/home/my-tasks",
         element: <MyTasks />,
-      },
-      { path: "/home/new-project", element: <NewProject /> },
-      {
-        path: "/home/new-task",
-        element: <NewTask />,
       },
     ],
   },

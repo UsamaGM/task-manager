@@ -86,15 +86,17 @@ async function createTask(req: AuthRequest, res: Response) {
         $push: { tasks: newTask._id },
       },
       { new: true }
-    );
+    ).lean();
 
-    if (!project) {
+    if (!updatedProject) {
       await Task.findByIdAndDelete(newTask._id);
       res.status(400).json({ message: "Invalid project provided" });
       return;
     }
 
-    res.status(201).json({ newTask, updatedProject });
+    const task = { ...newTask._doc, project: updatedProject };
+
+    res.status(201).json(task);
   } catch (error) {
     console.log("Error:", error);
     res.sendStatus(500);

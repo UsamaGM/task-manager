@@ -26,6 +26,7 @@ interface UpdateDataType {
 
 interface TaskContextType {
   tasks: GroupedTasksListType;
+  createTask: (data: any) => Promise<void>;
   changeTaskStatus: (
     taskId: string,
     prevStatus: TaskStatusType,
@@ -49,6 +50,26 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
   const { tasks: groupedTasks }: { tasks: GroupedTasksListType } =
     useLoaderData();
   const [tasks, setTasks] = useState(groupedTasks);
+
+  const createTask = useCallback(async (taskData: any) => {
+    try {
+      const { data }: { data: TaskWithProjectType } = await api.post(
+        "/task",
+        taskData
+      );
+      console.log(data);
+      setTasks((prev) => ({
+        ...prev,
+        [data.status]: {
+          tasks: [data, tasks],
+          count: prev[data.status].count + 1,
+        },
+      }));
+      toast.success(`New Task "${data.name}"`);
+    } catch (error) {
+      apiErrorHandler(error);
+    }
+  }, []);
 
   const updateTask = useCallback(
     async (taskId: string, formData: UpdateDataType) => {
@@ -145,7 +166,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
 
   return (
     <TaskContext.Provider
-      value={{ tasks, updateTask, changeTaskStatus, deleteTask }}
+      value={{ tasks, createTask, updateTask, changeTaskStatus, deleteTask }}
     >
       {children}
     </TaskContext.Provider>

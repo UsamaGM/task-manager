@@ -124,16 +124,6 @@ function Sidebar() {
           title="My Tasks"
           navigateTo="/home/my-tasks"
         />
-        <SidebarItem
-          icon={<CubeIcon />}
-          title="New Project"
-          navigateTo="/home/new-project"
-        />
-        <SidebarItem
-          icon={<ClipboardIcon />}
-          title="New Task"
-          navigateTo="/home/new-task"
-        />
       </div>
       <div>
         <SidebarItem

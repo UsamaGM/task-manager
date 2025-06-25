@@ -2,16 +2,20 @@ import TaskListContainer from "../../../components/ListContainer";
 import TaskListItem from "./TaskListItem";
 import { useTask } from "@/contexts/TaskContext";
 import Headline from "@/components/Headline";
+import { useState } from "react";
+import CreateTaskModal from "./CreateTaskModal";
 
 function MyTasks() {
+  const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
+  const [showEditTaskModal, setShowEditTaskModal] = useState(false);
   const { tasks } = useTask();
 
   return (
     <div className="flex flex-col space-y-6 h-[calc(100vh-5rem)] p-6">
       <Headline
         title="My Tasks"
-        rightLinkTitle="Create Task"
-        rightLinkTo="/home/new-task"
+        rightButtonTitle="Create Task"
+        rightButtonAction={() => setShowCreateTaskModal(true)}
       />
 
       <div className="flex flex-1 h-full space-x-6">
@@ -33,6 +37,10 @@ function MyTasks() {
           ))}
         </TaskListContainer>
       </div>
+      <CreateTaskModal
+        isOpen={showCreateTaskModal}
+        onClose={() => setShowCreateTaskModal(false)}
+      />
     </div>
   );
 }

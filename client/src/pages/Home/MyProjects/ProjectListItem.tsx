@@ -9,8 +9,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import ProjectEditForm from "./ProjectEditForm";
 
 function getStartDateColor(date: string) {
   const startDate = new Date(date);
@@ -31,9 +29,15 @@ function getEndDateColor(date: string) {
   return `text-red-${severity * 100}`;
 }
 
-function ProjectListItem({ project }: { project: ProjectType }) {
+interface PropTypes {
+  project: ProjectType;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+function ProjectListItem({ project, onEdit, onDelete }: PropTypes) {
   const [isOpen, setIsOpen] = useState(false);
-  const { updateProject, deleteProject } = useProject();
+  const { updateProject } = useProject();
 
   const handleClickOutside = useCallback(function () {
     setIsOpen(false);
@@ -45,28 +49,6 @@ function ProjectListItem({ project }: { project: ProjectType }) {
       : document.removeEventListener("click", handleClickOutside);
   });
 
-  const handleEdit = useCallback(function (e: any) {
-    e.stopPropagation();
-
-    const id = toast.warn(
-      <ProjectEditForm
-        project={project}
-        onUpdate={updateProject}
-        onClose={() => toast.dismiss(id)}
-      />,
-      {
-        icon: false,
-        autoClose: false,
-        position: "bottom-center",
-        role: "Edit Dialog",
-        style: {
-          border: "1px solid gray",
-          minWidth: "40rem",
-        },
-      }
-    );
-  }, []);
-
   const handleChangeStatus = useCallback(
     async (newStatus: ProjectStatusType) => {
       await updateProject(project._id, { status: newStatus });
@@ -74,12 +56,8 @@ function ProjectListItem({ project }: { project: ProjectType }) {
     []
   );
 
-  const handleDelete = useCallback(async () => {
-    await deleteProject(project._id);
-  }, []);
-
   return (
-    <div className="list-container-item -translate-x-32 flex flex-col shrink-0 mr-1 space-y-2 bg-white border border-gray-300 shadow rounded-xl p-3">
+    <div className="list-container-item -translate-x-32 flex flex-col shrink-0 min-h-45 mr-1 space-y-2 bg-white border border-gray-300 shadow rounded-xl p-3">
       <div className="flex justify-between items-start">
         <div className="min-h-16">
           <h3 className="font-bold text-gray-800">{project.name}</h3>
@@ -113,9 +91,9 @@ function ProjectListItem({ project }: { project: ProjectType }) {
       </p>
 
       {isOpen && (
-        <div className="flex flex-col absolute top-10 right-5 min-w-36 py-2 rounded-lg bg-white border border-gray-300 shadow">
+        <div className="flex flex-col absolute top-10 right-5 min-w-36 overflow-hidden rounded-lg bg-white border border-gray-300 shadow">
           <button
-            onClick={handleEdit}
+            onClick={onEdit}
             className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-blue-200 hover:text-blue-800 cursor-pointer"
           >
             <PencilIcon className="size-4" />
@@ -159,7 +137,7 @@ function ProjectListItem({ project }: { project: ProjectType }) {
             </>
           )}
           <button
-            onClick={handleDelete}
+            onClick={onDelete}
             className="flex items-center space-x-2 px-2 py-1 hover:bg-red-200 hover:text-red-800 cursor-pointer"
           >
             <TrashIcon className="size-4" />

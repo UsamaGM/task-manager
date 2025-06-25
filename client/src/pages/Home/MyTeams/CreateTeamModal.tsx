@@ -4,20 +4,19 @@ import {
   TextAreaWithLabel,
   TextInputWithLabel,
 } from "@/components";
+import CancelButton from "@/components/CancelButton";
+import ModalContainer from "@/components/ModalContainer";
 import { useTeam } from "@/contexts/TeamContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
+import { ModalPropTypes } from "@/helpers/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-interface PropTypes {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-function CreateTeamModal({ isOpen, onClose }: PropTypes) {
+function CreateTeamModal({ isOpen, onClose }: ModalPropTypes) {
+  const [isLoading, setIsLoading] = useState(false);
   const { createTeam } = useTeam();
 
   const formSchema = z.object({
@@ -52,7 +51,9 @@ function CreateTeamModal({ isOpen, onClose }: PropTypes) {
   }, [isOpen]);
 
   async function onSubmit(formData: any) {
+    setIsLoading(true);
     await createTeam(formData.name, formData.description);
+    setIsLoading(false);
 
     handleClose();
   }
@@ -65,13 +66,18 @@ function CreateTeamModal({ isOpen, onClose }: PropTypes) {
   if (!isOpen) return null;
 
   const isError = formErrorsHandler(errors);
+  if (isError) {
+    animate(".base-container", {
+      translateX: [-25, 25, -25, 25, 0],
+      duration: 500,
+    });
+  }
 
   return (
-    <div className="absolute inset-0 bg-black/25 flex items-center justify-center z-50 p-4">
-      <FormContainer
-        title="Create Team"
+    <ModalContainer title="Create Team">
+      <form
         onSubmit={handleSubmit(onSubmit)}
-        isError={!!isError}
+        className="flex flex-col space-y-5"
       >
         <TextInputWithLabel
           label="Team Name"
@@ -88,17 +94,11 @@ function CreateTeamModal({ isOpen, onClose }: PropTypes) {
           {...register("description")}
         />
         <div className="flex justify-center items-center space-x-4">
-          <button
-            type="button"
-            onClick={handleClose}
-            className="w-full hover:bg-red-200 hover:text-red-800 px-3 py-2 rounded-lg hover:shadow cursor-pointer"
-          >
-            Cancel
-          </button>
-          <SubmitButton title="Create Team" />
+          <CancelButton onClick={handleClose} />
+          <SubmitButton isLoading={isLoading} title="Create Team" />
         </div>
-      </FormContainer>
-    </div>
+      </form>
+    </ModalContainer>
   );
 }
 
