@@ -1,5 +1,5 @@
 import ModalContainer from "@/components/ModalContainer";
-import { ModalPropTypes, TaskPriorityType } from "@/helpers/types";
+import { ModalPropTypes, TaskPriorityType, TaskType } from "@/helpers/types";
 import TaskForm from "./TaskForm";
 import { useState } from "react";
 import { useTask } from "@/contexts/TaskContext";
@@ -9,7 +9,9 @@ function CreateTaskModal({ isOpen, onClose }: ModalPropTypes) {
   const [isLoading, setIsLoading] = useState(false);
   const { createTask } = useTask();
 
-  async function handleSubmit(formData: any) {
+  async function handleSubmit(
+    formData: Partial<TaskType> & { project: string }
+  ) {
     setIsLoading(true);
     await createTask(formData);
     setIsLoading(false);

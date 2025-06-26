@@ -11,6 +11,6 @@ const taskRouter = express.Router();
 taskRouter.get("/", getUserTasks);
 taskRouter.post("/", createTask);
 taskRouter.put("/", updateTask);
-taskRouter.delete("/:projectId/:taskId", deleteTask);
+taskRouter.delete("/:taskId", deleteTask);
 
 export default taskRouter;

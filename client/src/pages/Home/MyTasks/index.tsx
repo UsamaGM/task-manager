@@ -4,42 +4,86 @@ import { useTask } from "@/contexts/TaskContext";
 import Headline from "@/components/Headline";
 import { useState } from "react";
 import CreateTaskModal from "./CreateTaskModal";
+import { TaskStatusType, TaskType } from "@/helpers/types";
+import EditTaskModal from "./EditTaskModal";
+import DeleteTaskModal from "./DeleteTaskModal";
 
 function MyTasks() {
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
   const [showEditTaskModal, setShowEditTaskModal] = useState(false);
+  const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
   const { tasks } = useTask();
 
+  const todoTasks = tasks.filter((task) => task.status === TaskStatusType.TODO);
+  const inProgressTasks = tasks.filter(
+    (task) => task.status === TaskStatusType.IN_PROGRESS
+  );
+  const doneTasks = tasks.filter((task) => task.status === TaskStatusType.DONE);
+
+  function onEdit(task: TaskType) {
+    setSelectedTask(task);
+    setShowEditTaskModal(true);
+  }
+
+  function onDelete(task: TaskType) {
+    setSelectedTask(task);
+    setShowDeleteTaskModal(true);
+  }
+
   return (
-    <div className="flex flex-col space-y-6 h-[calc(100vh-5rem)] p-6">
+    <div className="relative flex flex-col space-y-6 h-[calc(100vh-1rem)] p-6">
       <Headline
         title="My Tasks"
         rightButtonTitle="Create Task"
         rightButtonAction={() => setShowCreateTaskModal(true)}
       />
 
-      <div className="flex flex-1 h-full space-x-6">
-        <TaskListContainer title={`To Do (${tasks.todo.count})`}>
-          {tasks.todo.tasks.map((task) => (
-            <TaskListItem key={task._id} task={task} />
+      <div className="flex flex-1 space-x-6 overflow-hidden">
+        <TaskListContainer title={`To Do (${todoTasks.length})`}>
+          {todoTasks.map((task) => (
+            <TaskListItem
+              key={task._id}
+              task={task}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           ))}
         </TaskListContainer>
-        <TaskListContainer
-          title={`In Progress (${tasks["in-progress"].count})`}
-        >
-          {tasks["in-progress"].tasks.map((task) => (
-            <TaskListItem key={task._id} task={task} />
+        <TaskListContainer title={`In Progress (${inProgressTasks.length})`}>
+          {inProgressTasks.map((task) => (
+            <TaskListItem
+              key={task._id}
+              task={task}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           ))}
         </TaskListContainer>
-        <TaskListContainer title={`Done (${tasks.done.count})`}>
-          {tasks.done.tasks.map((task) => (
-            <TaskListItem key={task._id} task={task} />
+        <TaskListContainer title={`Done (${doneTasks.length})`}>
+          {doneTasks.map((task) => (
+            <TaskListItem
+              key={task._id}
+              task={task}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           ))}
         </TaskListContainer>
       </div>
       <CreateTaskModal
         isOpen={showCreateTaskModal}
         onClose={() => setShowCreateTaskModal(false)}
+      />
+      <EditTaskModal
+        isOpen={showEditTaskModal}
+        task={selectedTask!}
+        onClose={() => setShowEditTaskModal(false)}
+      />
+      <DeleteTaskModal
+        isOpen={showDeleteTaskModal}
+        task={selectedTask!}
+        onClose={() => setShowDeleteTaskModal(false)}
       />
     </div>
   );

@@ -10,7 +10,6 @@ interface PropTypes extends ModalPropTypes {
 }
 
 function EditProjectModal({ isOpen, project, onClose }: PropTypes) {
-  console.log("Edit Modal");
   const [isLoading, setIsLoading] = useState(false);
   const { updateProject } = useProject();
 
@@ -22,8 +21,6 @@ function EditProjectModal({ isOpen, project, onClose }: PropTypes) {
   }
 
   if (!isOpen) return null;
-
-  console.log("Edit Modal visible");
 
   return (
     <ModalContainer title={`Update Project ${project.name}`}>

@@ -1,36 +1,45 @@
 import mongoose, { type ObjectId } from "mongoose";
 import type { UserType } from "./user";
 
-const taskSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
+const taskSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    dueDate: {
+      type: Date,
+      required: true,
+    },
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium",
+    },
+    status: {
+      type: String,
+      enum: ["todo", "in-progress", "done"],
+      default: "todo",
+    },
+    createdBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "Users",
+    },
+    assignedTo: {
+      type: String,
+      required: false,
+    },
   },
-  description: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  dueDate: {
-    type: Date,
-    required: true,
-  },
-  priority: {
-    type: String,
-    enum: ["low", "medium", "high"],
-    default: "medium",
-  },
-  status: {
-    type: String,
-    enum: ["todo", "in-progress", "done"],
-    default: "todo",
-  },
-  assignedTo: {
-    type: String,
-    required: false,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const Task = mongoose.model("Tasks", taskSchema);
 

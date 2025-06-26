@@ -1,23 +1,23 @@
 import { getFormattedDate } from "@/helpers/date-formatter";
-import {
-  TaskPriorityType,
-  TaskStatusType,
-  TaskWithProjectType,
-} from "@/helpers/types";
+import { TaskPriorityType, TaskStatusType, TaskType } from "@/helpers/types";
 import { BellIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   BoltIcon,
   EllipsisVerticalIcon,
   PencilIcon,
 } from "@heroicons/react/24/solid";
-import { MouseEvent, useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import TaskForm from "./TaskForm";
+import { useCallback, useEffect, useState } from "react";
 import { useTask } from "@/contexts/TaskContext";
 
-function TaskListItem({ task }: { task: TaskWithProjectType }) {
+interface PropTypes {
+  task: TaskType;
+  onEdit: (task: TaskType) => void;
+  onDelete: (task: TaskType) => void;
+}
+
+function TaskListItem({ task, onEdit, onDelete }: PropTypes) {
   const [isOpen, setIsOpen] = useState(false);
-  const { updateTask, changeTaskStatus, deleteTask } = useTask();
+  const { changeTaskStatus } = useTask();
 
   const handleClickOutside = useCallback(function () {
     setIsOpen(false);
@@ -29,16 +29,8 @@ function TaskListItem({ task }: { task: TaskWithProjectType }) {
       : document.removeEventListener("click", handleClickOutside);
   });
 
-  const handleEdit = useCallback(function (e: MouseEvent) {
-    e.stopPropagation();
-  }, []);
-
   const handleChangeStatus = useCallback(async (newStatus: TaskStatusType) => {
-    await changeTaskStatus(task._id, task.status, newStatus);
-  }, []);
-
-  const handleDelete = useCallback(async () => {
-    await deleteTask(task);
+    await changeTaskStatus(task._id, newStatus);
   }, []);
 
   const priorityConfig =
@@ -52,7 +44,7 @@ function TaskListItem({ task }: { task: TaskWithProjectType }) {
     getFormattedDate(new Date().toISOString());
 
   return (
-    <div className="list-container-item -translate-x-32 flex flex-col shrink-0 space-y-2 mr-1 bg-white border border-gray-300 shadow rounded-xl p-3">
+    <div className="list-container-item -translate-x-32 flex flex-col shrink-0 space-y-2 min-h-46 mr-1 bg-white border border-gray-300 shadow rounded-xl p-3">
       <div className="flex justify-between items-start">
         <div>
           <h3 className="font-bold text-gray-800">{task.name}</h3>
@@ -79,7 +71,7 @@ function TaskListItem({ task }: { task: TaskWithProjectType }) {
           <EllipsisVerticalIcon className="size-5 text-gray-900" />
         </button>
       </div>
-      <p className="text-gray-700 text-sm line-clamp-4 min-h-1/4">
+      <p className="flex-1 text-gray-700 text-sm line-clamp-4 min-h-1/4">
         {task.description}
       </p>
 
@@ -91,9 +83,9 @@ function TaskListItem({ task }: { task: TaskWithProjectType }) {
         {task.assignedTo ? task.assignedTo.username : "Not assigned yet"}
       </h3>
       {isOpen && (
-        <div className="flex flex-col absolute top-10 right-5 min-w-36 py-2 rounded-lg bg-white border border-gray-300 shadow">
+        <div className="flex flex-col absolute top-10 right-5 min-w-36 rounded-lg bg-white border border-gray-300 shadow">
           <button
-            onClick={handleEdit}
+            onClick={() => onEdit(task)}
             className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-blue-200 hover:text-blue-800 cursor-pointer"
           >
             <PencilIcon className="size-4" />
@@ -137,7 +129,7 @@ function TaskListItem({ task }: { task: TaskWithProjectType }) {
             </>
           )}
           <button
-            onClick={handleDelete}
+            onClick={() => onDelete(task)}
             className="flex items-center space-x-2 px-2 py-1 hover:bg-red-200 hover:text-red-800 cursor-pointer"
           >
             <TrashIcon className="size-4" />

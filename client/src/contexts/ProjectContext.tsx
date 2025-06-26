@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 interface ProjectContextType {
   projects: ProjectType[];
+  getProjectWithTask: (taskId: string) => ProjectType;
   createProject: (data: ProjectType) => Promise<void>;
   updateProject: (projectId: string, updatedData: any) => Promise<void>;
   deleteProject: (projectId: string) => Promise<boolean>;
@@ -27,6 +28,12 @@ function ProjectProvider({ children }: { children: ReactNode }) {
     useLoaderData();
 
   const [projects, setProjects] = useState(userProjects);
+
+  function getProjectWithTask(taskId: string) {
+    return projects.find((project) =>
+      project.tasks.some((task) => task === taskId)
+    )!;
+  }
 
   async function createProject(project: ProjectType) {
     try {
@@ -75,7 +82,13 @@ function ProjectProvider({ children }: { children: ReactNode }) {
 
   return (
     <ProjectContext.Provider
-      value={{ projects, createProject, updateProject, deleteProject }}
+      value={{
+        projects,
+        getProjectWithTask,
+        createProject,
+        updateProject,
+        deleteProject,
+      }}
     >
       {children}
     </ProjectContext.Provider>

@@ -1,19 +1,23 @@
 import ModalContainer from "@/components/ModalContainer";
 import { useTask } from "@/contexts/TaskContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { ModalPropTypes, TaskWithProjectType } from "@/helpers/types";
+import { ModalPropTypes, ProjectType, TaskType } from "@/helpers/types";
 import { toast } from "react-toastify";
 import TaskForm from "./TaskForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useProject } from "@/contexts/ProjectContext";
 
 interface PropTypes extends ModalPropTypes {
-  task: TaskWithProjectType;
+  task: TaskType;
 }
+
 function EditTaskModal({ isOpen, task, onClose }: PropTypes) {
   const [isLoading, setIsLoading] = useState(false);
   const { updateTask } = useTask();
+  const { getProjectWithTask } = useProject();
+  const project = isOpen ? getProjectWithTask(task._id) : null;
 
-  async function onSubmit(formData: any) {
+  async function onSubmit(formData: Partial<TaskType>) {
     const isUpdated =
       formData.name !== task.name ||
       formData.description !== task.description ||
@@ -26,8 +30,8 @@ function EditTaskModal({ isOpen, task, onClose }: PropTypes) {
     }
 
     const isDateInvalid =
-      formData.dueDate < getFormattedDate(task.project.startDate) ||
-      formData.dueDate > getFormattedDate(task.project.endDate);
+      formData.dueDate! < getFormattedDate(project!.startDate) ||
+      formData.dueDate! > getFormattedDate(project!.endDate);
 
     if (isDateInvalid) {
       toast.error("Select a date in the range of project lifetime.");
@@ -40,16 +44,22 @@ function EditTaskModal({ isOpen, task, onClose }: PropTypes) {
     onClose();
   }
 
+  if (!isOpen) return null;
+
   return (
     <ModalContainer title={`Update Task "${task.name}"`}>
       <TaskForm
         isLoading={isLoading}
+        subtitle={`Project: ${project?.name} (${getFormattedDate(
+          project!.startDate
+        )} - ${getFormattedDate(project!.endDate)})`}
         submitBtnTitle="Update"
         defaultValues={{
           name: task.name,
           description: task.description,
           dueDate: getFormattedDate(task.dueDate),
           priority: task.priority,
+          project: project!._id,
         }}
         onSubmit={onSubmit}
         onClose={onClose}

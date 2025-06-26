@@ -39,7 +39,7 @@ export interface ProjectType {
   startDate: string;
   endDate: string;
   status: ProjectStatusType;
-  tasks: TaskType[];
+  tasks: string[];
 }
 
 export enum TaskPriorityType {
@@ -60,25 +60,6 @@ export interface TaskType {
   priority: TaskPriorityType;
   status: TaskStatusType;
   assignedTo: UserType | undefined;
-}
-
-export interface TaskWithProjectType extends TaskType {
-  project: ProjectType;
-}
-
-export interface GroupedTasksListType {
-  todo: {
-    tasks: TaskWithProjectType[];
-    count: number;
-  };
-  "in-progress": {
-    tasks: TaskWithProjectType[];
-    count: number;
-  };
-  done: {
-    tasks: TaskWithProjectType[];
-    count: number;
-  };
 }
 
 export type ErrorType =

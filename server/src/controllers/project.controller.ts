@@ -14,11 +14,9 @@ async function getAllProjects(req: AuthRequest, res: Response) {
       return;
     }
 
-    const projectsWithTasks = await Task.populate(user.projects, "tasks");
-
-    res.status(200).json(projectsWithTasks);
+    res.status(200).json(user.projects);
   } catch (error) {
-    console.log("Error: ", error);
+    console.error("GET /project:", error);
     res.sendStatus(500);
   }
 }
