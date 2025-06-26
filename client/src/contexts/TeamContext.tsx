@@ -7,8 +7,10 @@ import { toast } from "react-toastify";
 
 interface TeamContextType {
   teams: TeamType[];
+  findTeamWithProject: (projectId: string) => TeamType | undefined;
   createTeam: (name: string, description: string) => Promise<void>;
   updateTeamData: (teamId: string, updatedData: any) => Promise<void>;
+  assignProject: (projectId: string, teamId: string) => Promise<void>;
   addMember: (teamId: string, members: string[]) => Promise<void>;
   removeMember: (teamId: string, members: string[]) => Promise<void>;
   leaveTeam: (teamId: string) => Promise<boolean>;
@@ -28,6 +30,15 @@ export function useTeam() {
 function TeamProvider({ children }: { children: ReactNode }) {
   const { teams: userTeams }: { teams: TeamType[] } = useLoaderData();
   const [teams, setTeams] = useState(userTeams);
+
+  function findTeamWithProject(projectId: string) {
+    const team = teams.find((team) =>
+      team.projects.some((project) => project === projectId)
+    );
+
+    console.log(team);
+    return team;
+  }
 
   async function createTeam(name: string, description: string) {
     try {
@@ -56,6 +67,21 @@ function TeamProvider({ children }: { children: ReactNode }) {
       );
 
       toast.success("Team Data Updated");
+    } catch (error) {
+      apiErrorHandler(error);
+    }
+  }
+
+  async function assignProject(projectId: string, teamId: string) {
+    try {
+      const { data }: { data: TeamType } = await api.put("/team/assign", {
+        projectId,
+        teamId,
+      });
+      setTeams((prev) =>
+        prev.map((team) => (team._id === data._id ? data : team))
+      );
+      toast.success(`Team ${data.name} was assigned the project`);
     } catch (error) {
       apiErrorHandler(error);
     }
@@ -125,8 +151,10 @@ function TeamProvider({ children }: { children: ReactNode }) {
     <TeamContext.Provider
       value={{
         teams,
+        findTeamWithProject,
         createTeam,
         updateTeamData,
+        assignProject,
         addMember,
         removeMember,
         leaveTeam,

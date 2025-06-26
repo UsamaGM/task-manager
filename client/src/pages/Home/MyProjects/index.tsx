@@ -7,6 +7,7 @@ import { useState } from "react";
 import CreateProjectModal from "./CreateProjectModal";
 import EditProjectModal from "./EditProjectModal";
 import DeleteProjectModal from "./DeleteProjectModal";
+import AssignTeamModal from "./AssignTeamModal";
 
 function MyProjects() {
   const [selectedProject, setSelectedProject] = useState<ProjectType | null>(
@@ -14,6 +15,7 @@ function MyProjects() {
   );
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
   const [showEditProjectModal, setShowEditProjectModal] = useState(false);
+  const [showAssignProjectModal, setShowAssignProjectModal] = useState(false);
   const [showDeleteProjectModal, setShowDeleteProjectModal] = useState(false);
   const { projects } = useProject();
 
@@ -26,6 +28,21 @@ function MyProjects() {
   const completedProjects = projects.filter(
     (project) => project.status === ProjectStatusType.COMPLETED
   );
+
+  function onEdit(project: ProjectType) {
+    setSelectedProject(project);
+    setShowEditProjectModal(true);
+  }
+
+  function onAssignTeam(project: ProjectType) {
+    setSelectedProject(project);
+    setShowAssignProjectModal(true);
+  }
+
+  function onDelete(project: ProjectType) {
+    setSelectedProject(project);
+    setShowDeleteProjectModal(true);
+  }
 
   return (
     <div className="relative flex flex-col space-y-6 h-[calc(100vh-1rem)] p-6">
@@ -40,14 +57,9 @@ function MyProjects() {
             <ProjectListItem
               key={project._id}
               project={project}
-              onEdit={() => {
-                setSelectedProject(project);
-                setShowEditProjectModal(true);
-              }}
-              onDelete={() => {
-                setSelectedProject(project);
-                setShowDeleteProjectModal(true);
-              }}
+              onEdit={onEdit}
+              onAssignTeam={onAssignTeam}
+              onDelete={onDelete}
             />
           ))}
         </TaskListContainer>
@@ -56,14 +68,9 @@ function MyProjects() {
             <ProjectListItem
               key={project._id}
               project={project}
-              onEdit={() => {
-                setSelectedProject(project);
-                setShowEditProjectModal(true);
-              }}
-              onDelete={() => {
-                setSelectedProject(project);
-                setShowDeleteProjectModal(true);
-              }}
+              onEdit={onEdit}
+              onAssignTeam={onAssignTeam}
+              onDelete={onDelete}
             />
           ))}
         </TaskListContainer>
@@ -72,14 +79,9 @@ function MyProjects() {
             <ProjectListItem
               key={project._id}
               project={project}
-              onEdit={() => {
-                setSelectedProject(project);
-                setShowEditProjectModal(true);
-              }}
-              onDelete={() => {
-                setSelectedProject(project);
-                setShowDeleteProjectModal(true);
-              }}
+              onEdit={onEdit}
+              onAssignTeam={onAssignTeam}
+              onDelete={onDelete}
             />
           ))}
         </TaskListContainer>
@@ -92,6 +94,11 @@ function MyProjects() {
         isOpen={showEditProjectModal}
         project={selectedProject!}
         onClose={() => setShowEditProjectModal(false)}
+      />
+      <AssignTeamModal
+        isOpen={showAssignProjectModal}
+        project={selectedProject!}
+        onClose={() => setShowAssignProjectModal(false)}
       />
       <DeleteProjectModal
         isOpen={showDeleteProjectModal}

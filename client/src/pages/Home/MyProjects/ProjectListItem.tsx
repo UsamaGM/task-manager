@@ -1,4 +1,5 @@
 import { useProject } from "@/contexts/ProjectContext";
+import { useTeam } from "@/contexts/TeamContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
 import { ProjectStatusType, ProjectType } from "@/helpers/types";
 import {
@@ -31,13 +32,20 @@ function getEndDateColor(date: string) {
 
 interface PropTypes {
   project: ProjectType;
-  onEdit: () => void;
-  onDelete: () => void;
+  onEdit: (project: ProjectType) => void;
+  onAssignTeam: (project: ProjectType) => void;
+  onDelete: (project: ProjectType) => void;
 }
 
-function ProjectListItem({ project, onEdit, onDelete }: PropTypes) {
+function ProjectListItem({
+  project,
+  onEdit,
+  onAssignTeam,
+  onDelete,
+}: PropTypes) {
   const [isOpen, setIsOpen] = useState(false);
   const { updateProject } = useProject();
+  const { findTeamWithProject } = useTeam();
 
   const handleClickOutside = useCallback(function () {
     setIsOpen(false);
@@ -55,6 +63,8 @@ function ProjectListItem({ project, onEdit, onDelete }: PropTypes) {
     },
     []
   );
+
+  const assignedTo = findTeamWithProject(project._id);
 
   return (
     <div className="list-container-item -translate-x-32 flex flex-col shrink-0 min-h-45 mr-1 space-y-2 bg-white border border-gray-300 shadow rounded-xl p-3">
@@ -86,14 +96,31 @@ function ProjectListItem({ project, onEdit, onDelete }: PropTypes) {
           <EllipsisVerticalIcon className="size-5 stroke-3 text-gray-900" />
         </button>
       </div>
-      <p className="text-gray-700 text-sm line-clamp-4">
+      <p className="text-gray-700 text-justify text-sm line-clamp-4">
         {project.description}
       </p>
+      <div className="flex justify-between items-center text-sm">
+        {assignedTo ? (
+          <p>
+            Assigned to <span className="font-bold">{assignedTo.name}</span>
+          </p>
+        ) : (
+          <>
+            <p>Not Assigned Yet</p>
+            <button
+              onClick={() => onAssignTeam(project)}
+              className="bg-blue-50 hover:bg-blue-100 text-blue-800 p-1 rounded-lg transition-colors duration-300 cursor-pointer"
+            >
+              Assign to a team
+            </button>
+          </>
+        )}
+      </div>
 
       {isOpen && (
         <div className="flex flex-col absolute top-10 right-5 min-w-36 overflow-hidden rounded-lg bg-white border border-gray-300 shadow">
           <button
-            onClick={onEdit}
+            onClick={() => onEdit(project)}
             className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-blue-200 hover:text-blue-800 cursor-pointer"
           >
             <PencilIcon className="size-4" />
@@ -137,7 +164,7 @@ function ProjectListItem({ project, onEdit, onDelete }: PropTypes) {
             </>
           )}
           <button
-            onClick={onDelete}
+            onClick={() => onDelete(project)}
             className="flex items-center space-x-2 px-2 py-1 hover:bg-red-200 hover:text-red-800 cursor-pointer"
           >
             <TrashIcon className="size-4" />

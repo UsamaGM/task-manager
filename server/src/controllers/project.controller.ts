@@ -1,13 +1,17 @@
-import type { Response } from "express";
-import Project, { type ProjectStatusType } from "../models/project";
 import type { AuthRequest } from "../middlewares/auth.middleware";
+import type { Response } from "express";
+import Project from "../models/project";
 import User from "../models/user";
 import Task from "../models/task";
+import Team from "../models/team";
 
 async function getAllProjects(req: AuthRequest, res: Response) {
   const { _id } = req.user!;
   try {
-    const user = await User.findById(_id).populate("projects").lean();
+    const user = await User.findById(_id)
+      .populate("projects")
+      .populate("projects.assignedTo", "-password")
+      .lean();
 
     if (!user) {
       res.status(404).json({ message: "User not found, are you signed in?" });
@@ -83,9 +87,21 @@ async function deleteProject(req: AuthRequest, res: Response) {
       _id: deletedProject.tasks,
     }).lean();
 
+    await Team.findOneAndUpdate(
+      {
+        $includes: { projects: id },
+      },
+      {
+        $pull: { projects: id },
+      },
+      {
+        new: true,
+      }
+    ).lean();
+
     res.status(200).json({ deletedProject, deletedTasks });
   } catch (error) {
-    console.log("Error:", error);
+    console.error("DELETE /project:", error);
     res.sendStatus(500);
   }
 }

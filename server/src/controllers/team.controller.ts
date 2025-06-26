@@ -1,7 +1,6 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/auth.middleware";
 import Team from "../models/team";
-import { toEditorSettings } from "typescript";
 
 async function getUserTeams(req: AuthRequest, res: Response) {
   try {
@@ -10,12 +9,26 @@ async function getUserTeams(req: AuthRequest, res: Response) {
     })
       .populate("admin", "-password")
       .populate("members", "-password")
-      .populate("projects")
       .lean();
 
     res.status(200).json(userTeams);
   } catch (error) {
     console.error("GET: /team:", error);
+    res.sendStatus(500);
+  }
+}
+
+async function getSearchedTeams(req: AuthRequest, res: Response) {
+  const { query } = req.params;
+
+  try {
+    const teams = await Team.find({
+      name: { $regex: query, $options: "i" },
+    }).lean();
+
+    res.status(200).json(teams);
+  } catch (error) {
+    console.error("GET /team/:query:", error);
     res.sendStatus(500);
   }
 }
@@ -67,7 +80,6 @@ async function updateTeam(req: AuthRequest, res: Response) {
     })
       .populate("admin")
       .populate("members", "-password")
-      .populate("projects")
       .lean();
 
     if (!updatedTeam) {
@@ -86,6 +98,38 @@ async function updateTeam(req: AuthRequest, res: Response) {
 interface MemberRequestType {
   teamId: string;
   members: string[];
+}
+
+async function assignProjectToTeam(req: AuthRequest, res: Response) {
+  const { projectId, teamId } = req.body;
+
+  if (!projectId || !teamId) {
+    res.status(400).json({ message: "Incomplete data provided" });
+    return;
+  }
+
+  try {
+    const team = await Team.findById(teamId);
+
+    if (!team) {
+      res.status(404).json({ message: "Team not found" });
+      return;
+    }
+
+    await team
+      .updateOne(
+        {
+          $addToSet: { projects: projectId },
+        },
+        { new: true }
+      )
+      .lean();
+
+    res.status(200).json(team);
+  } catch (error) {
+    console.error("PUT /project/assign:", error);
+    res.sendStatus(500);
+  }
 }
 
 async function addMember(req: AuthRequest, res: Response) {
@@ -122,7 +166,6 @@ async function addMember(req: AuthRequest, res: Response) {
     )
       .populate("admin", "-password")
       .populate("members", "-password")
-      .populate("projects")
       .lean();
 
     res.status(200).json(updatedTeam);
@@ -164,7 +207,6 @@ async function removeMember(req: AuthRequest, res: Response) {
     )
       .populate("admin", "-password")
       .populate("members", "-password")
-      .populate("projects")
       .lean();
 
     res.status(200).json(updatedTeam);
@@ -227,8 +269,10 @@ async function deleteTeam(req: AuthRequest, res: Response) {
 
 export {
   getUserTeams,
+  getSearchedTeams,
   createTeam,
   updateTeam,
+  assignProjectToTeam,
   addMember,
   removeMember,
   leaveTeam,
