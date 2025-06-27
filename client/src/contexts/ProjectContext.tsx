@@ -1,17 +1,25 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
 import { ProjectType } from "@/helpers/types";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface ProjectContextType {
   projects: ProjectType[];
+  setProjects: Dispatch<SetStateAction<ProjectType[]>>;
   getProjectsArray: (projectIds: string[]) => ProjectType[];
   getProjectsTaskCount: (projectIds: string[]) => number;
   getProjectWithTask: (taskId: string) => ProjectType;
   createProject: (data: ProjectType) => Promise<void>;
-  updateProject: (projectId: string, updatedData: any) => Promise<void>;
+  updateProject: (projectId: string, updateData: any) => Promise<void>;
   deleteProject: (projectId: string) => Promise<boolean>;
 }
 
@@ -100,6 +108,7 @@ function ProjectProvider({ children }: { children: ReactNode }) {
     <ProjectContext.Provider
       value={{
         projects,
+        setProjects,
         getProjectsArray,
         getProjectsTaskCount,
         getProjectWithTask,

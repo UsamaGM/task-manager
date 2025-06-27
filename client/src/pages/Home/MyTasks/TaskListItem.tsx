@@ -6,7 +6,7 @@ import {
   EllipsisVerticalIcon,
   PencilIcon,
 } from "@heroicons/react/24/solid";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTask } from "@/contexts/TaskContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProject } from "@/contexts/ProjectContext";
@@ -27,6 +27,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
   const adminId = useTeam().findTeamWithProject(projectId)?.admin._id;
   const userId = useAuth().user?._id;
   const isAdmin = adminId === userId;
+  const showExtraOptions = isAdmin || task.assignedTo?._id === userId;
 
   const handleClickOutside = useRef(() => {
     setIsOpen(false);
@@ -46,7 +47,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
     task.priority === TaskPriorityType.LOW
       ? { title: "Low", color: "text-green-500" }
       : task.priority === TaskPriorityType.MEDIUM
-      ? { title: "Medium", color: "text-yellow-500" }
+      ? { title: "Medium", color: "text-yellow-600" }
       : { title: "High", color: "text-red-500" };
   const hasDueDatePassed =
     getFormattedDate(task.dueDate) <=
@@ -57,18 +58,26 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
       <div className="flex justify-between items-start">
         <div>
           <h3 className="font-bold text-gray-800">{task.name}</h3>
-          <h4 className="font-semibold text-gray-600 text-sm">
-            Due{" "}
-            <span
-              className={hasDueDatePassed ? "text-red-600" : "text-gray-600"}
-            >
-              {getFormattedDate(task.dueDate)}
-            </span>
-          </h4>
-          <h4 className="font-semibold text-gray-600 text-sm">
-            Priority{" "}
-            <span className={priorityConfig.color}>{priorityConfig.title}</span>
-          </h4>
+          <div className="flex space-x-2">
+            {task.status !== TaskStatusType.DONE && (
+              <h4 className="flex-1 font-semibold text-gray-600 text-sm">
+                Due{" "}
+                <span
+                  className={
+                    hasDueDatePassed ? "text-red-600" : "text-gray-600"
+                  }
+                >
+                  {getFormattedDate(task.dueDate)}
+                </span>
+              </h4>
+            )}
+            <h4 className="flex flex-1 space-x-1 font-semibold text-gray-600 text-sm">
+              <span>Priority</span>
+              <span className={priorityConfig.color}>
+                {priorityConfig.title}
+              </span>
+            </h4>
+          </div>
         </div>
         <button
           onClick={(e) => {
@@ -87,7 +96,9 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
       {task.assignedTo ? (
         <h3 className="text-gray-800 text-sm">
           Assigned to{" "}
-          <span className="font-bold">{task.assignedTo.username}</span>
+          <span className="font-bold">
+            {task.assignedTo._id === userId ? "You" : task.assignedTo.username}
+          </span>
         </h3>
       ) : (
         <div className="flex justify-between items-center space-x-2">
@@ -103,7 +114,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
         </div>
       )}
       {isOpen && (
-        <div className="flex flex-col absolute top-10 right-5 min-w-36 rounded-lg bg-white border border-gray-300 shadow">
+        <div className="flex flex-col fixed top-10 right-5 min-w-36 rounded-lg bg-white border border-gray-300 shadow">
           <button
             onClick={() => onEdit(task)}
             className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-blue-200 hover:text-blue-800 cursor-pointer"
@@ -112,11 +123,11 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
             <span className="font-bold">Edit</span>
           </button>
           <hr className="text-gray-300 mx-1" />
-          {task.status !== TaskStatusType.TODO && (
+          {showExtraOptions && task.status !== TaskStatusType.TODO && (
             <>
               <button
                 onClick={() => handleChangeStatus(TaskStatusType.TODO)}
-                className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-green-200 hover:text-green-800 cursor-pointer"
+                className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-red-200 hover:text-red-800 cursor-pointer"
               >
                 <BellIcon className="size-4 stroke-2" />
                 <span className="font-bold">To Do</span>
@@ -124,7 +135,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {task.status !== TaskStatusType.IN_PROGRESS && (
+          {showExtraOptions && task.status !== TaskStatusType.IN_PROGRESS && (
             <>
               <button
                 onClick={() => handleChangeStatus(TaskStatusType.IN_PROGRESS)}
@@ -136,7 +147,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {task.status !== TaskStatusType.DONE && (
+          {showExtraOptions && task.status !== TaskStatusType.DONE && (
             <>
               <button
                 onClick={() => handleChangeStatus(TaskStatusType.DONE)}

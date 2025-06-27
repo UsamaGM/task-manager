@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useProject } from "./ProjectContext";
 
 interface TaskContextType {
   tasks: TaskType[];
@@ -36,6 +37,7 @@ export function useTask() {
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { tasks: loaderData }: { tasks: TaskType[] } = useLoaderData();
   const [tasks, setTasks] = useState(loaderData);
+  const { setProjects } = useProject();
 
   const createTask = useCallback(
     async (taskData: Partial<TaskType> & { project: string }) => {
@@ -44,7 +46,15 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
           taskData,
         });
 
+        setProjects((prev) =>
+          prev.map((project) =>
+            project._id === taskData._id
+              ? { ...project, tasks: [data._id, ...project.tasks] }
+              : project
+          )
+        );
         setTasks((prev) => [data, ...prev]);
+
         toast.success(`New Task "${data.name}"`);
       } catch (error) {
         apiErrorHandler(error);
