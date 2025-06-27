@@ -13,10 +13,12 @@ import {
   TicketIcon,
 } from "@heroicons/react/24/outline";
 import NoXMessage from "@/components/NoXMessage";
+import AssignTaskModal from "./AssignTaskModal";
 
 function MyTasks() {
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
   const [showEditTaskModal, setShowEditTaskModal] = useState(false);
+  const [showAssignTaskModal, setShowAssignTaskModal] = useState(false);
   const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
   const { tasks } = useTask();
@@ -30,6 +32,11 @@ function MyTasks() {
   function onEdit(task: TaskType) {
     setSelectedTask(task);
     setShowEditTaskModal(true);
+  }
+
+  function onAssign(task: TaskType) {
+    setSelectedTask(task);
+    setShowAssignTaskModal(true);
   }
 
   function onDelete(task: TaskType) {
@@ -53,6 +60,7 @@ function MyTasks() {
                 key={task._id}
                 task={task}
                 onEdit={onEdit}
+                onAssign={onAssign}
                 onDelete={onDelete}
               />
             ))}
@@ -63,6 +71,7 @@ function MyTasks() {
                 key={task._id}
                 task={task}
                 onEdit={onEdit}
+                onAssign={onAssign}
                 onDelete={onDelete}
               />
             ))}
@@ -73,6 +82,7 @@ function MyTasks() {
                 key={task._id}
                 task={task}
                 onEdit={onEdit}
+                onAssign={onAssign}
                 onDelete={onDelete}
               />
             ))}
@@ -92,6 +102,11 @@ function MyTasks() {
         isOpen={showEditTaskModal}
         task={selectedTask!}
         onClose={() => setShowEditTaskModal(false)}
+      />
+      <AssignTaskModal
+        isOpen={showAssignTaskModal}
+        task={selectedTask!}
+        onClose={() => setShowAssignTaskModal(false)}
       />
       <DeleteTaskModal
         isOpen={showDeleteTaskModal}

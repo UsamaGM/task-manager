@@ -4,35 +4,21 @@ import Task, { type TaskType } from "../models/task";
 import Project from "../models/project";
 import User from "../models/user";
 
-async function getUserTasks(req: AuthRequest, res: Response) {
-  const userId = req.user?._id;
+async function getTaskById(req: AuthRequest, res: Response) {
+  const id = req.params;
 
   try {
-    const user = await User.findById(userId).select("projects").lean();
-
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
+    const task = await Task.findById(id)
+      .populate("createdBy", "_id username email")
+      .populate("assignedTo", "_id username email")
+      .lean();
+    if (!task) {
+      res.status(404).json({ message: "Task not found" });
       return;
     }
-
-    const projects = await Project.find({
-      _id: { $in: user.projects },
-    }).lean();
-
-    const allTasks: TaskType[] = [];
-
-    projects.forEach((project) => {
-      if (project.tasks && Array.isArray(project.tasks))
-        project.tasks.forEach((taskId) => allTasks.push(taskId));
-    });
-
-    const tasks = await Task.find({
-      _id: { $in: allTasks },
-    }).lean();
-
-    res.status(200).json(tasks);
+    res.status(200).json(task);
   } catch (error) {
-    console.error("GET /task:", error);
+    console.error("GET /task/:id:", error);
     res.sendStatus(500);
   }
 }
@@ -59,7 +45,7 @@ async function createTask(req: AuthRequest, res: Response) {
 
     if (!updatedProject) {
       await Task.findByIdAndDelete(newTask._id);
-      res.status(400).json({ message: "Invalid projectId provided" });
+      res.sendStatus(500);
       return;
     }
 
@@ -83,11 +69,51 @@ async function updateTask(req: AuthRequest, res: Response) {
   try {
     const updatedTask = await Task.findByIdAndUpdate(id, updateData, {
       new: true,
-    });
+    })
+      .populate("assignedTo", "-password")
+      .lean();
 
     res.status(200).json(updatedTask);
   } catch (error) {
-    console.log(error);
+    console.error("PUT /task:", error);
+    res.sendStatus(500);
+  }
+}
+
+async function assignTaskToMember(req: AuthRequest, res: Response) {
+  const { taskId, userId } = req.body;
+
+  if (!taskId || !userId) {
+    res.status(400).json({ message: "Incomplete data provided" });
+    return;
+  }
+
+  try {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      res.status(404).json({ message: "Task not found" });
+      return;
+    }
+
+    const user = await User.findById(userId).lean();
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    const updatedTask = await task
+      .updateOne(
+        {
+          assignedTo: userId,
+        },
+        { new: true }
+      )
+      .populate("assignedTo", "-password")
+      .lean();
+
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    console.error("PUT /task/assign:", error);
     res.sendStatus(500);
   }
 }
@@ -108,10 +134,9 @@ async function deleteTask(req: AuthRequest, res: Response) {
       tasks: deletedTask._id,
     });
 
-    console.log(associatedProject);
-
     if (!associatedProject) {
       res.status(400).json({ message: "" });
+      return;
     }
 
     await Project.findByIdAndUpdate(associatedProject?._id, {
@@ -125,4 +150,4 @@ async function deleteTask(req: AuthRequest, res: Response) {
   }
 }
 
-export { getUserTasks, createTask, updateTask, deleteTask };
+export { getTaskById, createTask, updateTask, assignTaskToMember, deleteTask };

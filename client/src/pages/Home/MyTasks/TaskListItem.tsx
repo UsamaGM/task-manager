@@ -6,32 +6,41 @@ import {
   EllipsisVerticalIcon,
   PencilIcon,
 } from "@heroicons/react/24/solid";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTask } from "@/contexts/TaskContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useProject } from "@/contexts/ProjectContext";
+import { useTeam } from "@/contexts/TeamContext";
 
 interface PropTypes {
   task: TaskType;
   onEdit: (task: TaskType) => void;
+  onAssign: (task: TaskType) => void;
   onDelete: (task: TaskType) => void;
 }
 
-function TaskListItem({ task, onEdit, onDelete }: PropTypes) {
+function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
   const [isOpen, setIsOpen] = useState(false);
   const { changeTaskStatus } = useTask();
 
-  const handleClickOutside = useCallback(function () {
+  const projectId = useProject().getProjectWithTask(task._id)._id;
+  const adminId = useTeam().findTeamWithProject(projectId)?.admin._id;
+  const userId = useAuth().user?._id;
+  const isAdmin = adminId === userId;
+
+  const handleClickOutside = useRef(() => {
     setIsOpen(false);
-  }, []);
+  });
 
   useEffect(() => {
     isOpen
-      ? document.addEventListener("click", handleClickOutside)
-      : document.removeEventListener("click", handleClickOutside);
+      ? document.addEventListener("click", handleClickOutside.current)
+      : document.removeEventListener("click", handleClickOutside.current);
   });
 
-  const handleChangeStatus = useCallback(async (newStatus: TaskStatusType) => {
+  async function handleChangeStatus(newStatus: TaskStatusType) {
     await changeTaskStatus(task._id, newStatus);
-  }, []);
+  }
 
   const priorityConfig =
     task.priority === TaskPriorityType.LOW
@@ -75,13 +84,24 @@ function TaskListItem({ task, onEdit, onDelete }: PropTypes) {
         {task.description}
       </p>
 
-      <h3
-        className={`font-bold ${
-          task.assignedTo ? "text-gray-800" : "text-gray-600"
-        }`}
-      >
-        {task.assignedTo ? task.assignedTo.username : "Not assigned yet"}
-      </h3>
+      {task.assignedTo ? (
+        <h3 className="text-gray-800 text-sm">
+          Assigned to{" "}
+          <span className="font-bold">{task.assignedTo.username}</span>
+        </h3>
+      ) : (
+        <div className="flex justify-between items-center space-x-2">
+          <span>Not assigned yet</span>
+          {isAdmin && (
+            <button
+              onClick={() => onAssign(task)}
+              className="bg-blue-100 text-blue-800 hover:bg-blue-200 rounded-lg p-1 cursor-pointer"
+            >
+              Assign
+            </button>
+          )}
+        </div>
+      )}
       {isOpen && (
         <div className="flex flex-col absolute top-10 right-5 min-w-36 rounded-lg bg-white border border-gray-300 shadow">
           <button

@@ -3,15 +3,9 @@ import { apiErrorHandler } from "@/helpers/errorHandler";
 
 export async function dataLoader() {
   try {
-    const taskResponse = await api.get("/task");
-    const projectsResponse = await api.get("/project");
-    const teamsResponse = await api.get("/team");
+    const response = await api.get("/user/data");
 
-    return {
-      tasks: taskResponse.data,
-      projects: projectsResponse.data,
-      teams: teamsResponse.data,
-    };
+    return response.data;
   } catch (error) {
     apiErrorHandler(error);
   }

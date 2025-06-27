@@ -14,11 +14,12 @@ import { toast } from "react-toastify";
 interface TaskContextType {
   tasks: TaskType[];
   createTask: (data: Partial<TaskType> & { project: string }) => Promise<void>;
+  updateTask: (taskId: string, formData: Partial<TaskType>) => Promise<void>;
   changeTaskStatus: (
     taskId: string,
     newStatus: TaskStatusType
   ) => Promise<void>;
-  updateTask: (taskId: string, formData: Partial<TaskType>) => Promise<void>;
+  assignTask: (taskId: string, userId: string) => Promise<void>;
   deleteTask: (taskId: string) => Promise<boolean>;
 }
 
@@ -88,6 +89,22 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const assignTask = useCallback(async (taskId: string, userId: string) => {
+    try {
+      const { data }: { data: TaskType } = await api.put("/task/assign", {
+        taskId,
+        userId,
+      });
+
+      setTasks((prev) =>
+        prev.map((task) => (task._id === data._id ? data : task))
+      );
+      toast.success(`Assigned ${data.name} to the member`);
+    } catch (error) {
+      apiErrorHandler(error);
+    }
+  }, []);
+
   const deleteTask = useCallback(async (taskId: string) => {
     try {
       await api.delete(`/task/${taskId}`);
@@ -102,7 +119,14 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
 
   return (
     <TaskContext.Provider
-      value={{ tasks, createTask, updateTask, changeTaskStatus, deleteTask }}
+      value={{
+        tasks,
+        createTask,
+        updateTask,
+        changeTaskStatus,
+        assignTask,
+        deleteTask,
+      }}
     >
       {children}
     </TaskContext.Provider>

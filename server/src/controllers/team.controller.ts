@@ -55,10 +55,10 @@ async function createTeam(req: AuthRequest, res: Response) {
     });
 
     const newTeam = await Team.populate(team, {
-      path: "admin",
+      path: "admin members",
       select: "-password",
     });
-    console.log(newTeam);
+
     res.status(201).json(newTeam);
   } catch (error) {
     console.error("POST: /team:", error);
@@ -78,7 +78,8 @@ async function updateTeam(req: AuthRequest, res: Response) {
     const updatedTeam = await Team.findByIdAndUpdate(teamId, updatedData, {
       new: true,
     })
-      .populate("admin")
+      .populate("admin", "-password")
+      .populate("members", "-password")
       .lean();
 
     if (!updatedTeam) {
@@ -122,6 +123,8 @@ async function assignProject(req: AuthRequest, res: Response) {
         },
         { new: true }
       )
+      .populate("admin", "-password")
+      .populate("members", "-password")
       .lean();
 
     res.status(200).json(updatedTeam);
@@ -164,6 +167,7 @@ async function addMember(req: AuthRequest, res: Response) {
       { new: true }
     )
       .populate("admin", "-password")
+      .populate("members", "-password")
       .lean();
 
     res.status(200).json(updatedTeam);
@@ -204,6 +208,7 @@ async function removeMember(req: AuthRequest, res: Response) {
       { new: true }
     )
       .populate("admin", "-password")
+      .populate("members", "-password")
       .lean();
 
     res.status(200).json(updatedTeam);

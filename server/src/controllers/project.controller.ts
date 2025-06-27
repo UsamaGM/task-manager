@@ -5,22 +5,19 @@ import User from "../models/user";
 import Task from "../models/task";
 import Team from "../models/team";
 
-async function getAllProjects(req: AuthRequest, res: Response) {
-  const { _id } = req.user!;
+async function getProjectById(req: AuthRequest, res: Response) {
+  const id = req.params;
   try {
-    const user = await User.findById(_id)
-      .populate("projects")
-      .populate("projects.assignedTo", "-password")
-      .lean();
+    const project = await Project.findById(id).populate("assignedTo").lean();
 
-    if (!user) {
-      res.status(404).json({ message: "User not found, are you signed in?" });
+    if (!project) {
+      res.status(404).json({ message: "Project not found" });
       return;
     }
 
-    res.status(200).json(user.projects);
+    res.status(200).json(project);
   } catch (error) {
-    console.error("GET /project:", error);
+    console.error("GET /project/:id:", error);
     res.sendStatus(500);
   }
 }
@@ -106,4 +103,4 @@ async function deleteProject(req: AuthRequest, res: Response) {
   }
 }
 
-export { getAllProjects, createProject, updateProject, deleteProject };
+export { getProjectById, createProject, updateProject, deleteProject };

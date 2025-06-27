@@ -1,6 +1,9 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/auth.middleware";
 import User from "../models/user";
+import Team from "../models/team";
+import Task, { type TaskType } from "../models/task";
+import Project, { type ProjectType } from "../models/project";
 
 async function getQueriedUsers(req: AuthRequest, res: Response) {
   const { query } = req.params;
@@ -28,4 +31,50 @@ async function getQueriedUsers(req: AuthRequest, res: Response) {
   }
 }
 
-export { getQueriedUsers };
+async function getUserData(req: AuthRequest, res: Response) {
+  const userId = req.user?._id;
+  try {
+    const teams = await Team.find({
+      $or: [{ members: userId?.toString() }, { admin: userId }],
+    })
+      .populate("members", "_id username emails")
+      .populate("admin", "_id username email")
+      .lean();
+
+    const user = await User.findById(userId).select("projects").lean();
+
+    const allProjects: ProjectType[] = [];
+    const allTasks: TaskType[] = [];
+
+    teams.forEach((team) => {
+      if (team.projects && Array.isArray(team.projects))
+        allProjects.push(...team.projects);
+    });
+    if (user && user.projects && Array.isArray(user.projects)) {
+      allProjects.push(...user.projects);
+    }
+
+    const projects = await Project.find({
+      _id: { $in: allProjects },
+    }).lean();
+
+    projects.forEach((project) => {
+      if (project.tasks && Array.isArray(project.tasks))
+        allTasks.push(...project.tasks);
+    });
+
+    const tasks = await Task.find({
+      _id: { $in: allTasks },
+    })
+      .populate("createdBy", "_id username email")
+      .populate("assignedTo", "_id username email")
+      .lean();
+
+    res.status(200).json({ teams, projects, tasks });
+  } catch (error) {
+    console.error("GET /user/data:", error);
+    res.sendStatus(500);
+  }
+}
+
+export { getQueriedUsers, getUserData };
