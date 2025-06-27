@@ -8,6 +8,8 @@ import CreateProjectModal from "./CreateProjectModal";
 import EditProjectModal from "./EditProjectModal";
 import DeleteProjectModal from "./DeleteProjectModal";
 import AssignTeamModal from "./AssignTeamModal";
+import { CubeTransparentIcon } from "@heroicons/react/24/outline";
+import NoXMessage from "@/components/NoXMessage";
 
 function MyProjects() {
   const [selectedProject, setSelectedProject] = useState<ProjectType | null>(
@@ -48,44 +50,51 @@ function MyProjects() {
     <div className="relative flex flex-col space-y-6 h-[calc(100vh-1rem)] p-6">
       <Headline
         title="My Projects"
-        rightButtonTitle="New Project"
+        rightButtonTitle="Create Project"
         rightButtonAction={() => setShowCreateProjectModal(true)}
       />
-      <div className="flex flex-1 h-full space-x-6">
-        <TaskListContainer title={`Active (${activeProjects.length})`}>
-          {activeProjects.map((project) => (
-            <ProjectListItem
-              key={project._id}
-              project={project}
-              onEdit={onEdit}
-              onAssignTeam={onAssignTeam}
-              onDelete={onDelete}
-            />
-          ))}
-        </TaskListContainer>
-        <TaskListContainer title={`On Hold (${onHoldProjects.length})`}>
-          {onHoldProjects.map((project) => (
-            <ProjectListItem
-              key={project._id}
-              project={project}
-              onEdit={onEdit}
-              onAssignTeam={onAssignTeam}
-              onDelete={onDelete}
-            />
-          ))}
-        </TaskListContainer>
-        <TaskListContainer title={`Completed (${completedProjects.length})`}>
-          {completedProjects.map((project) => (
-            <ProjectListItem
-              key={project._id}
-              project={project}
-              onEdit={onEdit}
-              onAssignTeam={onAssignTeam}
-              onDelete={onDelete}
-            />
-          ))}
-        </TaskListContainer>
-      </div>
+      {projects.length ? (
+        <div className="flex flex-1 h-full space-x-6">
+          <TaskListContainer title={`Active (${activeProjects.length})`}>
+            {activeProjects.map((project) => (
+              <ProjectListItem
+                key={project._id}
+                project={project}
+                onEdit={onEdit}
+                onAssignTeam={onAssignTeam}
+                onDelete={onDelete}
+              />
+            ))}
+          </TaskListContainer>
+          <TaskListContainer title={`On Hold (${onHoldProjects.length})`}>
+            {onHoldProjects.map((project) => (
+              <ProjectListItem
+                key={project._id}
+                project={project}
+                onEdit={onEdit}
+                onAssignTeam={onAssignTeam}
+                onDelete={onDelete}
+              />
+            ))}
+          </TaskListContainer>
+          <TaskListContainer title={`Completed (${completedProjects.length})`}>
+            {completedProjects.map((project) => (
+              <ProjectListItem
+                key={project._id}
+                project={project}
+                onEdit={onEdit}
+                onAssignTeam={onAssignTeam}
+                onDelete={onDelete}
+              />
+            ))}
+          </TaskListContainer>
+        </div>
+      ) : (
+        <NoXMessage
+          icon={<CubeTransparentIcon />}
+          message="No Project created. Create a project to start creating tasks."
+        />
+      )}
       <CreateProjectModal
         isOpen={showCreateProjectModal}
         onClose={() => setShowCreateProjectModal(false)}

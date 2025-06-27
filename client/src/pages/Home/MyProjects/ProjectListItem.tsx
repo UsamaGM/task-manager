@@ -48,6 +48,7 @@ function ProjectListItem({
   const { findTeamWithProject } = useTeam();
 
   const handleClickOutside = useCallback(function () {
+    console.log("Click");
     setIsOpen(false);
   }, []);
 
@@ -55,7 +56,7 @@ function ProjectListItem({
     isOpen
       ? document.addEventListener("click", handleClickOutside)
       : document.removeEventListener("click", handleClickOutside);
-  });
+  }, [isOpen]);
 
   const handleChangeStatus = useCallback(
     async (newStatus: ProjectStatusType) => {
@@ -67,18 +68,10 @@ function ProjectListItem({
   const assignedTo = findTeamWithProject(project._id);
 
   return (
-    <div className="list-container-item -translate-x-32 flex flex-col shrink-0 min-h-45 mr-1 space-y-2 bg-white border border-gray-300 shadow rounded-xl p-3">
+    <div className="list-container-item -translate-x-32 flex flex-col shrink-0 min-h-47 mr-1 space-y-2 bg-white border border-gray-300 shadow rounded-xl p-3">
       <div className="flex justify-between items-start">
-        <div className="min-h-16">
+        <div className="">
           <h3 className="font-bold text-gray-800">{project.name}</h3>
-          {project.status !== ProjectStatusType.ACTIVE && (
-            <h4 className="font-semibold text-gray-600 text-sm">
-              Starts{" "}
-              <span className={getStartDateColor(project.startDate)}>
-                {getFormattedDate(project.startDate)}
-              </span>
-            </h4>
-          )}
           <h4 className="font-semibold text-gray-600 text-sm">
             Ends{" "}
             <span className={getEndDateColor(project.endDate)}>
@@ -96,7 +89,7 @@ function ProjectListItem({
           <EllipsisVerticalIcon className="size-5 stroke-3 text-gray-900" />
         </button>
       </div>
-      <p className="text-gray-700 text-justify text-sm line-clamp-4">
+      <p className="flex-1 text-gray-700 text-justify text-sm line-clamp-4">
         {project.description}
       </p>
       <div className="flex justify-between items-center text-sm">

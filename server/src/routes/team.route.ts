@@ -1,7 +1,7 @@
 import express from "express";
 import {
   addMember,
-  assignProjectToTeam,
+  assignProject,
   createTeam,
   deleteTeam,
   getSearchedTeams,
@@ -17,7 +17,7 @@ teamRouter.get("/", getUserTeams);
 teamRouter.get("/:query", getSearchedTeams);
 teamRouter.post("/", createTeam);
 teamRouter.put("/", updateTeam);
-teamRouter.put("/assign", assignProjectToTeam);
+teamRouter.put("/assign", assignProject);
 teamRouter.put("/add-member", addMember);
 teamRouter.put("/remove-member", removeMember);
 teamRouter.put("/leave/:id", leaveTeam);

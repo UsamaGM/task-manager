@@ -55,8 +55,8 @@ async function createTeam(req: AuthRequest, res: Response) {
     });
 
     const newTeam = await Team.populate(team, {
-      path: "admin members projects",
-      select: "-password -projects",
+      path: "admin",
+      select: "-password",
     });
     console.log(newTeam);
     res.status(201).json(newTeam);
@@ -79,7 +79,6 @@ async function updateTeam(req: AuthRequest, res: Response) {
       new: true,
     })
       .populate("admin")
-      .populate("members", "-password")
       .lean();
 
     if (!updatedTeam) {
@@ -100,7 +99,7 @@ interface MemberRequestType {
   members: string[];
 }
 
-async function assignProjectToTeam(req: AuthRequest, res: Response) {
+async function assignProject(req: AuthRequest, res: Response) {
   const { projectId, teamId } = req.body;
 
   if (!projectId || !teamId) {
@@ -116,7 +115,7 @@ async function assignProjectToTeam(req: AuthRequest, res: Response) {
       return;
     }
 
-    await team
+    const updatedTeam = await team
       .updateOne(
         {
           $addToSet: { projects: projectId },
@@ -125,9 +124,9 @@ async function assignProjectToTeam(req: AuthRequest, res: Response) {
       )
       .lean();
 
-    res.status(200).json(team);
+    res.status(200).json(updatedTeam);
   } catch (error) {
-    console.error("PUT /project/assign:", error);
+    console.error("PUT /team/assign:", error);
     res.sendStatus(500);
   }
 }
@@ -165,7 +164,6 @@ async function addMember(req: AuthRequest, res: Response) {
       { new: true }
     )
       .populate("admin", "-password")
-      .populate("members", "-password")
       .lean();
 
     res.status(200).json(updatedTeam);
@@ -206,7 +204,6 @@ async function removeMember(req: AuthRequest, res: Response) {
       { new: true }
     )
       .populate("admin", "-password")
-      .populate("members", "-password")
       .lean();
 
     res.status(200).json(updatedTeam);
@@ -272,7 +269,7 @@ export {
   getSearchedTeams,
   createTeam,
   updateTeam,
-  assignProjectToTeam,
+  assignProject,
   addMember,
   removeMember,
   leaveTeam,

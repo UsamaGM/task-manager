@@ -32,12 +32,9 @@ function TeamProvider({ children }: { children: ReactNode }) {
   const [teams, setTeams] = useState(userTeams);
 
   function findTeamWithProject(projectId: string) {
-    const team = teams.find((team) =>
+    return teams.find((team) =>
       team.projects.some((project) => project === projectId)
     );
-
-    console.log(team);
-    return team;
   }
 
   async function createTeam(name: string, description: string) {

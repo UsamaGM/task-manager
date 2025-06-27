@@ -36,7 +36,13 @@ function ProjectProvider({ children }: { children: ReactNode }) {
   }
 
   function getProjectsTaskCount(projectIds: string[]) {
-    return projects.reduce((acc, project) => project.tasks.length + acc, 0);
+    return projects.reduce(
+      (acc, project) =>
+        projectIds.some((id) => id === project._id)
+          ? project.tasks.length + acc
+          : acc,
+      0
+    );
   }
 
   function getProjectWithTask(taskId: string) {

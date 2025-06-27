@@ -10,6 +10,8 @@ import RemoveMemberModal from "./RemoveMemberModal";
 import EditTeamModal from "./EditTeamModal";
 import DeleteTeamModal from "./DeleteTeamModal";
 import LeaveTeamModal from "./LeaveTeamModal";
+import { UserGroupIcon } from "@heroicons/react/24/outline";
+import NoXMessage from "@/components/NoXMessage";
 
 function MyTeams() {
   const [selectedTeam, setSelectedTeam] = useState<TeamType | null>(null);
@@ -33,40 +35,47 @@ function MyTeams() {
   }, [teams]);
 
   return (
-    <div className="relative flex flex-col space-y-6 h-screen p-6">
+    <div className="relative flex flex-col space-y-6 h-[calc(100vh-1rem)] p-6">
       <Headline
         title="My Teams"
         rightButtonTitle="Create Team"
         rightButtonAction={() => setShowCreateTeamModal(true)}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-scroll">
-        {teams.map((team) => (
-          <TeamListItem
-            key={team._id}
-            handleAddMember={() => {
-              setShowAddMemberModal(true);
-              setSelectedTeam(team);
-            }}
-            handleRemoveMember={() => {
-              setShowRemoveMemberModal(true);
-              setSelectedTeam(team);
-            }}
-            handleEditTeam={() => {
-              setShowEditTeamModal(true);
-              setSelectedTeam(team);
-            }}
-            handleDeleteTeam={() => {
-              setShowDeleteTeamModal(true);
-              setSelectedTeam(team);
-            }}
-            handleLeaveTeam={() => {
-              setShowLeaveTeamModal(true);
-              setSelectedTeam(team);
-            }}
-            team={team}
-          />
-        ))}
-      </div>
+      {teams.length ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full overflow-y-scroll">
+          {teams.map((team) => (
+            <TeamListItem
+              key={team._id}
+              handleAddMember={() => {
+                setShowAddMemberModal(true);
+                setSelectedTeam(team);
+              }}
+              handleRemoveMember={() => {
+                setShowRemoveMemberModal(true);
+                setSelectedTeam(team);
+              }}
+              handleEditTeam={() => {
+                setShowEditTeamModal(true);
+                setSelectedTeam(team);
+              }}
+              handleDeleteTeam={() => {
+                setShowDeleteTeamModal(true);
+                setSelectedTeam(team);
+              }}
+              handleLeaveTeam={() => {
+                setShowLeaveTeamModal(true);
+                setSelectedTeam(team);
+              }}
+              team={team}
+            />
+          ))}
+        </div>
+      ) : (
+        <NoXMessage
+          icon={<UserGroupIcon />}
+          message="No Teams yet. Create or join one to start working."
+        />
+      )}
       <CreateTeamModal
         isOpen={showCreateTeamModal}
         onClose={() => setShowCreateTeamModal(false)}

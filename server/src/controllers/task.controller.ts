@@ -65,8 +65,6 @@ async function createTask(req: AuthRequest, res: Response) {
 
     const task = newTask.toObject();
 
-    console.log(task);
-
     res.status(201).json(task);
   } catch (error) {
     console.log("Error:", error);
@@ -98,7 +96,7 @@ async function deleteTask(req: AuthRequest, res: Response) {
   const { taskId } = req.params;
 
   try {
-    const deletedTask = await Task.findByIdAndDelete(taskId);
+    const deletedTask = await Task.findByIdAndDelete(taskId).lean();
     if (!deletedTask) {
       res.status(400).json({
         message: "Invalid Request, Task was not found",
@@ -110,17 +108,15 @@ async function deleteTask(req: AuthRequest, res: Response) {
       tasks: deletedTask._id,
     });
 
+    console.log(associatedProject);
+
     if (!associatedProject) {
       res.status(400).json({ message: "" });
     }
 
-    await Project.findByIdAndUpdate(
-      associatedProject?._id,
-      {
-        $pull: { tasks: taskId },
-      },
-      { new: true }
-    );
+    await Project.findByIdAndUpdate(associatedProject?._id, {
+      $pull: { tasks: deletedTask._id },
+    }).lean();
 
     res.status(201).json({ message: "Deleted the Task" });
   } catch (error) {

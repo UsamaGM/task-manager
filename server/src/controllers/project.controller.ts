@@ -84,12 +84,12 @@ async function deleteProject(req: AuthRequest, res: Response) {
     }
 
     const deletedTasks = await Task.deleteMany({
-      _id: deletedProject.tasks,
+      _id: { $in: deletedProject.tasks },
     }).lean();
 
     await Team.findOneAndUpdate(
       {
-        $includes: { projects: id },
+        projects: id,
       },
       {
         $pull: { projects: id },

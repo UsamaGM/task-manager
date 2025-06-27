@@ -7,6 +7,12 @@ import CreateTaskModal from "./CreateTaskModal";
 import { TaskStatusType, TaskType } from "@/helpers/types";
 import EditTaskModal from "./EditTaskModal";
 import DeleteTaskModal from "./DeleteTaskModal";
+import {
+  DocumentTextIcon,
+  KeyIcon,
+  TicketIcon,
+} from "@heroicons/react/24/outline";
+import NoXMessage from "@/components/NoXMessage";
 
 function MyTasks() {
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
@@ -39,38 +45,45 @@ function MyTasks() {
         rightButtonAction={() => setShowCreateTaskModal(true)}
       />
 
-      <div className="flex flex-1 space-x-6 overflow-hidden">
-        <TaskListContainer title={`To Do (${todoTasks.length})`}>
-          {todoTasks.map((task) => (
-            <TaskListItem
-              key={task._id}
-              task={task}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))}
-        </TaskListContainer>
-        <TaskListContainer title={`In Progress (${inProgressTasks.length})`}>
-          {inProgressTasks.map((task) => (
-            <TaskListItem
-              key={task._id}
-              task={task}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))}
-        </TaskListContainer>
-        <TaskListContainer title={`Done (${doneTasks.length})`}>
-          {doneTasks.map((task) => (
-            <TaskListItem
-              key={task._id}
-              task={task}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))}
-        </TaskListContainer>
-      </div>
+      {tasks.length ? (
+        <div className="flex flex-1 space-x-6 overflow-hidden">
+          <TaskListContainer title={`To Do (${todoTasks.length})`}>
+            {todoTasks.map((task) => (
+              <TaskListItem
+                key={task._id}
+                task={task}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))}
+          </TaskListContainer>
+          <TaskListContainer title={`In Progress (${inProgressTasks.length})`}>
+            {inProgressTasks.map((task) => (
+              <TaskListItem
+                key={task._id}
+                task={task}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))}
+          </TaskListContainer>
+          <TaskListContainer title={`Done (${doneTasks.length})`}>
+            {doneTasks.map((task) => (
+              <TaskListItem
+                key={task._id}
+                task={task}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))}
+          </TaskListContainer>
+        </div>
+      ) : (
+        <NoXMessage
+          icon={<DocumentTextIcon />}
+          message="No Tasks yet. Let's create one."
+        />
+      )}
       <CreateTaskModal
         isOpen={showCreateTaskModal}
         onClose={() => setShowCreateTaskModal(false)}

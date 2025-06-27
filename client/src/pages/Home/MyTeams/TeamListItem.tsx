@@ -1,12 +1,9 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useProject } from "@/contexts/ProjectContext";
-import { ProjectStatusType, TeamType } from "@/helpers/types";
+import { TeamType } from "@/helpers/types";
 import {
   ArrowRightStartOnRectangleIcon,
-  ChartBarIcon,
-  CheckIcon,
   CubeIcon,
-  HandRaisedIcon,
   KeyIcon,
   PencilIcon,
   TrashIcon,
