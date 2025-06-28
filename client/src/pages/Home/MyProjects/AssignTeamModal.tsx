@@ -31,7 +31,7 @@ function AssignTeamModal({ isOpen, project, onClose }: PropTypes) {
       if (e.target.value.trim().length) {
         try {
           const { data }: { data: TeamType[] } = await api.get(
-            `/team/${e.target.value}`
+            `/team/search/${e.target.value}`
           );
           setSearchResults(data);
         } catch (error) {

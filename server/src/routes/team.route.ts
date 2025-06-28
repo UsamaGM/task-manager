@@ -14,7 +14,7 @@ import {
 const teamRouter = express.Router();
 
 teamRouter.get("/:id", getTeamById);
-teamRouter.get("/:query", getSearchedTeams);
+teamRouter.get("/search/:query", getSearchedTeams);
 teamRouter.post("/", createTeam);
 teamRouter.put("/", updateTeam);
 teamRouter.put("/assign", assignProject);

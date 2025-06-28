@@ -6,6 +6,7 @@ import Header from "./Header";
 import Headline from "./Headline";
 import ListContainer from "./ListContainer";
 import Loader from "./Loader";
+import NoXMessage from "./NoXMessage";
 import PrioritySelectorWithLabel from "./PrioritySelectorWithLabel";
 import SubmitButton from "./SubmitButton";
 import TextAreaWithLabel from "./TextAreaWithLabel";
@@ -20,6 +21,7 @@ export {
   Headline,
   ListContainer,
   Loader,
+  NoXMessage,
   PrioritySelectorWithLabel,
   SubmitButton,
   TextAreaWithLabel,

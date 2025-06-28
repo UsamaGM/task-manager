@@ -1,12 +1,10 @@
-import { Card } from "@/components";
+import { Card, NoXMessage } from "@/components";
 import { useAuth } from "@/contexts/AuthContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
-import {
-  DetailedTeamType,
-  ProjectType,
-  TaskStatusType,
-  UserType,
-} from "@/helpers/types";
+import { DetailedTeamType, ProjectType, UserType } from "@/helpers/types";
+import { CubeTransparentIcon } from "@heroicons/react/24/outline";
+import { stagger, Timeline } from "animejs";
+import { useEffect } from "react";
 import { Link, useLoaderData } from "react-router-dom";
 
 function TeamDetails() {
@@ -14,7 +12,28 @@ function TeamDetails() {
   const team: DetailedTeamType = useLoaderData();
   const isAdmin = user?._id === team.admin._id;
 
-  console.log(team);
+  useEffect(() => {
+    const tl = new Timeline({ delay: 400 });
+
+    tl.add(".description-card", {
+      rotateY: [0, 360],
+      duration: 500,
+    })
+      .add(".user-card", {
+        translateY: [0, "-2.5rem", 0],
+        duration: 300,
+        delay: stagger(200),
+        ease: "inOutBounce",
+      })
+      .add(".project-card", {
+        translateX: [0, "2.5rem", 0],
+        duration: 300,
+        delay: stagger(200),
+        ease: "inOutBounce",
+      });
+
+    tl.play();
+  }, []);
 
   return (
     <Card>
@@ -33,14 +52,14 @@ function TeamDetails() {
             {isAdmin ? "Description" : "What they have to say"}
           </p>
           <div className="flex items-center justify-center">
-            <p className="text-wrap max-w-2xl p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl">
+            <p className="description-card text-wrap max-w-3xl p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl">
               {team.description}
             </p>
           </div>
         </div>
         <div className="flex flex-col space-y-2">
           <p className="font-bold text-lg">Members</p>
-          <div className="flex flex-wrap justify-center items-center text-start space-x-4 w-full">
+          <div className="flex flex-wrap justify-center items-center text-start gap-4 w-full">
             <UserCard user={team.admin} isAdmin />
             {team.members.map((member) => (
               <UserCard user={member} />
@@ -49,11 +68,18 @@ function TeamDetails() {
         </div>
         <div className="flex flex-col space-y-2">
           <p className="font-bold text-lg">Projects</p>
-          <div className="flex flex-wrap justify-center items-center text-start space-x-4 w-full">
-            {team.projects.map((project) => (
-              <ProjectCard project={project} />
-            ))}
-          </div>
+          {team.projects.length ? (
+            <div className="flex flex-wrap justify-center items-center text-start space-x-4 w-full">
+              {team.projects.map((project) => (
+                <ProjectCard project={project} />
+              ))}
+            </div>
+          ) : (
+            <NoXMessage
+              icon={<CubeTransparentIcon />}
+              message="No Projects Yet."
+            />
+          )}
         </div>
       </div>
     </Card>

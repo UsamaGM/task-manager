@@ -31,7 +31,9 @@ async function getSearchedTeams(req: AuthRequest, res: Response) {
   try {
     const teams = await Team.find({
       name: { $regex: query, $options: "i" },
-    }).lean();
+    })
+      .populate("admin", "username email")
+      .lean();
 
     res.status(200).json(teams);
   } catch (error) {

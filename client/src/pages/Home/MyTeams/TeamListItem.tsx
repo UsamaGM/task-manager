@@ -4,7 +4,7 @@ import { TeamType } from "@/helpers/types";
 import {
   ArrowRightStartOnRectangleIcon,
   CubeIcon,
-  KeyIcon,
+  DocumentTextIcon,
   PencilIcon,
   TrashIcon,
   UserIcon,
@@ -94,7 +94,7 @@ function TeamListItem({
           </h4>
         </div>
         <div className="flex items-center space-x-2">
-          <KeyIcon className="size-5 stroke-2" />
+          <DocumentTextIcon className="size-5 stroke-2" />
           <h4>{taskCount + (taskCount === 1 ? " Task" : " Tasks")}</h4>
         </div>
       </div>
