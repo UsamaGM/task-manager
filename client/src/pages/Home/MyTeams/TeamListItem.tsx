@@ -12,6 +12,7 @@ import {
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import { ReactElement } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface PropTypes {
   team: TeamType;
@@ -32,6 +33,7 @@ function TeamListItem({
 }: PropTypes) {
   const { getProjectsTaskCount } = useProject();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const isAdmin = team.admin._id === user?._id;
 
   const taskCount = getProjectsTaskCount(team.projects);
@@ -96,7 +98,10 @@ function TeamListItem({
           <h4>{taskCount + (taskCount === 1 ? " Task" : " Tasks")}</h4>
         </div>
       </div>
-      <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg border border-gray-300 shadow p-1 text-sm font-semibold cursor-pointer">
+      <button
+        onClick={() => navigate("/team/" + team._id)}
+        className="bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg border border-gray-300 shadow p-1 text-sm font-semibold cursor-pointer"
+      >
         Show Team Details
       </button>
     </div>

@@ -5,7 +5,7 @@ import {
   createTeam,
   deleteTeam,
   getSearchedTeams,
-  getUserTeams,
+  getTeamById,
   leaveTeam,
   removeMember,
   updateTeam,
@@ -13,7 +13,7 @@ import {
 
 const teamRouter = express.Router();
 
-teamRouter.get("/", getUserTeams);
+teamRouter.get("/:id", getTeamById);
 teamRouter.get("/:query", getSearchedTeams);
 teamRouter.post("/", createTeam);
 teamRouter.put("/", updateTeam);
