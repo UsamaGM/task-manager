@@ -21,3 +21,13 @@ export async function teamDataLoader({ params }: LoaderFunctionArgs) {
     apiErrorHandler(error);
   }
 }
+
+export async function projectDataLoader({ params }: LoaderFunctionArgs) {
+  try {
+    const response = await api.get("/project/" + params.id);
+
+    return response.data;
+  } catch (error) {
+    apiErrorHandler(error);
+  }
+}

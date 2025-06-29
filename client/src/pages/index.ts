@@ -7,6 +7,7 @@ import MyTeams from "./Home/MyTeams";
 import MyProjects from "./Home/MyProjects";
 import MyTasks from "./Home/MyTasks";
 import TeamDetails from "./TeamDetails";
+import ProjectDetails from "./ProjectDetails";
 
 export {
   Login,
@@ -18,4 +19,5 @@ export {
   MyProjects,
   MyTasks,
   TeamDetails,
+  ProjectDetails,
 };
