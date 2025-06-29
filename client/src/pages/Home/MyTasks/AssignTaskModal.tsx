@@ -45,7 +45,7 @@ function TeamMemberList({ task, onClose }: TeamMemberListPropTypes) {
   }
 
   return (
-    <div>
+    <div className="h-full overflow-auto">
       {team?.members.length ? (
         team.members.map((member) => (
           <div className="flex justify-between items-center w-full px-3 py-2 text-left border-b border-gray-100 last:border-b-0">

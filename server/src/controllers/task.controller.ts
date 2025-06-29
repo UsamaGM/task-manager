@@ -101,13 +101,13 @@ async function assignTaskToMember(req: AuthRequest, res: Response) {
       return;
     }
 
-    const updatedTask = await task
-      .updateOne(
-        {
-          assignedTo: userId,
-        },
-        { new: true }
-      )
+    const updatedTask = await Task.findByIdAndUpdate(
+      taskId,
+      {
+        assignedTo: userId,
+      },
+      { new: true }
+    )
       .populate("assignedTo", "-password")
       .lean();
 

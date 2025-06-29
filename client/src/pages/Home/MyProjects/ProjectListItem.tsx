@@ -10,13 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useCallback, useEffect, useState } from "react";
-
-function getStartDateColor(date: string) {
-  const startDate = new Date(date);
-  const today = new Date();
-  if (startDate <= today) return "text-green-600";
-  return "text-gray-600";
-}
+import { Link } from "react-router-dom";
 
 function getEndDateColor(date: string) {
   if (!date) return "text-gray-700";
@@ -25,9 +19,9 @@ function getEndDateColor(date: string) {
   const due = new Date(date);
   const diffMs = due.getTime() - now.getTime();
   const diffDays = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-  const severity = Math.max(0, 5 - diffDays);
+  const severity = Math.max(0, 7 - diffDays);
 
-  return `text-red-${severity * 100}`;
+  return severity ? `text-red-${severity * 100}` : "text-gray-700";
 }
 
 interface PropTypes {
@@ -89,7 +83,7 @@ function ProjectListItem({
           <EllipsisVerticalIcon className="size-5 stroke-3 text-gray-900" />
         </button>
       </div>
-      <p className="flex-1 text-gray-700 text-justify text-sm line-clamp-4">
+      <p className="flex-1 text-gray-700 text-justify text-sm line-clamp-3">
         {project.description}
       </p>
       <div className="flex justify-between items-center text-sm">
@@ -109,6 +103,12 @@ function ProjectListItem({
           </>
         )}
       </div>
+      <Link
+        to={`/project/${project._id}`}
+        className="w-full text-center py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg text-sm font-bold"
+      >
+        Show Details
+      </Link>
 
       {isOpen && (
         <div className="flex flex-col absolute top-10 right-5 min-w-36 overflow-hidden rounded-lg bg-white border border-gray-300 shadow">
@@ -151,7 +151,7 @@ function ProjectListItem({
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-green-200 hover:text-green-800 cursor-pointer"
               >
                 <CheckIcon className="size-4 stroke-3" />
-                <span className="font-bold">Done</span>
+                <span className="font-bold">Completed</span>
               </button>
               <hr className="text-gray-300 mx-1" />
             </>
