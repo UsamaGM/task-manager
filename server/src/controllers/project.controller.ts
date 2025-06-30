@@ -6,16 +6,26 @@ import Task from "../models/task";
 import Team from "../models/team";
 
 async function getProjectById(req: AuthRequest, res: Response) {
-  const id = req.params;
+  const { id } = req.params;
+
   try {
-    const project = await Project.findById(id).populate("assignedTo").lean();
+    const project = await Project.findById(id).populate("tasks").lean();
 
     if (!project) {
       res.status(404).json({ message: "Project not found" });
       return;
     }
 
-    res.status(200).json(project);
+    const createdBy = await User.findOne({ projects: project._id })
+      .select("username email projects")
+      .lean();
+    const assignedTo = await Team.findOne({ projects: project._id.toString() })
+      .populate("admin", "username email")
+      .lean();
+
+    const response = { ...project, createdBy, assignedTo };
+
+    res.status(200).json(response);
   } catch (error) {
     console.error("GET /project/:id:", error);
     res.sendStatus(500);

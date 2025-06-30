@@ -52,6 +52,18 @@ export interface ProjectType {
   tasks: string[];
 }
 
+export interface DetailedProjectType {
+  _id: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  status: ProjectStatusType;
+  tasks: TaskType[];
+  createdBy: UserType;
+  assignedTo: TeamType | undefined;
+}
+
 export enum TaskPriorityType {
   LOW = "low",
   MEDIUM = "medium",

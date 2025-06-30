@@ -54,7 +54,7 @@ function MyProjects() {
         rightButtonAction={() => setShowCreateProjectModal(true)}
       />
       {projects.length ? (
-        <div className="flex flex-1 h-full space-x-6">
+        <div className="flex h-full space-x-6 overflow-hidden">
           <TaskListContainer title={`Active (${activeProjects.length})`}>
             {activeProjects.map((project) => (
               <ProjectListItem

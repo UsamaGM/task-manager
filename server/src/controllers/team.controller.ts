@@ -125,13 +125,13 @@ async function assignProject(req: AuthRequest, res: Response) {
       return;
     }
 
-    const updatedTeam = await team
-      .updateOne(
-        {
-          $addToSet: { projects: projectId },
-        },
-        { new: true }
-      )
+    const updatedTeam = await Team.findByIdAndUpdate(
+      teamId,
+      {
+        $addToSet: { projects: projectId },
+      },
+      { new: true }
+    )
       .populate("admin", "-password")
       .populate("members", "-password")
       .lean();

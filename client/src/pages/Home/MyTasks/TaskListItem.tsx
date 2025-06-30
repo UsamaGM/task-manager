@@ -23,7 +23,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
   const [isOpen, setIsOpen] = useState(false);
   const { changeTaskStatus } = useTask();
 
-  const projectId = useProject().getProjectWithTask(task._id)._id;
+  const projectId = useProject().getProjectWithTask(task._id)?._id;
   const adminId = useTeam().findTeamWithProject(projectId)?.admin._id;
   const userId = useAuth().user?._id;
   const isAdmin = adminId === userId;

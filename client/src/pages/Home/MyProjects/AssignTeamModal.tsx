@@ -76,7 +76,10 @@ function AssignTeamModal({ isOpen, project, onClose }: PropTypes) {
       <div className="flex flex-col items-start justify-between h-full min-h-20 text-gray-700 border border-gray-300 rounded-lg overflow-y-scroll">
         {searchResults.length ? (
           searchResults.map((team) => (
-            <div className="flex justify-between items-center w-full px-3 py-2 text-left border-b border-gray-100 last:border-b-0">
+            <div
+              key={team._id}
+              className="flex justify-between items-center w-full px-3 py-2 text-left border-b border-gray-100 last:border-b-0"
+            >
               <div className="flex flex-col flex-1">
                 <div className="text-sm font-medium text-gray-700">
                   {team.name}
