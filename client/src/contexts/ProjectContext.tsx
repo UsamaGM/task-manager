@@ -1,14 +1,25 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
 import { ProjectType } from "@/helpers/types";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface ProjectContextType {
   projects: ProjectType[];
+  setProjects: Dispatch<SetStateAction<ProjectType[]>>;
+  getProjectsArray: (projectIds: string[]) => ProjectType[];
+  getProjectsTaskCount: (projectIds: string[]) => number;
+  getProjectWithTask: (taskId: string) => ProjectType;
   createProject: (data: ProjectType) => Promise<void>;
-  updateProject: (projectId: string, updatedData: any) => Promise<void>;
+  updateProject: (projectId: string, updateData: any) => Promise<void>;
   deleteProject: (projectId: string) => Promise<boolean>;
 }
 
@@ -27,6 +38,26 @@ function ProjectProvider({ children }: { children: ReactNode }) {
     useLoaderData();
 
   const [projects, setProjects] = useState(userProjects);
+
+  function getProjectsArray(projectIds: string[]) {
+    return projects.filter((project) => projectIds.includes(project._id));
+  }
+
+  function getProjectsTaskCount(projectIds: string[]) {
+    return projects.reduce(
+      (acc, project) =>
+        projectIds.some((id) => id === project._id)
+          ? project.tasks.length + acc
+          : acc,
+      0
+    );
+  }
+
+  function getProjectWithTask(taskId: string) {
+    return projects.find((project) =>
+      project.tasks.some((task) => task === taskId)
+    )!;
+  }
 
   async function createProject(project: ProjectType) {
     try {
@@ -75,7 +106,16 @@ function ProjectProvider({ children }: { children: ReactNode }) {
 
   return (
     <ProjectContext.Provider
-      value={{ projects, createProject, updateProject, deleteProject }}
+      value={{
+        projects,
+        setProjects,
+        getProjectsArray,
+        getProjectsTaskCount,
+        getProjectWithTask,
+        createProject,
+        updateProject,
+        deleteProject,
+      }}
     >
       {children}
     </ProjectContext.Provider>

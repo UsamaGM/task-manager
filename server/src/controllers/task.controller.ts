@@ -1,87 +1,42 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/auth.middleware";
-import Task, {
-  type TaskPriorityType,
-  type TaskStatusType,
-} from "../models/task";
+import Task, { type TaskType } from "../models/task";
 import Project from "../models/project";
 import User from "../models/user";
-import type { ObjectId } from "mongoose";
 
-async function getUserTasks(req: AuthRequest, res: Response) {
-  const userId = req.user?._id;
+async function getTaskById(req: AuthRequest, res: Response) {
+  const id = req.params;
 
   try {
-    const user = await User.findById(userId).select("projects").lean();
-
-    const projects = await Project.find({
-      _id: { $in: user?.projects },
-    }).lean();
-
-    const projectMap: Map<string, any> = new Map();
-    const allTasks: ObjectId[] = [];
-
-    projects.forEach((project) => {
-      if (project.tasks && Array.isArray(project.tasks)) {
-        project.tasks.forEach((taskId) => {
-          projectMap.set(taskId.toString(), project);
-          allTasks.push(taskId);
-        });
-      }
-    });
-
-    const tasks = await Task.find({
-      _id: { $in: allTasks },
-    }).lean();
-
-    const groupedTasks = tasks.reduce((acc, task) => {
-      const status = task.status as TaskStatusType;
-      if (!acc[status]) acc[status] = [];
-
-      const project = projectMap.get(task._id.toString());
-      const taskWithProject = {
-        ...task,
-        project,
-      };
-
-      acc[status].push(taskWithProject);
-      return acc;
-    }, {} as Record<TaskStatusType, any[]>);
-
-    const userTasks = {
-      todo: {
-        tasks: groupedTasks.todo || [],
-        count: (groupedTasks.todo || []).length,
-      },
-      "in-progress": {
-        tasks: groupedTasks["in-progress"] || [],
-        count: (groupedTasks["in-progress"] || []).length,
-      },
-      done: {
-        tasks: groupedTasks.done || [],
-        count: (groupedTasks.done || []).length,
-      },
-    };
-
-    res.status(200).json(userTasks);
+    const task = await Task.findById(id)
+      .populate("createdBy", "_id username email")
+      .populate("assignedTo", "_id username email")
+      .lean();
+    if (!task) {
+      res.status(404).json({ message: "Task not found" });
+      return;
+    }
+    res.status(200).json(task);
   } catch (error) {
-    console.log(error);
+    console.error("GET /task/:id:", error);
     res.sendStatus(500);
   }
 }
 
 async function createTask(req: AuthRequest, res: Response) {
-  const { name, description, project, dueDate, priority } = req.body;
+  const { taskData }: { taskData: Partial<TaskType> & { project: string } } =
+    req.body;
+
   try {
     const newTask = await Task.create({
-      name,
-      description,
-      dueDate,
-      priority,
+      name: taskData.name,
+      description: taskData.description,
+      dueDate: taskData.dueDate,
+      priority: taskData.priority,
     });
 
     const updatedProject = await Project.findByIdAndUpdate(
-      project,
+      taskData.project,
       {
         $push: { tasks: newTask._id },
       },
@@ -90,11 +45,11 @@ async function createTask(req: AuthRequest, res: Response) {
 
     if (!updatedProject) {
       await Task.findByIdAndDelete(newTask._id);
-      res.status(400).json({ message: "Invalid project provided" });
+      res.sendStatus(500);
       return;
     }
 
-    const task = { ...newTask._doc, project: updatedProject };
+    const task = newTask.toObject();
 
     res.status(201).json(task);
   } catch (error) {
@@ -104,60 +59,95 @@ async function createTask(req: AuthRequest, res: Response) {
 }
 
 async function updateTask(req: AuthRequest, res: Response) {
-  const { id, name, description, priority, status, dueDate } = req.body;
+  const { id, updateData } = req.body;
 
   if (!id) {
     res.status(400).json({ message: "Id not provided" });
     return;
   }
 
-  let updatedData: {
-    name?: string;
-    description?: string;
-    priority?: TaskPriorityType;
-    status?: TaskStatusType;
-    dueDate?: string;
-  } = {};
-  if (name) updatedData.name = name;
-  if (description) updatedData.description = description;
-  if (priority) updatedData.priority = priority;
-  if (status) updatedData.status = status;
-  if (dueDate) updatedData.dueDate = dueDate;
-
   try {
-    const updatedTask = await Task.findByIdAndUpdate(id, updatedData, {
+    const updatedTask = await Task.findByIdAndUpdate(id, updateData, {
       new: true,
-    });
+    })
+      .populate("assignedTo", "-password")
+      .lean();
 
     res.status(200).json(updatedTask);
   } catch (error) {
-    console.log(error);
+    console.error("PUT /task:", error);
+    res.sendStatus(500);
+  }
+}
+
+async function assignTaskToMember(req: AuthRequest, res: Response) {
+  const { taskId, userId } = req.body;
+
+  if (!taskId || !userId) {
+    res.status(400).json({ message: "Incomplete data provided" });
+    return;
+  }
+
+  try {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      res.status(404).json({ message: "Task not found" });
+      return;
+    }
+
+    const user = await User.findById(userId).lean();
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    const updatedTask = await task
+      .updateOne(
+        {
+          assignedTo: userId,
+        },
+        { new: true }
+      )
+      .populate("assignedTo", "-password")
+      .lean();
+
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    console.error("PUT /task/assign:", error);
     res.sendStatus(500);
   }
 }
 
 async function deleteTask(req: AuthRequest, res: Response) {
-  const { taskId, projectId } = req.params;
+  const { taskId } = req.params;
 
   try {
-    const deletedTask = await Task.findByIdAndDelete(taskId);
+    const deletedTask = await Task.findByIdAndDelete(taskId).lean();
     if (!deletedTask) {
       res.status(400).json({
-        message: "Invalid Request, the provided task ID was not found",
+        message: "Invalid Request, Task was not found",
       });
       return;
     }
 
-    const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      {
-        $pull: { tasks: taskId },
-      },
-      { new: true }
-    );
+    const associatedProject = await Project.findOne({
+      tasks: deletedTask._id,
+    });
 
-    res.status(201).json({ message: "Success" });
-  } catch (error) {}
+    if (!associatedProject) {
+      res.status(400).json({ message: "" });
+      return;
+    }
+
+    await Project.findByIdAndUpdate(associatedProject?._id, {
+      $pull: { tasks: deletedTask._id },
+    }).lean();
+
+    res.status(201).json({ message: "Deleted the Task" });
+  } catch (error) {
+    console.error("DELETE /task/:taskId:", error);
+    res.sendStatus(500);
+  }
 }
 
-export { getUserTasks, createTask, updateTask, deleteTask };
+export { getTaskById, createTask, updateTask, assignTaskToMember, deleteTask };

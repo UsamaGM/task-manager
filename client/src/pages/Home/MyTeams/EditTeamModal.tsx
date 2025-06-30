@@ -3,6 +3,7 @@ import {
   TextAreaWithLabel,
   TextInputWithLabel,
 } from "@/components";
+import CancelButton from "@/components/CancelButton";
 import ModalContainer from "@/components/ModalContainer";
 import { useTeam } from "@/contexts/TeamContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
@@ -94,7 +95,7 @@ function EditForm({ team, onClose }: FormPropTypes) {
 
   const isError = !!formErrorsHandler(errors);
   if (isError) {
-    animate(".form-container", {
+    animate(".base-container", {
       translateX: [-25, 25, -25, 25, 0],
       duration: 500,
       ease: "inOutBounce",
@@ -121,13 +122,7 @@ function EditForm({ team, onClose }: FormPropTypes) {
         {...register("description")}
       />
       <div className="flex space-x-5">
-        <button
-          type="button"
-          onClick={handleClose}
-          className="w-full hover:bg-red-200 hover:text-red-700 transition-colors duration-300 rounded-lg cursor-pointer"
-        >
-          Cancel
-        </button>
+        <CancelButton onClick={handleClose} />
         <SubmitButton isLoading={isLoading} title="Update Team Data" />
       </div>
     </form>

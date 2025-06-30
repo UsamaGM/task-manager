@@ -3,19 +3,18 @@ import {
   BellAlertIcon,
   HomeIcon,
   UserGroupIcon,
-  UserIcon,
+  DocumentTextIcon,
   Cog6ToothIcon,
   ArrowLeftStartOnRectangleIcon,
   MagnifyingGlassIcon,
   CubeIcon,
-  ClipboardIcon,
 } from "@heroicons/react/24/solid";
 import SidebarItem from "./SidebarItem";
 import { useEffect } from "react";
 import * as anime from "animejs";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Id, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 function Sidebar() {
   const { logout, user } = useAuth();
@@ -40,8 +39,7 @@ function Sidebar() {
 
   const navigate = useNavigate();
   function handleLogout() {
-    let toastId: Id;
-    const logoutConfirmationDialog = (
+    const toastId = toast.warn(
       <div className="w-full">
         <h2>Confirm logout</h2>
         <h4>Do you really want to log out?</h4>
@@ -63,13 +61,13 @@ function Sidebar() {
             Yes, log me out
           </button>
         </div>
-      </div>
+      </div>,
+      {
+        autoClose: false,
+        closeButton: false,
+        position: "bottom-left",
+      }
     );
-    toastId = toast.warn(logoutConfirmationDialog, {
-      autoClose: false,
-      closeButton: false,
-      position: "bottom-left",
-    });
   }
 
   const isNotificationPresent = true; //TODO: This should be replaced with actual logic to check for notifications
@@ -120,7 +118,7 @@ function Sidebar() {
           navigateTo="/home/my-projects"
         />
         <SidebarItem
-          icon={<UserIcon />}
+          icon={<DocumentTextIcon />}
           title="My Tasks"
           navigateTo="/home/my-tasks"
         />

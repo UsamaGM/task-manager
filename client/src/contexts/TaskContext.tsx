@@ -1,12 +1,6 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
-import {
-  GroupedTasksListType,
-  TaskPriorityType,
-  TaskStatusType,
-  TaskType,
-  TaskWithProjectType,
-} from "@/helpers/types";
+import { TaskStatusType, TaskType } from "@/helpers/types";
 import {
   createContext,
   ReactNode,
@@ -16,24 +10,18 @@ import {
 } from "react";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
-
-interface UpdateDataType {
-  name?: string;
-  description?: string;
-  dueData?: string;
-  priority?: TaskPriorityType;
-}
+import { useProject } from "./ProjectContext";
 
 interface TaskContextType {
-  tasks: GroupedTasksListType;
-  createTask: (data: any) => Promise<void>;
+  tasks: TaskType[];
+  createTask: (data: Partial<TaskType> & { project: string }) => Promise<void>;
+  updateTask: (taskId: string, formData: Partial<TaskType>) => Promise<void>;
   changeTaskStatus: (
     taskId: string,
-    prevStatus: TaskStatusType,
     newStatus: TaskStatusType
   ) => Promise<void>;
-  updateTask: (taskId: string, formData: UpdateDataType) => Promise<void>;
-  deleteTask: (task: TaskWithProjectType) => Promise<void>;
+  assignTask: (taskId: string, userId: string) => Promise<void>;
+  deleteTask: (taskId: string) => Promise<boolean>;
 }
 
 const TaskContext = createContext<TaskContextType | null>(null);
@@ -47,55 +35,44 @@ export function useTask() {
 }
 
 export default function TaskProvider({ children }: { children: ReactNode }) {
-  const { tasks: groupedTasks }: { tasks: GroupedTasksListType } =
-    useLoaderData();
-  const [tasks, setTasks] = useState(groupedTasks);
+  const { tasks: loaderData }: { tasks: TaskType[] } = useLoaderData();
+  const [tasks, setTasks] = useState(loaderData);
+  const { setProjects } = useProject();
 
-  const createTask = useCallback(async (taskData: any) => {
-    try {
-      const { data }: { data: TaskWithProjectType } = await api.post(
-        "/task",
-        taskData
-      );
-      console.log(data);
-      setTasks((prev) => ({
-        ...prev,
-        [data.status]: {
-          tasks: [data, tasks],
-          count: prev[data.status].count + 1,
-        },
-      }));
-      toast.success(`New Task "${data.name}"`);
-    } catch (error) {
-      apiErrorHandler(error);
-    }
-  }, []);
+  const createTask = useCallback(
+    async (taskData: Partial<TaskType> & { project: string }) => {
+      try {
+        const { data }: { data: TaskType } = await api.post("/task", {
+          taskData,
+        });
+
+        setProjects((prev) =>
+          prev.map((project) =>
+            project._id === taskData._id
+              ? { ...project, tasks: [data._id, ...project.tasks] }
+              : project
+          )
+        );
+        setTasks((prev) => [data, ...prev]);
+
+        toast.success(`New Task "${data.name}"`);
+      } catch (error) {
+        apiErrorHandler(error);
+      }
+    },
+    []
+  );
 
   const updateTask = useCallback(
-    async (taskId: string, formData: UpdateDataType) => {
+    async (taskId: string, updateData: Partial<TaskType>) => {
       try {
         const { data }: { data: TaskType } = await api.put("/task", {
           id: taskId,
-          ...formData,
+          updateData,
         });
-        setTasks((prev) => {
-          const updatedTasks = prev[data.status].tasks.map((task) =>
-            task._id === data._id
-              ? {
-                  ...task,
-                  ...data,
-                }
-              : task
-          );
-
-          return {
-            ...prev,
-            [data.status]: {
-              tasks: updatedTasks,
-              count: prev[data.status].count,
-            },
-          };
-        });
+        setTasks((prev) =>
+          prev.map((task) => (task._id === data._id ? data : task))
+        );
         toast.success("Task Updated successfully!");
       } catch (error) {
         apiErrorHandler(error);
@@ -105,37 +82,16 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
   );
 
   const changeTaskStatus = useCallback(
-    async (
-      taskId: string,
-      prevStatus: TaskStatusType,
-      newStatus: TaskStatusType
-    ) => {
+    async (taskId: string, newStatus: TaskStatusType) => {
       try {
         const { data }: { data: TaskType } = await api.put("/task", {
           id: taskId,
-          status: newStatus,
+          updateData: { status: newStatus },
         });
 
-        setTasks((prev) => {
-          const taskData = prev[prevStatus].tasks.find(
-            (task) => task._id === taskId
-          );
-
-          const updatedPrevStatusData = {
-            tasks: prev[prevStatus].tasks.filter((task) => task._id !== taskId),
-            count: prev[prevStatus].count - 1,
-          };
-          const updatedNewStatusData = {
-            tasks: [{ ...taskData, ...data }, ...prev[newStatus].tasks],
-            count: prev[newStatus].count + 1,
-          };
-
-          return {
-            ...prev,
-            [prevStatus]: updatedPrevStatusData,
-            [newStatus]: updatedNewStatusData,
-          };
-        });
+        setTasks((prev) =>
+          prev.map((task) => (task._id === data._id ? data : task))
+        );
       } catch (error) {
         apiErrorHandler(error);
       }
@@ -143,30 +99,44 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  const deleteTask = useCallback(async (task: TaskWithProjectType) => {
+  const assignTask = useCallback(async (taskId: string, userId: string) => {
     try {
-      await api.delete(`/task/${task.project._id}/${task._id}`);
-
-      setTasks((prev) => {
-        const updatedTasks = prev[task.status].tasks.filter(
-          (t) => task._id !== t._id
-        );
-        const updatedStatusData = {
-          tasks: updatedTasks,
-          count: updatedTasks.length,
-        };
-        return { ...prev, [task.status]: updatedStatusData };
+      const { data }: { data: TaskType } = await api.put("/task/assign", {
+        taskId,
+        userId,
       });
 
-      toast.success(`Task ${task.name} deleted`);
+      setTasks((prev) =>
+        prev.map((task) => (task._id === data._id ? data : task))
+      );
+      toast.success(`Assigned ${data.name} to the member`);
     } catch (error) {
       apiErrorHandler(error);
     }
   }, []);
 
+  const deleteTask = useCallback(async (taskId: string) => {
+    try {
+      await api.delete(`/task/${taskId}`);
+
+      setTasks((prev) => prev.filter((task) => task._id !== taskId));
+      return true;
+    } catch (error) {
+      apiErrorHandler(error);
+      return false;
+    }
+  }, []);
+
   return (
     <TaskContext.Provider
-      value={{ tasks, createTask, updateTask, changeTaskStatus, deleteTask }}
+      value={{
+        tasks,
+        createTask,
+        updateTask,
+        changeTaskStatus,
+        assignTask,
+        deleteTask,
+      }}
     >
       {children}
     </TaskContext.Provider>

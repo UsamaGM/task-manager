@@ -9,7 +9,7 @@ import CancelButton from "@/components/CancelButton";
 import PrioritySelectorWithLabel from "@/components/PrioritySelectorWithLabel";
 import { useProject } from "@/contexts/ProjectContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
-import { TaskPriorityType } from "@/helpers/types";
+import { TaskPriorityType, TaskType } from "@/helpers/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
 import { useForm } from "react-hook-form";
@@ -17,19 +17,22 @@ import { z } from "zod";
 
 interface PropTypes {
   isLoading: boolean;
+  subtitle?: string;
   submitBtnTitle: string;
   defaultValues: {
     name: string;
     description: string;
     dueDate: string;
     priority: TaskPriorityType;
+    project?: string;
   };
   onClose: () => void;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: Partial<TaskType> & { project: string }) => Promise<void>;
 }
 
 function TaskForm({
   isLoading,
+  subtitle,
   submitBtnTitle,
   defaultValues,
   onClose,
@@ -37,7 +40,7 @@ function TaskForm({
 }: PropTypes) {
   const { projects } = useProject();
 
-  const projectSchema = z.object({
+  const formSchema = z.object({
     name: z.string().min(3, "Name must be 3 characters or more"),
     description: z
       .string()
@@ -47,29 +50,24 @@ function TaskForm({
     priority: z.custom<TaskPriorityType>(),
   });
 
-  type projectDataType = z.infer<typeof projectSchema>;
+  type formDataTypes = z.infer<typeof formSchema>;
 
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<projectDataType>({
-    resolver: zodResolver(projectSchema),
+  } = useForm<formDataTypes>({
+    resolver: zodResolver(formSchema),
     defaultValues,
     mode: "onSubmit",
     reValidateMode: "onSubmit",
   });
 
-  const isError = formErrorsHandler(errors);
-  if (isError) {
-    animate(".base-container", {
-      translateX: [-25, 25, -25, 25, 0],
-      duration: 500,
-    });
-  }
+  formErrorsHandler(errors);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-6">
+      {subtitle && <p className="text-center">{subtitle}</p>}
       <TextInputWithLabel
         label="Task Name"
         id="name"
@@ -84,12 +82,14 @@ function TaskForm({
         hint="Should be descriptive, show what this is about"
         {...register("description")}
       />
-      <DropdownWithLabel
-        label="Associated Project"
-        placeholder="Select a Project"
-        options={projects}
-        {...register("project")}
-      />
+      {!subtitle && (
+        <DropdownWithLabel
+          label="Associated Project"
+          placeholder="Select a Project"
+          options={projects}
+          {...register("project")}
+        />
+      )}
       <div className="flex space-x-6 w-full">
         <DateSelectorWithLabel
           label="Due Date"

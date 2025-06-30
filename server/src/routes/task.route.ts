@@ -1,16 +1,18 @@
 import express from "express";
 import {
+  assignTaskToMember,
   createTask,
   deleteTask,
-  getUserTasks,
+  getTaskById,
   updateTask,
 } from "../controllers/task.controller";
 
 const taskRouter = express.Router();
 
-taskRouter.get("/", getUserTasks);
+taskRouter.get("/:id", getTaskById);
 taskRouter.post("/", createTask);
 taskRouter.put("/", updateTask);
-taskRouter.delete("/:projectId/:taskId", deleteTask);
+taskRouter.put("/assign", assignTaskToMember);
+taskRouter.delete("/:taskId", deleteTask);
 
 export default taskRouter;
