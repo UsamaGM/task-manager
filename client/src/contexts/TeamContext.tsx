@@ -75,6 +75,7 @@ function TeamProvider({ children }: { children: ReactNode }) {
         projectId,
         teamId,
       });
+      console.log(data);
       setTeams((prev) =>
         prev.map((team) => (team._id === data._id ? data : team))
       );

@@ -2,18 +2,25 @@ import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/auth.middleware";
 import Team from "../models/team";
 
-async function getUserTeams(req: AuthRequest, res: Response) {
+async function getTeamById(req: AuthRequest, res: Response) {
+  const { id } = req.params;
+
   try {
-    const userTeams = await Team.find({
-      $or: [{ admin: req.user?._id }, { members: req.user?._id.toString() }],
-    })
+    const team = await Team.findById(id)
       .populate("admin", "-password")
       .populate("members", "-password")
+      .populate("projects")
+      .populate("projects.tasks")
       .lean();
 
-    res.status(200).json(userTeams);
+    if (!team) {
+      res.status(404).json({ message: "Team not found" });
+      return;
+    }
+
+    res.status(200).json(team);
   } catch (error) {
-    console.error("GET: /team:", error);
+    console.error("GET /team/:id:", error);
     res.sendStatus(500);
   }
 }
@@ -24,7 +31,9 @@ async function getSearchedTeams(req: AuthRequest, res: Response) {
   try {
     const teams = await Team.find({
       name: { $regex: query, $options: "i" },
-    }).lean();
+    })
+      .populate("admin", "username email")
+      .lean();
 
     res.status(200).json(teams);
   } catch (error) {
@@ -270,7 +279,7 @@ async function deleteTeam(req: AuthRequest, res: Response) {
 }
 
 export {
-  getUserTeams,
+  getTeamById,
   getSearchedTeams,
   createTeam,
   updateTeam,

@@ -5,7 +5,6 @@ export interface UserType {
   username: string;
   email: string;
   projects: string[];
-  teams: string[];
 }
 
 export interface ModalPropTypes {
@@ -24,6 +23,17 @@ export interface TeamType {
   admin: UserType;
   members: UserType[];
   projects: string[];
+}
+
+export interface DetailedTeamType {
+  _id: string;
+  name: string;
+  description: string;
+  admin: UserType;
+  members: UserType[];
+  projects: ProjectType[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export enum ProjectStatusType {

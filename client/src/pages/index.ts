@@ -1,19 +1,21 @@
 import Login from "./Auth/Login";
 import Register from "./Auth/Register";
-import Home from "./Home";
 import LandingPage from "./LandingPage";
+import Home from "./Home";
 import Dashboard from "./Home/Dashboard";
 import MyTeams from "./Home/MyTeams";
 import MyProjects from "./Home/MyProjects";
 import MyTasks from "./Home/MyTasks";
+import TeamDetails from "./TeamDetails";
 
 export {
   Login,
   Register,
+  LandingPage,
   Home,
   Dashboard,
   MyTeams,
   MyProjects,
   MyTasks,
-  LandingPage,
+  TeamDetails,
 };
