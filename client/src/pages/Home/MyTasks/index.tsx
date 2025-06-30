@@ -7,10 +7,18 @@ import CreateTaskModal from "./CreateTaskModal";
 import { TaskStatusType, TaskType } from "@/helpers/types";
 import EditTaskModal from "./EditTaskModal";
 import DeleteTaskModal from "./DeleteTaskModal";
+import {
+  DocumentTextIcon,
+  KeyIcon,
+  TicketIcon,
+} from "@heroicons/react/24/outline";
+import NoXMessage from "@/components/NoXMessage";
+import AssignTaskModal from "./AssignTaskModal";
 
 function MyTasks() {
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
   const [showEditTaskModal, setShowEditTaskModal] = useState(false);
+  const [showAssignTaskModal, setShowAssignTaskModal] = useState(false);
   const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
   const { tasks } = useTask();
@@ -26,6 +34,11 @@ function MyTasks() {
     setShowEditTaskModal(true);
   }
 
+  function onAssign(task: TaskType) {
+    setSelectedTask(task);
+    setShowAssignTaskModal(true);
+  }
+
   function onDelete(task: TaskType) {
     setSelectedTask(task);
     setShowDeleteTaskModal(true);
@@ -39,38 +52,48 @@ function MyTasks() {
         rightButtonAction={() => setShowCreateTaskModal(true)}
       />
 
-      <div className="flex flex-1 space-x-6 overflow-hidden">
-        <TaskListContainer title={`To Do (${todoTasks.length})`}>
-          {todoTasks.map((task) => (
-            <TaskListItem
-              key={task._id}
-              task={task}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))}
-        </TaskListContainer>
-        <TaskListContainer title={`In Progress (${inProgressTasks.length})`}>
-          {inProgressTasks.map((task) => (
-            <TaskListItem
-              key={task._id}
-              task={task}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))}
-        </TaskListContainer>
-        <TaskListContainer title={`Done (${doneTasks.length})`}>
-          {doneTasks.map((task) => (
-            <TaskListItem
-              key={task._id}
-              task={task}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))}
-        </TaskListContainer>
-      </div>
+      {tasks.length ? (
+        <div className="flex flex-1 space-x-6 overflow-hidden">
+          <TaskListContainer title={`To Do (${todoTasks.length})`}>
+            {todoTasks.map((task) => (
+              <TaskListItem
+                key={task._id}
+                task={task}
+                onEdit={onEdit}
+                onAssign={onAssign}
+                onDelete={onDelete}
+              />
+            ))}
+          </TaskListContainer>
+          <TaskListContainer title={`In Progress (${inProgressTasks.length})`}>
+            {inProgressTasks.map((task) => (
+              <TaskListItem
+                key={task._id}
+                task={task}
+                onEdit={onEdit}
+                onAssign={onAssign}
+                onDelete={onDelete}
+              />
+            ))}
+          </TaskListContainer>
+          <TaskListContainer title={`Done (${doneTasks.length})`}>
+            {doneTasks.map((task) => (
+              <TaskListItem
+                key={task._id}
+                task={task}
+                onEdit={onEdit}
+                onAssign={onAssign}
+                onDelete={onDelete}
+              />
+            ))}
+          </TaskListContainer>
+        </div>
+      ) : (
+        <NoXMessage
+          icon={<DocumentTextIcon />}
+          message="No Tasks yet. Let's create one."
+        />
+      )}
       <CreateTaskModal
         isOpen={showCreateTaskModal}
         onClose={() => setShowCreateTaskModal(false)}
@@ -79,6 +102,11 @@ function MyTasks() {
         isOpen={showEditTaskModal}
         task={selectedTask!}
         onClose={() => setShowEditTaskModal(false)}
+      />
+      <AssignTaskModal
+        isOpen={showAssignTaskModal}
+        task={selectedTask!}
+        onClose={() => setShowAssignTaskModal(false)}
       />
       <DeleteTaskModal
         isOpen={showDeleteTaskModal}

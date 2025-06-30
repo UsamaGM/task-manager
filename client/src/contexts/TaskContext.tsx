@@ -10,15 +10,17 @@ import {
 } from "react";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useProject } from "./ProjectContext";
 
 interface TaskContextType {
   tasks: TaskType[];
   createTask: (data: Partial<TaskType> & { project: string }) => Promise<void>;
+  updateTask: (taskId: string, formData: Partial<TaskType>) => Promise<void>;
   changeTaskStatus: (
     taskId: string,
     newStatus: TaskStatusType
   ) => Promise<void>;
-  updateTask: (taskId: string, formData: Partial<TaskType>) => Promise<void>;
+  assignTask: (taskId: string, userId: string) => Promise<void>;
   deleteTask: (taskId: string) => Promise<boolean>;
 }
 
@@ -35,6 +37,7 @@ export function useTask() {
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { tasks: loaderData }: { tasks: TaskType[] } = useLoaderData();
   const [tasks, setTasks] = useState(loaderData);
+  const { setProjects } = useProject();
 
   const createTask = useCallback(
     async (taskData: Partial<TaskType> & { project: string }) => {
@@ -43,7 +46,15 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
           taskData,
         });
 
+        setProjects((prev) =>
+          prev.map((project) =>
+            project._id === taskData._id
+              ? { ...project, tasks: [data._id, ...project.tasks] }
+              : project
+          )
+        );
         setTasks((prev) => [data, ...prev]);
+
         toast.success(`New Task "${data.name}"`);
       } catch (error) {
         apiErrorHandler(error);
@@ -88,6 +99,22 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const assignTask = useCallback(async (taskId: string, userId: string) => {
+    try {
+      const { data }: { data: TaskType } = await api.put("/task/assign", {
+        taskId,
+        userId,
+      });
+
+      setTasks((prev) =>
+        prev.map((task) => (task._id === data._id ? data : task))
+      );
+      toast.success(`Assigned ${data.name} to the member`);
+    } catch (error) {
+      apiErrorHandler(error);
+    }
+  }, []);
+
   const deleteTask = useCallback(async (taskId: string) => {
     try {
       await api.delete(`/task/${taskId}`);
@@ -102,7 +129,14 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
 
   return (
     <TaskContext.Provider
-      value={{ tasks, createTask, updateTask, changeTaskStatus, deleteTask }}
+      value={{
+        tasks,
+        createTask,
+        updateTask,
+        changeTaskStatus,
+        assignTask,
+        deleteTask,
+      }}
     >
       {children}
     </TaskContext.Provider>

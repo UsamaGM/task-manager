@@ -46,9 +46,7 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
         } finally {
           setIsLoading(false);
         }
-      } else {
-        setSearchResults([]);
-      }
+      } else setSearchResults([]);
     }, 500);
   }
 
@@ -123,7 +121,7 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
             </button>
           ))
         ) : (
-          <p className="m-3 text-center">
+          <p className="w-full h-full text-center">
             Enter a user's name or email <br />
             to search and add as member
           </p>

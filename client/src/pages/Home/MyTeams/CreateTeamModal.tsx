@@ -1,5 +1,4 @@
 import {
-  FormContainer,
   SubmitButton,
   TextAreaWithLabel,
   TextInputWithLabel,
@@ -44,8 +43,8 @@ function CreateTeamModal({ isOpen, onClose }: ModalPropTypes) {
   });
 
   useEffect(() => {
-    animate(".form-container", {
-      translateY: 25,
+    animate(".base-container", {
+      translateY: [-50, 0],
       duration: 500,
     });
   }, [isOpen]);

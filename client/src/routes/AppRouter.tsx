@@ -34,13 +34,13 @@ const authenticatedRoutes = [
   {
     path: "/home",
     element: (
-      <TaskProvider>
+      <TeamProvider>
         <ProjectProvider>
-          <TeamProvider>
+          <TaskProvider>
             <Home />
-          </TeamProvider>
+          </TaskProvider>
         </ProjectProvider>
-      </TaskProvider>
+      </TeamProvider>
     ),
     loader: dataLoader,
     hydrateFallbackElement: <Loader fullscreen />,

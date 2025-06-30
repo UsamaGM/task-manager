@@ -27,7 +27,7 @@ export default async function authMiddleware(
 
     next();
   } else {
-    console.log("Unauthorized access declined: ", req.ip);
+    console.error("Unauthorized access declined: ", req.ip);
     res.sendStatus(401);
   }
 }

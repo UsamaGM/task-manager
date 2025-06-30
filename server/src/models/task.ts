@@ -32,8 +32,8 @@ const taskSchema = new mongoose.Schema(
       ref: "Users",
     },
     assignedTo: {
-      type: String,
-      required: false,
+      type: mongoose.Types.ObjectId,
+      ref: "Users",
     },
   },
   {
@@ -55,5 +55,6 @@ export interface TaskType {
   dueDate: string;
   priority: TaskPriorityType;
   status: TaskStatusType;
+  createdBy: UserType | ObjectId;
   assignedTo: UserType | ObjectId;
 }
