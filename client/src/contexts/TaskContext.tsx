@@ -14,6 +14,7 @@ import { useProject } from "./ProjectContext";
 
 interface TaskContextType {
   tasks: TaskType[];
+  getDoneTasksCount: (tasks: string[]) => number;
   createTask: (data: Partial<TaskType> & { project: string }) => Promise<void>;
   updateTask: (taskId: string, formData: Partial<TaskType>) => Promise<void>;
   changeTaskStatus: (
@@ -36,8 +37,18 @@ export function useTask() {
 
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { tasks: loaderData }: { tasks: TaskType[] } = useLoaderData();
-  const [tasks, setTasks] = useState(loaderData);
+  const [tasks, setTasks] = useState(loaderData || []);
   const { setProjects } = useProject();
+
+  const getDoneTasksCount = useCallback((t: string[]) => {
+    return tasks.reduce(
+      (acc, task) =>
+        t.some((t) => t === task._id) && task.status === TaskStatusType.DONE
+          ? acc + 1
+          : acc,
+      0
+    );
+  }, []);
 
   const createTask = useCallback(
     async (taskData: Partial<TaskType> & { project: string }) => {
@@ -131,6 +142,7 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
     <TaskContext.Provider
       value={{
         tasks,
+        getDoneTasksCount,
         createTask,
         updateTask,
         changeTaskStatus,
