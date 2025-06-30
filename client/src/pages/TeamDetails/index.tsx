@@ -1,11 +1,13 @@
 import { Card, NoXMessage } from "@/components";
 import { useAuth } from "@/contexts/AuthContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { DetailedTeamType, ProjectType, UserType } from "@/helpers/types";
+import { DetailedTeamType } from "@/helpers/types";
 import { CubeTransparentIcon } from "@heroicons/react/24/outline";
 import { stagger, Timeline } from "animejs";
 import { useEffect } from "react";
-import { Link, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
+import ProjectCard from "./ProjectCard";
+import UserCard from "./UserCard";
 
 function TeamDetails() {
   const { user } = useAuth();
@@ -86,47 +88,4 @@ function TeamDetails() {
   );
 }
 
-interface UserCardPropTypes {
-  user: UserType;
-  isAdmin?: boolean;
-}
-
 export default TeamDetails;
-
-function ProjectCard({ project }: { project: ProjectType }) {
-  return (
-    <Link
-      to={`/project/${project._id}`}
-      className="project-card flex flex-col space-y-2 max-w-md p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-102 transition-transform duration-300"
-    >
-      <h3 className="font-bold">{project.name}</h3>
-      <h4 className="line-clamp-2 text-justify">{project.description}</h4>
-      <h4>
-        From <b>{getFormattedDate(project.startDate)}</b> to{" "}
-        <b>{getFormattedDate(project.endDate)}</b>
-      </h4>
-      <div className="flex justify-between items-center">
-        <h4>
-          <b>{project.tasks.length}</b> Tasks
-        </h4>
-        <h4>
-          {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-        </h4>
-      </div>
-    </Link>
-  );
-}
-
-function UserCard({ user, isAdmin = false }: UserCardPropTypes) {
-  return (
-    <Link
-      to={`/user/${user._id}`}
-      className="user-card flex flex-col space-y-2 max-w-md p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-105 transition-transform duration-300"
-    >
-      <h3 className="font-bold">
-        {user.username} {isAdmin && "(Admin)"}
-      </h3>
-      <h4 className="text-sm">{user.email}</h4>
-    </Link>
-  );
-}

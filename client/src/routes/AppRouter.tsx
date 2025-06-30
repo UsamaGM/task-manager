@@ -14,10 +14,11 @@ import {
   MyProjects,
   MyTasks,
   TeamDetails,
+  ProjectDetails,
 } from "@/pages";
 import Loader from "@/components/Loader";
 
-import { dataLoader, teamDataLoader } from "./dataLoaders";
+import { dataLoader, projectDataLoader, teamDataLoader } from "./dataLoaders";
 
 import { useAuth } from "@/contexts/AuthContext";
 import TaskProvider from "@/contexts/TaskContext";
@@ -65,6 +66,12 @@ const authenticatedRoutes = [
     path: "/team/:id",
     element: <TeamDetails />,
     loader: teamDataLoader,
+    hydrateFallbackElement: <Loader fullscreen />,
+  },
+  {
+    path: "/project/:id",
+    element: <ProjectDetails />,
+    loader: projectDataLoader,
     hydrateFallbackElement: <Loader fullscreen />,
   },
   { path: "/", element: <LandingPage /> },

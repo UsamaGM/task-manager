@@ -37,6 +37,7 @@ export function useTask() {
 
 export default function TaskProvider({ children }: { children: ReactNode }) {
   const { tasks: loaderData }: { tasks: TaskType[] } = useLoaderData();
+
   const [tasks, setTasks] = useState(loaderData || []);
   const { setProjects } = useProject();
 
@@ -58,10 +59,10 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
         });
 
         setProjects((prev) =>
-          prev.map((project) =>
-            project._id === taskData._id
-              ? { ...project, tasks: [data._id, ...project.tasks] }
-              : project
+          prev.map((p) =>
+            p._id === taskData.project
+              ? { ...p, tasks: [data._id, ...p.tasks] }
+              : p
           )
         );
         setTasks((prev) => [data, ...prev]);
@@ -116,6 +117,8 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
         taskId,
         userId,
       });
+
+      console.log(data);
 
       setTasks((prev) =>
         prev.map((task) => (task._id === data._id ? data : task))
