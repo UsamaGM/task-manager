@@ -18,12 +18,18 @@ import {
 } from "@/pages";
 import Loader from "@/components/Loader";
 
-import { dataLoader, projectDataLoader, teamDataLoader } from "./dataLoaders";
+import {
+  dataLoader,
+  projectDataLoader,
+  teamDataLoader,
+  userDataLoader,
+} from "./dataLoaders";
 
 import { useAuth } from "@/contexts/AuthContext";
 import TaskProvider from "@/contexts/TaskContext";
 import ProjectProvider from "@/contexts/ProjectContext";
 import TeamProvider from "@/contexts/TeamContext";
+import UserDetails from "@/pages/UserDetails";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -61,6 +67,12 @@ const authenticatedRoutes = [
         element: <MyTasks />,
       },
     ],
+  },
+  {
+    path: "/user/:id",
+    element: <UserDetails />,
+    loader: userDataLoader,
+    hydrateFallbackElement: <Loader fullscreen />,
   },
   {
     path: "/team/:id",

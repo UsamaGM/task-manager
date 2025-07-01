@@ -7,6 +7,14 @@ export interface UserType {
   projects: string[];
 }
 
+export interface DetailedUserType {
+  _id: string;
+  username: string;
+  email: string;
+  projects: ProjectType[];
+  teams: TeamType[];
+}
+
 export interface ModalPropTypes {
   isOpen: boolean;
   onClose: () => void;

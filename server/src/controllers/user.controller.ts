@@ -5,6 +5,35 @@ import Team from "../models/team";
 import Task, { type TaskType } from "../models/task";
 import Project, { type ProjectType } from "../models/project";
 
+async function getUserById(req: AuthRequest, res: Response) {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id)
+      .select("-password")
+      .populate("projects")
+      .lean();
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    const teams = await Team.find({
+      $or: [{ admin: id }, { members: id }],
+    })
+      .populate("admin", "_id username email")
+      .populate("members", "_id username email")
+      .populate("projects")
+      .lean();
+
+    res.status(200).json({ ...user, teams });
+  } catch (error) {
+    console.error("GET /user/:id:", error);
+    res.sendStatus(500);
+  }
+}
+
 async function getQueriedUsers(req: AuthRequest, res: Response) {
   const { query } = req.params;
   const isEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(
@@ -77,4 +106,4 @@ async function getUserData(req: AuthRequest, res: Response) {
   }
 }
 
-export { getQueriedUsers, getUserData };
+export { getUserById, getQueriedUsers, getUserData };

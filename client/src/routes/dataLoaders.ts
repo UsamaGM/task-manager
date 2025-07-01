@@ -12,6 +12,16 @@ export async function dataLoader() {
   }
 }
 
+export async function userDataLoader({ params }: LoaderFunctionArgs) {
+  try {
+    const response = await api.get("/user/" + params.id);
+
+    return response.data;
+  } catch (error) {
+    apiErrorHandler(error);
+  }
+}
+
 export async function teamDataLoader({ params }: LoaderFunctionArgs) {
   try {
     const response = await api.get("/team/" + params.id);
