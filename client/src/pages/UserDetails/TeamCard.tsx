@@ -5,7 +5,7 @@ function TeamCard({ team, isAdmin }: { team: TeamType; isAdmin: boolean }) {
   return (
     <Link
       to={`/team/${team._id}`}
-      className="team-card flex flex-col flex-1 space-y-2 min-w-sm p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-102 transition-transform duration-300"
+      className="team-card flex flex-col flex-1 space-y-2 min-w-sm max-w-lg p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-102 transition-transform duration-300"
     >
       <h3 className="font-bold line-clamp-1">
         {team.name} ({isAdmin ? "Admin" : "Member"})

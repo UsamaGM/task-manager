@@ -6,7 +6,7 @@ function ProjectCard({ project }: { project: ProjectType }) {
   return (
     <Link
       to={`/project/${project._id}`}
-      className="project-card flex flex-col space-y-2 max-w-md p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-102 transition-transform duration-300"
+      className="project-card flex flex-col flex-1 space-y-2 min-w-sm max-w-md p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-102 transition-transform duration-300"
     >
       <h3 className="font-bold">{project.name}</h3>
       <h4 className="line-clamp-2 text-justify">{project.description}</h4>

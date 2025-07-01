@@ -17,29 +17,24 @@ function TeamDetails() {
   useEffect(() => {
     const tl = new Timeline({ delay: 400 });
 
-    tl.add(".description-card", {
-      rotateY: [0, 360],
-      duration: 500,
-    })
-      .add(".user-card", {
-        translateY: [0, "-2.5rem", 0],
-        duration: 300,
-        delay: stagger(200),
-        ease: "inOutBounce",
-      })
-      .add(".project-card", {
-        translateX: [0, "2.5rem", 0],
-        duration: 300,
-        delay: stagger(200),
-        ease: "inOutBounce",
-      });
+    tl.add(".user-card", {
+      translateY: [0, "-2.5rem", 0],
+      duration: 300,
+      delay: stagger(200),
+      ease: "inOutBounce",
+    }).add(".project-card", {
+      translateX: [0, "2.5rem", 0],
+      duration: 300,
+      delay: stagger(200),
+      ease: "inOutBounce",
+    });
 
     tl.play();
   }, []);
 
   return (
     <Card>
-      <div className="flex flex-col text-center space-y-6 w-screen h-screen text-wrap p-6 overflow-auto">
+      <div className="flex flex-col space-y-6 w-screen h-screen text-wrap p-6 overflow-auto">
         <div className="flex flex-col text-gray-800">
           <h2 className="text-3xl font-bold">{team.name}</h2>
           <h4>
@@ -53,15 +48,13 @@ function TeamDetails() {
           <p className="font-bold text-lg">
             {isAdmin ? "Description" : "What they have to say"}
           </p>
-          <div className="flex items-center justify-center">
-            <p className="description-card text-wrap max-w-3xl p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl">
-              {team.description}
-            </p>
+          <div className="flex">
+            <p className="description-card text-wrap">{team.description}</p>
           </div>
         </div>
         <div className="flex flex-col space-y-2">
           <p className="font-bold text-lg">Members</p>
-          <div className="flex flex-wrap justify-center items-center text-start gap-4 w-full">
+          <div className="flex flex-wrap items-center text-start gap-4 w-full">
             <UserCard user={team.admin} isAdmin />
             {team.members.map((member) => (
               <UserCard user={member} />
@@ -71,7 +64,7 @@ function TeamDetails() {
         <div className="flex flex-col space-y-2">
           <p className="font-bold text-lg">Projects</p>
           {team.projects.length ? (
-            <div className="flex flex-wrap justify-center items-center text-start space-x-4 w-full">
+            <div className="flex flex-wrap items-center text-start gap-4 w-full">
               {team.projects.map((project) => (
                 <ProjectCard project={project} />
               ))}
