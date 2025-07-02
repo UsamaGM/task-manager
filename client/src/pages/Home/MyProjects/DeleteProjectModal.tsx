@@ -1,4 +1,4 @@
-import { Loader } from "@/components";
+import { CancelButton, Loader, SubmitButton } from "@/components";
 import ModalContainer from "@/components/ModalContainer";
 import { useProject } from "@/contexts/ProjectContext";
 import { ModalPropTypes, ProjectType } from "@/helpers/types";
@@ -25,27 +25,21 @@ function DeleteProjectModal({ isOpen, project, onClose }: PropTypes) {
   if (!isOpen) return null;
   return (
     <ModalContainer title={`Delete Project "${project.name}"`}>
-      <h3>
-        Are you sure you want to delete the project "{project.name}"? This
-        action is permanent and all data associated with this team will be
-        erased.
-      </h3>
+      <div className="flex flex-col space-y-10 mt-4">
+        <h3>
+          Are you sure you want to delete the project "{project.name}"? This
+          action is permanent and all data associated with this team will be
+          erased.
+        </h3>
 
-      <div className="flex space-x-5">
-        <button
-          type="button"
-          onClick={onClose}
-          className="w-full p-2 hover:bg-red-200 hover:text-red-700 transition-colors duration-300 rounded-lg cursor-pointer"
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          onClick={handleDeleteTeam}
-          className="w-full p-2 bg-red-500 hover:bg-red-700 text-white transition-colors duration-300 rounded-lg cursor-pointer"
-        >
-          {isLoading ? <Loader size="small" /> : "Delete"}
-        </button>
+        <div className="flex space-x-5">
+          <CancelButton onClick={onClose} />
+          <SubmitButton
+            isLoading={isLoading}
+            title="Delete Project"
+            onClick={handleDeleteTeam}
+          />
+        </div>
       </div>
     </ModalContainer>
   );

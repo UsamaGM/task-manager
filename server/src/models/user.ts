@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema(
       ref: "Projects",
       default: [],
     },
+    profilePicture: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
@@ -68,4 +72,5 @@ export interface UserType {
   createdAt: Date;
   updatedAt: Date;
   matchPassword: (enteredPassword: string) => Promise<boolean>;
+  profilePicture: string;
 }

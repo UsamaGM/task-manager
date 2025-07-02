@@ -9,9 +9,8 @@ interface UserCardPropTypes {
 function UserCard({ user, isAdmin = false }: UserCardPropTypes) {
   return (
     <Link
-      key={user._id}
       to={`/user/${user._id}`}
-      className="user-card flex flex-col flex-1 space-y-2 min-w-3xs p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-105 transition-transform duration-300"
+      className="user-card flex flex-col space-y-2 max-w-md p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-105 transition-transform duration-300"
     >
       <h3 className="font-bold">
         {user.username} {isAdmin && "(Admin)"}

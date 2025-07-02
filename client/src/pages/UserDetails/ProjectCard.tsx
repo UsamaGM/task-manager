@@ -5,11 +5,10 @@ import { Link } from "react-router-dom";
 function ProjectCard({ project }: { project: ProjectType }) {
   return (
     <Link
-      key={project._id}
       to={`/project/${project._id}`}
-      className="project-card flex flex-col flex-1 space-y-2 min-w-sm max-w-md p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-102 transition-transform duration-300"
+      className="project-card flex flex-col flex-1 min-w-sm space-y-2 h-fit p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-102 transition-transform duration-300"
     >
-      <h3 className="font-bold">{project.name}</h3>
+      <h3 className="font-bold line-clamp-1">{project.name}</h3>
       <h4 className="line-clamp-2 text-justify">{project.description}</h4>
       <h4>
         From <b>{getFormattedDate(project.startDate)}</b> to{" "}

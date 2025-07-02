@@ -34,18 +34,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<UserType | null>(null);
 
+  const logout = useCallback(function () {
+    localStorage.removeItem("user");
+    deleteCookie("token");
+    setIsAuthenticated(false);
+  }, []);
+
   useEffect(() => {
     async function checkAuthorization() {
       const token = getCookie("token");
       if (token) {
         try {
-          const localUser = JSON.parse(localStorage.getItem("user")!);
+          await api.get("/auth/verify");
+
+          const localUserJSON = localStorage.getItem("user");
+          if (!localUserJSON) {
+            setIsAuthenticated(false);
+            return;
+          }
+          const localUser = JSON.parse(localUserJSON);
           setUser(localUser);
           setIsAuthenticated(true);
         } catch (error) {
-          toast.error("Error parsing user, logging you out");
-          localStorage.removeItem("user");
-          deleteCookie("token");
+          toast.error("Session expired, please log in again");
+          logout();
         } finally {
           setLoading(false);
         }
@@ -55,39 +67,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     checkAuthorization();
-  }, []);
+  }, [logout]);
 
-  const login = useCallback(async function (data: any) {
-    try {
-      const response = await api.post("/auth/login", data);
+  const login = useCallback(
+    async function (data: any) {
+      try {
+        const response = await api.post("/auth/login", data);
 
-      if (response.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        localStorage.setItem("token", response.data.token);
-        setCookie("token", response.data.token, {
-          maxAge: 3600,
-          path: "/",
-        });
+        if (response.status === 200) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
 
-        api.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
+          setCookie("token", response.data.token, {
+            maxAge: 259200,
+            path: "/",
+          });
 
-        setIsAuthenticated(true);
-        setUser(user);
+          api.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
 
-        return true;
+          setIsAuthenticated(true);
+
+          setUser(response.data.user);
+
+          return true;
+        }
+      } catch (error) {
+        apiErrorHandler(error);
+        return false;
       }
-    } catch (error) {
-      apiErrorHandler(error);
-      return false;
-    }
-    return true;
-  }, []);
-
-  const logout = useCallback(function () {
-    localStorage.removeItem("user");
-    deleteCookie("token");
-    setIsAuthenticated(false);
-  }, []);
+      return true;
+    },
+    [user]
+  );
 
   return (
     <AuthContext.Provider

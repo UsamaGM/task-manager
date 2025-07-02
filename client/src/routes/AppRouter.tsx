@@ -15,10 +15,16 @@ import {
   MyTasks,
   TeamDetails,
   ProjectDetails,
+  UserDetails,
 } from "@/pages";
 import Loader from "@/components/Loader";
 
-import { dataLoader, projectDataLoader, teamDataLoader } from "./dataLoaders";
+import {
+  dataLoader,
+  projectDataLoader,
+  teamDataLoader,
+  userDataLoader,
+} from "./dataLoaders";
 
 import { useAuth } from "@/contexts/AuthContext";
 import TaskProvider from "@/contexts/TaskContext";
@@ -61,6 +67,12 @@ const authenticatedRoutes = [
         element: <MyTasks />,
       },
     ],
+  },
+  {
+    path: "/user/:id",
+    element: <UserDetails />,
+    loader: userDataLoader,
+    hydrateFallbackElement: <Loader fullscreen />,
   },
   {
     path: "/team/:id",

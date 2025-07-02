@@ -8,6 +8,18 @@ export async function dataLoader() {
 
     return response.data;
   } catch (error) {
+    // BUG: This function should return a value in the catch block.
+    apiErrorHandler(error);
+  }
+}
+
+export async function userDataLoader({ params }: LoaderFunctionArgs) {
+  try {
+    const response = await api.get("/user/" + params.id);
+
+    return response.data;
+  } catch (error) {
+    // BUG: This function should return a value in the catch block.
     apiErrorHandler(error);
   }
 }
@@ -18,6 +30,7 @@ export async function teamDataLoader({ params }: LoaderFunctionArgs) {
 
     return response.data;
   } catch (error) {
+    // BUG: This function should return a value in the catch block.
     apiErrorHandler(error);
   }
 }
@@ -28,6 +41,7 @@ export async function projectDataLoader({ params }: LoaderFunctionArgs) {
 
     return response.data;
   } catch (error) {
+    // BUG: This function should return a value in the catch block.
     apiErrorHandler(error);
   }
 }

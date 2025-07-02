@@ -1,4 +1,4 @@
-import { ProjectType, TaskPriorityType } from "@/helpers/types";
+import { ProjectType } from "@/helpers/types";
 import { getFormattedDate } from "@/helpers/date-formatter";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { animate } from "animejs";
@@ -33,6 +33,7 @@ const DropdownWithLabel = forwardRef<HTMLInputElement, DropdownPropTypes>(
     const toggleDropdown = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       setIsOpen(!isOpen);
+
       animate(".icon", {
         rotateZ: isOpen ? [0, 180] : [180, 360],
         duration: 300,
@@ -77,25 +78,11 @@ const DropdownWithLabel = forwardRef<HTMLInputElement, DropdownPropTypes>(
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold">{label}</label>
         <div className="relative w-full">
-          <input
-            ref={ref}
-            type="hidden"
-            name={name}
-            value={value || ""}
-            onBlur={onBlur}
-          />
+          <input ref={ref} type="hidden" name={name} value={value || ""} />
 
           <button
             type="button"
             onClick={toggleDropdown}
-            onBlur={(e) => {
-              onBlur?.({
-                target: {
-                  value: value || "",
-                  name: name,
-                },
-              });
-            }}
             className="w-full px-4 py-2 outline rounded-lg text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
           >
             {selectedOption ? selectedOption.name : placeholder}

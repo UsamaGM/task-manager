@@ -42,13 +42,9 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
   const { setProjects } = useProject();
 
   const getDoneTasksCount = useCallback((t: string[]) => {
-    return tasks.reduce(
-      (acc, task) =>
-        t.some((t) => t === task._id) && task.status === TaskStatusType.DONE
-          ? acc + 1
-          : acc,
-      0
-    );
+    return tasks.filter(
+      (task) => t.includes(task._id) && task.status === TaskStatusType.DONE
+    ).length;
   }, []);
 
   const createTask = useCallback(
@@ -117,8 +113,6 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
         taskId,
         userId,
       });
-
-      console.log(data);
 
       setTasks((prev) =>
         prev.map((task) => (task._id === data._id ? data : task))

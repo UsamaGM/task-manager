@@ -5,7 +5,7 @@ import { type ObjectId } from "mongoose";
 
 function generateToken(id: ObjectId) {
   return jwt.sign({ id }, process.env.JWT_SECRET || "default", {
-    expiresIn: "30d",
+    expiresIn: "3d",
   });
 }
 

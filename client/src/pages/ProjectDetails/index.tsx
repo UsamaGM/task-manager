@@ -1,34 +1,67 @@
 import { Card, NoXMessage } from "@/components";
 import { getFormattedDate } from "@/helpers/date-formatter";
 import { DetailedProjectType } from "@/helpers/types";
-import { Link, useLoaderData } from "react-router-dom";
-import TaskCard from "./TaskCard";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { stagger, Timeline } from "animejs";
+import { useEffect } from "react";
+import { Link, useLoaderData } from "react-router-dom";
+import TeamCard from "../UserDetails/TeamCard";
+import TaskCard from "./TaskCard";
 
 const statusConfig = {
   active: {
     title: "Active",
-    className: "text-yellow-700",
+    className: "text-yellow-600",
   },
   completed: {
     title: "Completed",
-    className: "text-green-700",
+    className: "text-green-600",
   },
   "on-hold": {
     title: "On Hold",
-    className: "text-red-700",
+    className: "text-red-600",
   },
 };
 
 function ProjectDetails() {
   const project: DetailedProjectType = useLoaderData();
 
+  useEffect(() => {
+    const tl = new Timeline({ delay: 400 });
+
+    tl.add(".user-card", {
+      translateY: [0, "-2.5rem", 0],
+      duration: 300,
+      ease: "inOutBounce",
+    })
+      .add(
+        ".team-card",
+        {
+          translateX: [0, "2.5rem", 0],
+          duration: 300,
+          ease: "inOutBounce",
+        },
+        "-=200"
+      )
+      .add(
+        ".task-card",
+        {
+          translateY: [0, "-2.5rem", 0],
+          duration: 300,
+          delay: stagger(200),
+          ease: "inOutBounce",
+        },
+        "-=200"
+      );
+
+    tl.play();
+  }, []);
+
   return (
     <Card>
-      <h1 className="text-5xl font-black m-6">Project Details</h1>
-      <div className="flex flex-col space-y-8 w-screen h-max text-center text-gray-800 p-6 overflow-auto">
-        <div>
-          <h2 className="text-2xl font-bold">
+      <div className="flex flex-col space-y-6 w-screen h-screen text-wrap p-6 overflow-auto">
+        <div className="flex flex-col text-gray-800">
+          <h2 className="text-3xl font-bold">
             {project.name} (
             <span className={statusConfig[project.status].className}>
               {statusConfig[project.status].title}
@@ -42,62 +75,34 @@ function ProjectDetails() {
             Ending Date: <b>{getFormattedDate(project.endDate)}</b>
           </h4>
         </div>
-        <div className="flex flex-col justify-center items-center space-y-2">
-          <h3 className="text-xl font-bold">Created By</h3>
-          <Link
-            to={`/user/${project.createdBy._id}`}
-            className=" bg-white/20 border border-gray-300 hover:scale-105 shadow-md p-3 rounded-xl transition-transform duration-300"
-          >
-            <h2 className="text-lg font-bold">{project.createdBy.username}</h2>
-            <h4>{project.createdBy.email}</h4>
-            <h4>{project.createdBy.projects.length - 1} More Projects</h4>
-          </Link>
+        <div className="flex flex-col space-y-2">
+          <p className="font-bold text-lg">Created By</p>
+          <h2>
+            {project.createdBy.username} ({project.createdBy.email}){" "}
+            <Link
+              to={`/user/${project.createdBy._id}`}
+              className="text-blue-800 hover:underline"
+            >
+              Show user details
+            </Link>
+          </h2>
         </div>
-        <div className="flex flex-col justify-center items-center space-y-2">
-          <h3 className="text-xl font-bold">Description</h3>
-          <p className="max-w-3xl bg-white/20 border border-gray-300 shadow-md p-3 rounded-xl">
-            {project.description}
-          </p>
+        <div className="flex flex-col space-y-2">
+          <p className="font-bold text-lg">What it's about</p>
+          <div className="flex">
+            <p className="description-card text-wrap">{project.description}</p>
+          </div>
         </div>
         {project.assignedTo && (
-          <div className="flex flex-col justify-center items-center space-y-2">
-            <h3 className="text-xl font-bold">Assigned To</h3>
-            <div className=" bg-white/20 border border-gray-300 shadow-md p-3 rounded-xl">
-              <h2 className="text-lg font-bold">{project.assignedTo.name}</h2>
-              <h4>
-                Admin{" "}
-                <b>
-                  {project.assignedTo.admin.username} (
-                  {project.assignedTo.admin.email})
-                </b>
-              </h4>
-              <h4
-                title={project.assignedTo.description}
-                className="line-clamp-2 mb-2 max-w-3xl"
-              >
-                {project.assignedTo.description}
-              </h4>
-              <div className="flex justify-evenly items-center">
-                <span className="font-bold">
-                  {project.assignedTo.members.length} Members
-                </span>
-                <Link
-                  to={`/team/${project.assignedTo._id}`}
-                  className="bg-blue-100 hover:bg-blue-200 text-blue-800 border border-gray-400 hover:scale-105 text-sm font-bold rounded-lg px-4 py-1 transition-all duration-300"
-                >
-                  More About Team
-                </Link>
-                <span className="font-bold">
-                  {project.assignedTo.projects.length - 1} Other Projects
-                </span>
-              </div>
-            </div>
+          <div className="flex flex-col space-y-2">
+            <p className="font-bold text-lg">Assigned To</p>
+            <TeamCard team={project.assignedTo} />
           </div>
         )}
-        <div className="flex flex-col justify-center items-center space-y-2">
-          <h3 className="text-xl font-bold">Tasks</h3>
+        <div className="flex flex-col space-y-2">
+          <p className="font-bold text-lg">Tasks</p>
           {project.tasks.length ? (
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap text-start gap-4 w-full">
               {project.tasks.map((task) => (
                 <TaskCard task={task} />
               ))}
