@@ -27,6 +27,7 @@ async function login(req: Request, res: Response) {
     const token = generateToken(user._id);
     res.status(200).json({ message: "Success", user, token });
   } catch (error) {
+    console.error("POST /auth/login:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
@@ -50,6 +51,7 @@ async function register(req: Request, res: Response) {
 
     res.status(201).json({ message: "Success", newUser });
   } catch (error) {
+    console.error("POST /auth/register:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }

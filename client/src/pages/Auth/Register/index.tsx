@@ -1,8 +1,14 @@
+import {
+  PasswordInputWithLabel,
+  SubmitButton,
+  TextInputWithLabel,
+} from "@/components";
 import Card from "@/components/Card";
 import api from "@/config/api";
 import { apiErrorHandler, formErrorsHandler } from "@/helpers/errorHandler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -26,8 +32,10 @@ function Register() {
     reValidateMode: "onSubmit",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const onSubmit = async (data: formDataTypes) => {
+    setIsLoading(true);
     try {
       const response = await api.post("/auth/register", data);
       if (response.status === 201) {
@@ -41,6 +49,8 @@ function Register() {
         duration: 300,
         ease: "inOutExpo",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -48,10 +58,10 @@ function Register() {
 
   return (
     <Card>
-      <div className="w-full h-screen flex flex-col space-y-6 items-center justify-center">
+      <div className="form-container w-full h-screen flex flex-col items-center justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className={`flex flex-col bg-white/30 p-8 rounded-xl shadow-md w-full max-w-md ${
+          className={`flex flex-col space-y-6 bg-white/30 p-8 rounded-xl shadow-md w-full max-w-lg ${
             isError && "border-red-400 border-2"
           }`}
         >
@@ -59,35 +69,30 @@ function Register() {
             Register
           </h2>
 
-          <input
-            type="username"
-            placeholder="Username"
-            title="Someone..."
-            className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 ease-in-out"
+          <TextInputWithLabel
+            label="Username"
+            id="username"
+            placeholder="I_Am_Batman"
+            hint="Enter a username that will be displayed everywhere in the application"
             {...register("username")}
           />
-          <input
-            type="email"
-            placeholder="Email"
-            title="someone@mail.domain"
-            className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 ease-in-out"
+          <TextInputWithLabel
+            label="Email"
+            id="email"
+            placeholder="someone@domain.xyz"
+            hint="Enter your email"
             {...register("email")}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            title="$ecureP@ssword123"
-            className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 ease-in-out"
+          <PasswordInputWithLabel
+            label="Password"
+            id="password"
+            placeholder="$trongP@ssw0rd@321"
+            hint="Enter a strong password for your account"
             {...register("password")}
           />
-          <button
-            type="submit"
-            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition"
-          >
-            Register
-          </button>
+          <SubmitButton isLoading={isLoading} title="Register" />
         </form>
-        <span>
+        <span className="mt-6">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-700 hover:underline">
             Click here

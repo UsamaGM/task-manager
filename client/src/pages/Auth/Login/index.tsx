@@ -82,7 +82,7 @@ function Login() {
           />
           <SubmitButton title="Log In" isLoading={loading} />
         </form>
-        <span>
+        <span className="mt-6">
           Already have an account?{" "}
           <Link to="/register" className="text-blue-700 hover:underline">
             Click here
