@@ -5,6 +5,7 @@ export interface UserType {
   username: string;
   email: string;
   projects: string[];
+  profilePicture: string;
 }
 
 export interface DetailedUserType {
@@ -13,6 +14,7 @@ export interface DetailedUserType {
   email: string;
   projects: ProjectType[];
   teams: TeamType[];
+  profilePicture: string;
 }
 
 export interface ModalPropTypes {

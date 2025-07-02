@@ -46,7 +46,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         try {
           await api.get("/auth/verify");
-          const localUser = JSON.parse(localStorage.getItem("user")!);
+
+          const localUserJSON = localStorage.getItem("user");
+          if (!localUserJSON) {
+            setIsAuthenticated(false);
+            return;
+          }
+          const localUser = JSON.parse(localUserJSON);
           setUser(localUser);
           setIsAuthenticated(true);
         } catch (error) {
@@ -63,31 +69,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuthorization();
   }, [logout]);
 
-  const login = useCallback(async function (data: any) {
-    try {
-      const response = await api.post("/auth/login", data);
+  const login = useCallback(
+    async function (data: any) {
+      try {
+        const response = await api.post("/auth/login", data);
 
-      if (response.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        localStorage.setItem("token", response.data.token);
-        setCookie("token", response.data.token, {
-          maxAge: 259200,
-          path: "/",
-        });
+        if (response.status === 200) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
 
-        api.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
+          setCookie("token", response.data.token, {
+            maxAge: 259200,
+            path: "/",
+          });
 
-        setIsAuthenticated(true);
-        setUser(user);
+          api.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
 
-        return true;
+          setIsAuthenticated(true);
+
+          setUser(response.data.user);
+
+          return true;
+        }
+      } catch (error) {
+        apiErrorHandler(error);
+        return false;
       }
-    } catch (error) {
-      apiErrorHandler(error);
-      return false;
-    }
-    return true;
-  }, [user]);
+      return true;
+    },
+    [user]
+  );
 
   return (
     <AuthContext.Provider

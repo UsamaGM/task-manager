@@ -1,14 +1,11 @@
-import { Loader } from "@/components";
+import { Loader, SubmitButton } from "@/components";
+import CancelButton from "@/components/CancelButton";
 import ModalContainer from "@/components/ModalContainer";
 import api from "@/config/api";
 import { useTeam } from "@/contexts/TeamContext";
 import { apiErrorHandler } from "@/helpers/errorHandler";
 import { TeamType, UserType } from "@/helpers/types";
-import {
-  MagnifyingGlassIcon,
-  UserPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
 
 interface PropTypes {
@@ -38,7 +35,7 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
         setIsLoading(true);
         try {
           const { data }: { data: UserType[] } = await api.get(
-            `/user/${e.target.value}`
+            `/user/search/${e.target.value}`
           );
           setSearchResults(data);
         } catch (error) {
@@ -153,21 +150,12 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
       </div>
 
       <div className="flex gap-3">
-        <button
-          onClick={handleClose}
-          className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
-          disabled={isLoading}
-        >
-          Cancel
-        </button>
-        <button
+        <CancelButton onClick={handleClose} />
+        <SubmitButton
+          isLoading={isLoading}
+          title="Add Selected"
           onClick={handleAddMembers}
-          disabled={isLoading || selectedUsers.length === 0}
-          className="flex flex-1 items-center justify-center px-4 py-2 bg-blue-200 text-blue-900 rounded-md hover:bg-blue-300 font-bold transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-        >
-          <UserPlusIcon className="size-5 strole-3 mr-2" />
-          Add Members ({selectedUsers.length})
-        </button>
+        />
       </div>
     </ModalContainer>
   );

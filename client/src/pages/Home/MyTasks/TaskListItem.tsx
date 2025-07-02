@@ -23,8 +23,8 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
   const [isOpen, setIsOpen] = useState(false);
   const { changeTaskStatus } = useTask();
 
-  const projectId = useProject().getProjectWithTask(task._id)?._id;
-  const adminId = useTeam().findTeamWithProject(projectId)?.admin._id;
+  const project = useProject().getProjectWithTask(task._id);
+  const adminId = useTeam().findTeamWithProject(project._id)?.admin._id;
   const userId = useAuth().user?._id;
   const isAdmin = adminId === userId;
   const showExtraOptions = isAdmin || task.assignedTo?._id === userId;
@@ -58,27 +58,8 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
       <div className="flex justify-between items-start">
         <div>
           <h3 className="font-bold text-gray-800">{task.name}</h3>
-          <div className="flex space-x-2">
-            {task.status !== TaskStatusType.DONE && (
-              <h4 className="flex-1 font-semibold text-gray-600 text-sm">
-                Due{" "}
-                <span
-                  className={
-                    hasDueDatePassed ? "text-red-600" : "text-gray-600"
-                  }
-                >
-                  {getFormattedDate(task.dueDate)}
-                </span>
-              </h4>
-            )}
-            <h4 className="flex flex-1 space-x-1 font-semibold text-gray-600 text-sm">
-              <span>Priority</span>
-              <span className={priorityConfig.color}>
-                {priorityConfig.title}
-              </span>
-            </h4>
-          </div>
         </div>
+
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -89,16 +70,38 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
           <EllipsisVerticalIcon className="size-5 text-gray-900" />
         </button>
       </div>
-      <p className="flex-1 text-gray-700 text-sm line-clamp-4 min-h-1/4">
+      <p
+        title={task.description}
+        className="flex-1 text-gray-700 text-justify text-sm line-clamp-2"
+      >
         {task.description}
       </p>
 
+      <p className="text-sm font-bold">Project: {project.name}</p>
+
+      {task.status !== TaskStatusType.DONE && (
+        <h4 className="font-semibold text-sm">
+          Due:{" "}
+          <span className={hasDueDatePassed ? "text-red-600" : "text-gray-600"}>
+            {getFormattedDate(task.dueDate)}
+          </span>
+        </h4>
+      )}
+
       {task.assignedTo ? (
-        <h3 className="text-gray-800 text-sm">
-          Assigned to{" "}
+        <h3 className="flex justify-between text-gray-800 text-sm">
           <span className="font-bold">
+            Assigned to{" "}
             {task.assignedTo._id === userId ? "You" : task.assignedTo.username}
           </span>
+          {isAdmin && (
+            <button
+              onClick={() => onAssign(task)}
+              className="bg-blue-100 text-blue-800 hover:bg-blue-200 rounded-lg p-1 cursor-pointer"
+            >
+              Change
+            </button>
+          )}
         </h3>
       ) : (
         <div className="flex justify-between items-center space-x-2">
@@ -113,6 +116,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
           )}
         </div>
       )}
+
       {isOpen && (
         <div className="flex flex-col fixed top-10 right-5 min-w-36 rounded-lg bg-white border border-gray-300 shadow">
           <button

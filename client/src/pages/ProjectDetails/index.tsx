@@ -6,7 +6,6 @@ import { stagger, Timeline } from "animejs";
 import { useEffect } from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import TeamCard from "../UserDetails/TeamCard";
-import UserCard from "../TeamDetails/UserCard";
 import TaskCard from "./TaskCard";
 
 const statusConfig = {
@@ -103,7 +102,7 @@ function ProjectDetails() {
         <div className="flex flex-col space-y-2">
           <p className="font-bold text-lg">Tasks</p>
           {project.tasks.length ? (
-            <div className="flex flex-wrap items-center text-start gap-4 w-full">
+            <div className="flex flex-wrap text-start gap-4 w-full">
               {project.tasks.map((task) => (
                 <TaskCard task={task} />
               ))}

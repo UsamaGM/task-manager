@@ -1,28 +1,34 @@
-import { animate } from "animejs";
+import { animate, utils } from "animejs";
 import { ReactNode, useEffect } from "react";
 
-function Card({ children }: { children: ReactNode }) {
+function Card({
+  children,
+  animated = true,
+}: {
+  children: ReactNode;
+  animated?: boolean;
+}) {
   useEffect(() => {
-    const rootAnimation = animate(".base", {
-      opacity: [0, 1],
-      duration: 1000,
-    });
-    const contentAnimation = animate(".content > *", {
-      translateY: ["-100px", "0%"],
-      duration: 1000,
-    });
-
-    return () => {
-      rootAnimation.cancel();
-      contentAnimation.cancel();
-    };
+    if (animated)
+      animate(".box", {
+        left: () => utils.random(0, 100) + "%",
+        top: () => utils.random(0, 100) + "%",
+        ease: "inOutSine",
+        duration: 3000,
+        frameRate: 15,
+        loop: true,
+        onLoop: (a) => a.refresh(),
+      });
   }, []);
 
   return (
-    <div className="base opacity-0 relative rounded-3xl bg-[#FEFFFF] shadow-xs overflow-hidden flex-1">
-      <div className="absolute left-20 top-24 bg-[#FA6E5E] w-1/2 h-1/3" />
-      <div className="absolute left-1/2 top-30 bg-[#9387F0] w-1/2 h-1/3" />
-      <div className="content w-full h-full bg-transparent backdrop-blur-3xl flex flex-col items-center">
+    <div className="base relative rounded-3xl bg-white shadow-xs overflow-hidden flex-1">
+      <div className="box absolute bg-[#FA6E5E] size-56 rounded-full" />
+      <div className="box absolute bg-[#5f3732] size-56 rounded-full" />
+      <div className="box absolute bg-[#1bc282] size-56 rounded-full" />
+      <div className="box absolute bg-[#1a1dbe] size-56 rounded-full" />
+      <div className="box absolute bg-[#8b143c] size-56 rounded-full" />
+      <div className="w-full h-full bg-transparent backdrop-blur-3xl flex flex-col items-center">
         {children}
       </div>
     </div>

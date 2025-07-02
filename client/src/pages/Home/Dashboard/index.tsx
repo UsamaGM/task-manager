@@ -93,8 +93,11 @@ function Dashboard() {
       </TitledSegment>
       <TitledSegment title="Tasks">
         <div className="flex w-full space-x-3">
-          <TaskList title="This week" tasks={thisWeekTasks} />
-          <TaskList title="To Do" tasks={todoTasks} />
+          <TaskList
+            title={`This week (${thisWeekTasks.length})`}
+            tasks={thisWeekTasks}
+          />
+          <TaskList title={`To Do (${todoTasks.length})`} tasks={todoTasks} />
         </div>
       </TitledSegment>
       <TitledSegment title="Projects">
@@ -116,7 +119,7 @@ function Dashboard() {
                     <p className="text-sm text-gray-500">{`${done} of ${totalTasks} tasks done`}</p>
                   </div>
                 }
-                onClick={() => console.log("Navigate to", project.name)}
+                onClick={() => navigate(`/project/${project._id}`)}
               />
             );
           })}
@@ -136,7 +139,7 @@ function Dashboard() {
                   </p>
                 </div>
               }
-              onClick={() => console.log("Navigate to", team.name)}
+              onClick={() => navigate(`/team/${team._id}`)}
             />
           ))}
         </div>

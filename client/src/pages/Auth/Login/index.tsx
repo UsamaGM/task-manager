@@ -4,13 +4,22 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import api from "@/config/api";
-import { setCookie } from "@/config/cookie";
 import { animate } from "animejs";
-import { apiErrorHandler, formErrorsHandler } from "@/helpers/errorHandler";
+import { formErrorsHandler } from "@/helpers/errorHandler";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  FormContainer,
+  PasswordInputWithLabel,
+  SubmitButton,
+  TextInputWithLabel,
+} from "@/components";
+import { useState } from "react";
 
 function Login() {
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const formSchema = z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
@@ -27,11 +36,10 @@ function Login() {
     reValidateMode: "onSubmit",
   });
 
-  const { login } = useAuth();
-  const navigate = useNavigate();
-
-  const onSubmit = async (data: formDataTypes) => {
+  async function onSubmit(data: formDataTypes) {
+    setLoading(true);
     const loggedIn = await login(data);
+    setLoading(false);
 
     if (loggedIn) {
       toast.success("Login successful!");
@@ -42,42 +50,37 @@ function Login() {
         duration: 300,
         ease: "inOutExpo",
       });
-  };
+  }
 
-  const isError = formErrorsHandler(errors);
+  const isError = !!formErrorsHandler(errors);
 
   return (
     <Card>
-      <div className="form-container w-full h-screen flex flex-col space-y-4 items-center justify-center">
+      <div className="form-container w-full h-screen flex flex-col items-center justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className={`flex flex-col bg-white/30 p-8 rounded-xl shadow-md w-full max-w-md ${
+          className={`flex flex-col space-y-6 bg-white/30 p-8 rounded-xl shadow-md w-full max-w-lg ${
             isError && "border-red-400 border-2"
           }`}
         >
-          <h2 className="text-2xl font-bold mb-6 text-purple-700 text-center">
-            Login
+          <h2 className="text-2xl font-bold mb-10 text-purple-700 text-center">
+            Log In
           </h2>
-          <input
-            type="email"
-            placeholder="Email"
-            title="someone@mail.domain"
-            className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 ease-in-out"
+          <TextInputWithLabel
+            label="Email"
+            id="email"
+            placeholder="someone@domain.xyz"
+            hint="Enter the email that you used to register previously"
             {...register("email")}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            title="$ecureP@ssword123"
-            className="w-full mb-4 px-4 py-2 outline rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 ease-in-out"
+          <PasswordInputWithLabel
+            label="Password"
+            id="password"
+            placeholder="Your$trongP@ssword@123"
+            hint="Enter the same password you used to register previously"
             {...register("password")}
           />
-          <button
-            type="submit"
-            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition"
-          >
-            Login
-          </button>
+          <SubmitButton title="Log In" isLoading={loading} />
         </form>
         <span>
           Already have an account?{" "}

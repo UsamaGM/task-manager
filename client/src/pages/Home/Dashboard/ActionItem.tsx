@@ -31,12 +31,12 @@ function ActionItem({ icon, title, subtitle, onClick }: PropTypes) {
       onClick={onClick}
       className="action-item translate-y-6 opacity-0 flex items-center space-x-3 min-w-[30%] shadow border border-gray-300 rounded-2xl bg-white px-2 py-2 w-full overflow-hidden cursor-pointer"
     >
-      <div className="flex items-center bg-blue-200 rounded-lg p-2 min-w-10 h-10 text-blue-700">
+      <div className="flex bg-blue-200 rounded-lg p-2 min-w-10 h-10 text-blue-700">
         {icon}
       </div>
-      <div className="flex flex-col items-start w-full">
-        <h2 className="text-gray-800">{title}</h2>
-        <h4 className="text-start text-gray-700 text-sm">{subtitle}</h4>
+      <div className="flex flex-col items-start w-full text-start">
+        <h2 className="text-gray-800 line-clamp-1">{title}</h2>
+        <h4 className="text-gray-700 text-sm">{subtitle}</h4>
       </div>
       <ChevronRightIcon
         ref={iconRef}

@@ -15,6 +15,7 @@ import {
   MyTasks,
   TeamDetails,
   ProjectDetails,
+  UserDetails,
 } from "@/pages";
 import Loader from "@/components/Loader";
 
@@ -29,7 +30,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import TaskProvider from "@/contexts/TaskContext";
 import ProjectProvider from "@/contexts/ProjectContext";
 import TeamProvider from "@/contexts/TeamContext";
-import UserDetails from "@/pages/UserDetails";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },

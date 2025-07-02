@@ -75,7 +75,7 @@ function TeamProvider({ children }: { children: ReactNode }) {
         projectId,
         teamId,
       });
-      console.log(data);
+
       setTeams((prev) =>
         prev.map((team) => (team._id === data._id ? data : team))
       );
@@ -130,11 +130,6 @@ function TeamProvider({ children }: { children: ReactNode }) {
   }
 
   async function deleteTeam(teamId: string) {
-    if (!teamId) {
-      toast.error("Team ID not provided");
-      return false;
-    }
-
     try {
       await api.delete(`/team/${teamId}`);
       setTeams((prev) => prev.filter((team) => team._id !== teamId));

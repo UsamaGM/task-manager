@@ -14,10 +14,10 @@ interface PropTypes {
 
 function TaskList({ title, tasks }: PropTypes) {
   return (
-    <div className="flex flex-col flex-1 max-h-52 border border-gray-300 shadow rounded-2xl p-4">
+    <div className="flex flex-col flex-1 max-h-60 border border-gray-300 shadow rounded-2xl p-4 overflow-auto">
       <h2 className="text-gray-700 font-bold">{title}</h2>
       {tasks.length ? (
-        <table className="w-full mt-4 text-left">
+        <table className="mt-4 text-left">
           <thead className="text-sm text-gray-500">
             <tr className="h-2 text-sm">
               <th>Name</th>

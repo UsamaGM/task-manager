@@ -33,9 +33,12 @@ const statusConfig = {
 
 function TaskCard({ task }: { task: TaskType }) {
   return (
-    <div className="max-w-md bg-white/20 border border-gray-300 shadow-md rounded-xl p-3">
+    <div
+      key={task._id}
+      className="flex flex-col flex-1 min-w-xs max-w-md bg-white/20 border border-gray-300 shadow-md rounded-xl p-3"
+    >
       <h2 className="font-bold">{task.name}</h2>
-      <h4>{task.description}</h4>
+      <h4 className="flex-1">{task.description}</h4>
       <div className="flex justify-evenly items-center gap-2 mt-2 text-sm font-bold">
         <h4 className={priorityConfig[task.priority].className}>
           Priority: {priorityConfig[task.priority].title}

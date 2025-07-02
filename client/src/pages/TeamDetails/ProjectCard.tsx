@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 function ProjectCard({ project }: { project: ProjectType }) {
   return (
     <Link
+      key={project._id}
       to={`/project/${project._id}`}
       className="project-card flex flex-col flex-1 space-y-2 min-w-sm max-w-md p-3 bg-white/20 border border-gray-300 shadow-md rounded-xl hover:scale-102 transition-transform duration-300"
     >

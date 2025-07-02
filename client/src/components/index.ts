@@ -1,3 +1,4 @@
+import CancelButton from "./CancelButton";
 import Card from "./Card";
 import DateSelectorWithLabel from "./DateSelectorWithLabel";
 import DropdownWithLabel from "./DropdownWithLabel";
@@ -11,8 +12,10 @@ import PrioritySelectorWithLabel from "./PrioritySelectorWithLabel";
 import SubmitButton from "./SubmitButton";
 import TextAreaWithLabel from "./TextAreaWithLabel";
 import TextInputWithLabel from "./TextInputWithLabel";
+import PasswordInputWithLabel from "./PasswordInputWithLabel";
 
 export {
+  CancelButton,
   Card,
   DateSelectorWithLabel,
   DropdownWithLabel,
@@ -26,4 +29,5 @@ export {
   SubmitButton,
   TextAreaWithLabel,
   TextInputWithLabel,
+  PasswordInputWithLabel,
 };
