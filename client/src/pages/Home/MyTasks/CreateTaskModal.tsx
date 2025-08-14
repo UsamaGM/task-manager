@@ -1,17 +1,15 @@
 import ModalContainer from "@/components/ModalContainer";
-import { ModalPropTypes, TaskPriorityType, TaskType } from "@/helpers/types";
 import TaskForm from "./TaskForm";
 import { useState } from "react";
 import { useTask } from "@/contexts/TaskContext";
 import { formattedDateToday } from "@/helpers/date-formatter";
+import { ModalProps, Task, TaskPriority } from "type";
 
-function CreateTaskModal({ isOpen, onClose }: ModalPropTypes) {
+function CreateTaskModal({ isOpen, onClose }: ModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { createTask } = useTask();
 
-  async function handleSubmit(
-    formData: Partial<TaskType> & { project: string }
-  ) {
+  async function handleSubmit(formData: Partial<Task> & { project: string }) {
     setIsLoading(true);
     await createTask(formData);
     setIsLoading(false);
@@ -30,7 +28,7 @@ function CreateTaskModal({ isOpen, onClose }: ModalPropTypes) {
           name: "",
           description: "",
           dueDate: today,
-          priority: TaskPriorityType.MEDIUM,
+          priority: TaskPriority.MEDIUM,
         }}
         onClose={onClose}
         onSubmit={handleSubmit}

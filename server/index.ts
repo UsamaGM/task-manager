@@ -11,8 +11,8 @@ import userRouter from "./src/routes/user.route";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRouter);

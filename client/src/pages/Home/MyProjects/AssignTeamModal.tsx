@@ -3,18 +3,14 @@ import ModalContainer from "@/components/ModalContainer";
 import api from "@/config/api";
 import { useTeam } from "@/contexts/TeamContext";
 import { apiErrorHandler } from "@/helpers/errorHandler";
-import { ModalPropTypes, ProjectType, TeamType } from "@/helpers/types";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
+import { ProjectModalProps, Team } from "type";
 
-interface PropTypes extends ModalPropTypes {
-  project: ProjectType;
-}
-
-function AssignTeamModal({ isOpen, project, onClose }: PropTypes) {
+function AssignTeamModal({ isOpen, project, onClose }: ProjectModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<TeamType[]>([]);
+  const [searchResults, setSearchResults] = useState<Team[]>([]);
 
   const { assignProject } = useTeam();
 
@@ -30,8 +26,8 @@ function AssignTeamModal({ isOpen, project, onClose }: PropTypes) {
       setIsLoading(true);
       if (e.target.value.trim().length) {
         try {
-          const { data }: { data: TeamType[] } = await api.get(
-            `/team/search/${e.target.value}`
+          const { data }: { data: Team[] } = await api.get(
+            `/team/search/${e.target.value}`,
           );
           setSearchResults(data);
         } catch (error) {

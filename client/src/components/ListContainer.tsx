@@ -13,7 +13,7 @@ function ListContainer({ title, children }: PropTypes) {
       duration: 400,
       delay: stagger(100),
     });
-  });
+  }, []);
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden mt-4">

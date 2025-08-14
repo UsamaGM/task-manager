@@ -1,7 +1,6 @@
 import { useProject } from "@/contexts/ProjectContext";
 import { useTeam } from "@/contexts/TeamContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { ProjectStatusType, ProjectType } from "@/helpers/types";
 import {
   ChartBarIcon,
   CheckIcon,
@@ -11,6 +10,7 @@ import {
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Project, ProjectStatus } from "type";
 
 function getEndDateColor(date: string) {
   if (!date) return "text-gray-700";
@@ -25,10 +25,10 @@ function getEndDateColor(date: string) {
 }
 
 interface PropTypes {
-  project: ProjectType;
-  onEdit: (project: ProjectType) => void;
-  onAssignTeam: (project: ProjectType) => void;
-  onDelete: (project: ProjectType) => void;
+  project: Project;
+  onEdit: (project: Project) => void;
+  onAssignTeam: (project: Project) => void;
+  onDelete: (project: Project) => void;
 }
 
 function ProjectListItem({
@@ -52,12 +52,9 @@ function ProjectListItem({
       : document.removeEventListener("click", handleClickOutside);
   }, [isOpen]);
 
-  const handleChangeStatus = useCallback(
-    async (newStatus: ProjectStatusType) => {
-      await updateProject(project._id, { status: newStatus });
-    },
-    []
-  );
+  const handleChangeStatus = useCallback(async (newStatus: ProjectStatus) => {
+    await updateProject(project._id, { status: newStatus });
+  }, []);
 
   const assignedTo = findTeamWithProject(project._id);
 
@@ -120,10 +117,10 @@ function ProjectListItem({
             <span className="font-bold">Edit</span>
           </button>
           <hr className="text-gray-300 mx-1" />
-          {project.status !== ProjectStatusType.ACTIVE && (
+          {project.status !== ProjectStatus.ACTIVE && (
             <>
               <button
-                onClick={() => handleChangeStatus(ProjectStatusType.ACTIVE)}
+                onClick={() => handleChangeStatus(ProjectStatus.ACTIVE)}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-yellow-200 hover:text-green-800 cursor-pointer"
               >
                 <ChartBarIcon className="size-4 stroke-2" />
@@ -132,10 +129,10 @@ function ProjectListItem({
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {project.status !== ProjectStatusType.ON_HOLD && (
+          {project.status !== ProjectStatus.ON_HOLD && (
             <>
               <button
-                onClick={() => handleChangeStatus(ProjectStatusType.ON_HOLD)}
+                onClick={() => handleChangeStatus(ProjectStatus.ON_HOLD)}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-red-200 hover:text-yellow-800 cursor-pointer"
               >
                 <HandRaisedIcon className="size-4" />
@@ -144,10 +141,10 @@ function ProjectListItem({
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {project.status !== ProjectStatusType.COMPLETED && (
+          {project.status !== ProjectStatus.COMPLETED && (
             <>
               <button
-                onClick={() => handleChangeStatus(ProjectStatusType.COMPLETED)}
+                onClick={() => handleChangeStatus(ProjectStatus.COMPLETED)}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-green-200 hover:text-green-800 cursor-pointer"
               >
                 <CheckIcon className="size-4 stroke-3" />

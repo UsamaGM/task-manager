@@ -26,21 +26,21 @@ import {
   userDataLoader,
 } from "./dataLoaders";
 
-import { useAuth } from "@/contexts/AuthContext";
 import TaskProvider from "@/contexts/TaskContext";
 import ProjectProvider from "@/contexts/ProjectContext";
 import TeamProvider from "@/contexts/TeamContext";
+import useAuthStore from "@/stores/auth.store";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
-  { path: "/", element: <LandingPage /> },
+  { path: "/hello", element: <LandingPage /> },
   { path: "/*", element: <Navigate to="/login" /> },
 ];
 
 const authenticatedRoutes = [
   {
-    path: "/home",
+    path: "/",
     element: (
       <TeamProvider>
         <ProjectProvider>
@@ -53,17 +53,17 @@ const authenticatedRoutes = [
     loader: dataLoader,
     hydrateFallbackElement: <Loader fullscreen />,
     children: [
-      { path: "/home/dashboard", element: <Dashboard /> },
+      { path: "/dashboard", element: <Dashboard /> },
       {
-        path: "/home/my-teams",
+        path: "/my-teams",
         element: <MyTeams />,
       },
       {
-        path: "/home/my-projects",
+        path: "/my-projects",
         element: <MyProjects />,
       },
       {
-        path: "/home/my-tasks",
+        path: "/my-tasks",
         element: <MyTasks />,
       },
     ],
@@ -86,17 +86,15 @@ const authenticatedRoutes = [
     loader: projectDataLoader,
     hydrateFallbackElement: <Loader fullscreen />,
   },
-  { path: "/", element: <LandingPage /> },
-  { path: "/*", element: <Navigate to="/home/dashboard" /> },
+  { path: "/hello", element: <LandingPage /> },
+  { path: "/*", element: <Navigate to="/dashboard" /> },
 ];
 
 function AppRouterProvider() {
-  const { loading, isAuthenticated } = useAuth();
-  if (loading) return <Loader fullscreen />;
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const routes = isAuthenticated ? authenticatedRoutes : authRoutes;
 
-  const router = createBrowserRouter(
-    isAuthenticated ? authenticatedRoutes : authRoutes
-  );
+  const router = createBrowserRouter(routes);
   return <RouterProvider router={router} />;
 }
 

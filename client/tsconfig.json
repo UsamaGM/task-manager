@@ -10,7 +10,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "type": ["./type.d.ts"]
     }
   },
   "exclude": ["dist", "node_modules"]

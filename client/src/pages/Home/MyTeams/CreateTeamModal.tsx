@@ -7,14 +7,14 @@ import CancelButton from "@/components/CancelButton";
 import ModalContainer from "@/components/ModalContainer";
 import { useTeam } from "@/contexts/TeamContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
-import { ModalPropTypes } from "@/helpers/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { ModalProps } from "type";
 import { z } from "zod";
 
-function CreateTeamModal({ isOpen, onClose }: ModalPropTypes) {
+function CreateTeamModal({ isOpen, onClose }: ModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { createTeam } = useTeam();
 

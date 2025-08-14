@@ -4,11 +4,11 @@ import {
   formattedDateToday,
   getFormattedDateNDaysLater,
 } from "@/helpers/date-formatter";
-import { ModalPropTypes } from "@/helpers/types";
 import { useState } from "react";
 import ProjectForm from "./ProjectForm";
+import { ModalProps } from "type";
 
-function CreateProjectModal({ isOpen, onClose }: ModalPropTypes) {
+function CreateProjectModal({ isOpen, onClose }: ModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { createProject } = useProject();
 

@@ -1,15 +1,11 @@
 import { CancelButton, SubmitButton } from "@/components";
 import ModalContainer from "@/components/ModalContainer";
 import { useTask } from "@/contexts/TaskContext";
-import { ModalPropTypes, TaskType } from "@/helpers/types";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { TaskModalProps } from "type";
 
-interface PropTypes extends ModalPropTypes {
-  task: TaskType;
-}
-
-function DeleteTaskModal({ isOpen, task, onClose }: PropTypes) {
+function DeleteTaskModal({ isOpen, task, onClose }: TaskModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { deleteTask } = useTask();

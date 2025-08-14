@@ -1,15 +1,9 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { animate } from "animejs";
 import { useRef } from "react";
+import { ActionItemProps } from "type";
 
-interface PropTypes {
-  icon: React.ReactNode;
-  title: string;
-  subtitle: string | React.ReactNode;
-  onClick: () => void;
-}
-
-function ActionItem({ icon, title, subtitle, onClick }: PropTypes) {
+function ActionItem({ icon, title, subtitle, onClick }: ActionItemProps) {
   const iconRef = useRef<SVGSVGElement>(null);
   function onMouseEnter() {
     animate(iconRef.current!, {

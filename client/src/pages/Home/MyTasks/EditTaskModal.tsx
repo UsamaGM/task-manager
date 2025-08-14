@@ -1,23 +1,19 @@
 import ModalContainer from "@/components/ModalContainer";
 import { useTask } from "@/contexts/TaskContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { ModalPropTypes, ProjectType, TaskType } from "@/helpers/types";
 import { toast } from "react-toastify";
 import TaskForm from "./TaskForm";
 import { useEffect, useState } from "react";
 import { useProject } from "@/contexts/ProjectContext";
+import { Task, TaskModalProps } from "type";
 
-interface PropTypes extends ModalPropTypes {
-  task: TaskType;
-}
-
-function EditTaskModal({ isOpen, task, onClose }: PropTypes) {
+function EditTaskModal({ isOpen, task, onClose }: TaskModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { updateTask } = useTask();
   const { getProjectWithTask } = useProject();
   const project = isOpen ? getProjectWithTask(task._id) : null;
 
-  async function onSubmit(formData: Partial<TaskType>) {
+  async function onSubmit(formData: Partial<Task>) {
     const isUpdated =
       formData.name !== task.name ||
       formData.description !== task.description ||
@@ -51,7 +47,7 @@ function EditTaskModal({ isOpen, task, onClose }: PropTypes) {
       <TaskForm
         isLoading={isLoading}
         subtitle={`Project: ${project?.name} (${getFormattedDate(
-          project!.startDate
+          project!.startDate,
         )} - ${getFormattedDate(project!.endDate)})`}
         submitBtnTitle="Update"
         defaultValues={{

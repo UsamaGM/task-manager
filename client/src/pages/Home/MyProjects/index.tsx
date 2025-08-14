@@ -1,5 +1,4 @@
 import { useProject } from "@/contexts/ProjectContext";
-import { ProjectStatusType, ProjectType } from "@/helpers/types";
 import TaskListContainer from "@/components/ListContainer";
 import ProjectListItem from "./ProjectListItem";
 import Headline from "@/components/Headline";
@@ -10,11 +9,10 @@ import DeleteProjectModal from "./DeleteProjectModal";
 import AssignTeamModal from "./AssignTeamModal";
 import { CubeTransparentIcon } from "@heroicons/react/24/outline";
 import NoXMessage from "@/components/NoXMessage";
+import { Project, ProjectStatus } from "type";
 
 function MyProjects() {
-  const [selectedProject, setSelectedProject] = useState<ProjectType | null>(
-    null
-  );
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
   const [showEditProjectModal, setShowEditProjectModal] = useState(false);
   const [showAssignProjectModal, setShowAssignProjectModal] = useState(false);
@@ -22,26 +20,26 @@ function MyProjects() {
   const { projects } = useProject();
 
   const activeProjects = projects.filter(
-    (project) => project.status === ProjectStatusType.ACTIVE
+    (project) => project.status === ProjectStatus.ACTIVE,
   );
   const onHoldProjects = projects.filter(
-    (project) => project.status === ProjectStatusType.ON_HOLD
+    (project) => project.status === ProjectStatus.ON_HOLD,
   );
   const completedProjects = projects.filter(
-    (project) => project.status === ProjectStatusType.COMPLETED
+    (project) => project.status === ProjectStatus.COMPLETED,
   );
 
-  function onEdit(project: ProjectType) {
+  function onEdit(project: Project) {
     setSelectedProject(project);
     setShowEditProjectModal(true);
   }
 
-  function onAssignTeam(project: ProjectType) {
+  function onAssignTeam(project: Project) {
     setSelectedProject(project);
     setShowAssignProjectModal(true);
   }
 
-  function onDelete(project: ProjectType) {
+  function onDelete(project: Project) {
     setSelectedProject(project);
     setShowDeleteProjectModal(true);
   }

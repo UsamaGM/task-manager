@@ -4,7 +4,6 @@ import { useTask } from "@/contexts/TaskContext";
 import Headline from "@/components/Headline";
 import { useState } from "react";
 import CreateTaskModal from "./CreateTaskModal";
-import { TaskStatusType, TaskType } from "@/helpers/types";
 import EditTaskModal from "./EditTaskModal";
 import DeleteTaskModal from "./DeleteTaskModal";
 import {
@@ -14,32 +13,33 @@ import {
 } from "@heroicons/react/24/outline";
 import NoXMessage from "@/components/NoXMessage";
 import AssignTaskModal from "./AssignTaskModal";
+import { Task, TaskStatus } from "type";
 
 function MyTasks() {
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
   const [showEditTaskModal, setShowEditTaskModal] = useState(false);
   const [showAssignTaskModal, setShowAssignTaskModal] = useState(false);
   const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const { tasks } = useTask();
 
-  const todoTasks = tasks.filter((task) => task.status === TaskStatusType.TODO);
+  const todoTasks = tasks.filter((task) => task.status === TaskStatus.TODO);
   const inProgressTasks = tasks.filter(
-    (task) => task.status === TaskStatusType.IN_PROGRESS
+    (task) => task.status === TaskStatus.IN_PROGRESS,
   );
-  const doneTasks = tasks.filter((task) => task.status === TaskStatusType.DONE);
+  const doneTasks = tasks.filter((task) => task.status === TaskStatus.DONE);
 
-  function onEdit(task: TaskType) {
+  function onEdit(task: Task) {
     setSelectedTask(task);
     setShowEditTaskModal(true);
   }
 
-  function onAssign(task: TaskType) {
+  function onAssign(task: Task) {
     setSelectedTask(task);
     setShowAssignTaskModal(true);
   }
 
-  function onDelete(task: TaskType) {
+  function onDelete(task: Task) {
     setSelectedTask(task);
     setShowDeleteTaskModal(true);
   }

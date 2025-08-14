@@ -1,8 +1,8 @@
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { ProjectType } from "@/helpers/types";
 import { Link } from "react-router-dom";
+import { Project } from "type";
 
-function ProjectCard({ project }: { project: ProjectType }) {
+function ProjectCard({ project }: { project: Project }) {
   return (
     <Link
       to={`/project/${project._id}`}

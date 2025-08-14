@@ -1,6 +1,5 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
-import { TaskStatusType, TaskType } from "@/helpers/types";
 import {
   createContext,
   ReactNode,
@@ -11,16 +10,14 @@ import {
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useProject } from "./ProjectContext";
+import { Task, TaskStatus } from "type";
 
 interface TaskContextType {
-  tasks: TaskType[];
+  tasks: Task[];
   getDoneTasksCount: (tasks: string[]) => number;
-  createTask: (data: Partial<TaskType> & { project: string }) => Promise<void>;
-  updateTask: (taskId: string, formData: Partial<TaskType>) => Promise<void>;
-  changeTaskStatus: (
-    taskId: string,
-    newStatus: TaskStatusType
-  ) => Promise<void>;
+  createTask: (data: Partial<Task> & { project: string }) => Promise<void>;
+  updateTask: (taskId: string, formData: Partial<Task>) => Promise<void>;
+  changeTaskStatus: (taskId: string, newStatus: TaskStatus) => Promise<void>;
   assignTask: (taskId: string, userId: string) => Promise<void>;
   deleteTask: (taskId: string) => Promise<boolean>;
 }
@@ -36,21 +33,21 @@ export function useTask() {
 }
 
 export default function TaskProvider({ children }: { children: ReactNode }) {
-  const { tasks: loaderData }: { tasks: TaskType[] } = useLoaderData();
+  const { tasks: loaderData }: { tasks: Task[] } = useLoaderData();
 
   const [tasks, setTasks] = useState(loaderData || []);
   const { setProjects } = useProject();
 
   const getDoneTasksCount = useCallback((t: string[]) => {
     return tasks.filter(
-      (task) => t.includes(task._id) && task.status === TaskStatusType.DONE
+      (task) => t.includes(task._id) && task.status === TaskStatus.DONE,
     ).length;
   }, []);
 
   const createTask = useCallback(
-    async (taskData: Partial<TaskType> & { project: string }) => {
+    async (taskData: Partial<Task> & { project: string }) => {
       try {
-        const { data }: { data: TaskType } = await api.post("/task", {
+        const { data }: { data: Task } = await api.post("/task", {
           taskData,
         });
 
@@ -58,8 +55,8 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
           prev.map((p) =>
             p._id === taskData.project
               ? { ...p, tasks: [data._id, ...p.tasks] }
-              : p
-          )
+              : p,
+          ),
         );
         setTasks((prev) => [data, ...prev]);
 
@@ -68,54 +65,54 @@ export default function TaskProvider({ children }: { children: ReactNode }) {
         apiErrorHandler(error);
       }
     },
-    []
+    [],
   );
 
   const updateTask = useCallback(
-    async (taskId: string, updateData: Partial<TaskType>) => {
+    async (taskId: string, updateData: Partial<Task>) => {
       try {
-        const { data }: { data: TaskType } = await api.put("/task", {
+        const { data }: { data: Task } = await api.put("/task", {
           id: taskId,
           updateData,
         });
         setTasks((prev) =>
-          prev.map((task) => (task._id === data._id ? data : task))
+          prev.map((task) => (task._id === data._id ? data : task)),
         );
         toast.success("Task Updated successfully!");
       } catch (error) {
         apiErrorHandler(error);
       }
     },
-    []
+    [],
   );
 
   const changeTaskStatus = useCallback(
-    async (taskId: string, newStatus: TaskStatusType) => {
+    async (taskId: string, newStatus: TaskStatus) => {
       try {
-        const { data }: { data: TaskType } = await api.put("/task", {
+        const { data }: { data: Task } = await api.put("/task", {
           id: taskId,
           updateData: { status: newStatus },
         });
 
         setTasks((prev) =>
-          prev.map((task) => (task._id === data._id ? data : task))
+          prev.map((task) => (task._id === data._id ? data : task)),
         );
       } catch (error) {
         apiErrorHandler(error);
       }
     },
-    []
+    [],
   );
 
   const assignTask = useCallback(async (taskId: string, userId: string) => {
     try {
-      const { data }: { data: TaskType } = await api.put("/task/assign", {
+      const { data }: { data: Task } = await api.put("/task/assign", {
         taskId,
         userId,
       });
 
       setTasks((prev) =>
-        prev.map((task) => (task._id === data._id ? data : task))
+        prev.map((task) => (task._id === data._id ? data : task)),
       );
       toast.success(`Assigned ${data.name} to the member`);
     } catch (error) {

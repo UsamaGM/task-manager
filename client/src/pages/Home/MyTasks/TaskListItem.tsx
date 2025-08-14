@@ -1,5 +1,4 @@
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { TaskPriorityType, TaskStatusType, TaskType } from "@/helpers/types";
 import { BellIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   BoltIcon,
@@ -8,15 +7,16 @@ import {
 } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
 import { useTask } from "@/contexts/TaskContext";
-import { useAuth } from "@/contexts/AuthContext";
+import useAuthStore from "@/stores/auth.store";
 import { useProject } from "@/contexts/ProjectContext";
 import { useTeam } from "@/contexts/TeamContext";
+import { Task, TaskPriority, TaskStatus } from "type";
 
 interface PropTypes {
-  task: TaskType;
-  onEdit: (task: TaskType) => void;
-  onAssign: (task: TaskType) => void;
-  onDelete: (task: TaskType) => void;
+  task: Task;
+  onEdit: (task: Task) => void;
+  onAssign: (task: Task) => void;
+  onDelete: (task: Task) => void;
 }
 
 function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
@@ -25,7 +25,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
 
   const project = useProject().getProjectWithTask(task._id);
   const adminId = useTeam().findTeamWithProject(project._id)?.admin._id;
-  const userId = useAuth().user?._id;
+  const userId = useAuthStore((state) => state.user?._id);
   const isAdmin = adminId === userId;
   const showExtraOptions = isAdmin || task.assignedTo?._id === userId;
 
@@ -39,16 +39,16 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
       : document.removeEventListener("click", handleClickOutside.current);
   });
 
-  async function handleChangeStatus(newStatus: TaskStatusType) {
+  async function handleChangeStatus(newStatus: TaskStatus) {
     await changeTaskStatus(task._id, newStatus);
   }
 
   const priorityConfig =
-    task.priority === TaskPriorityType.LOW
+    task.priority === TaskPriority.LOW
       ? { title: "Low", color: "text-green-500" }
-      : task.priority === TaskPriorityType.MEDIUM
-      ? { title: "Medium", color: "text-yellow-600" }
-      : { title: "High", color: "text-red-500" };
+      : task.priority === TaskPriority.MEDIUM
+        ? { title: "Medium", color: "text-yellow-600" }
+        : { title: "High", color: "text-red-500" };
   const hasDueDatePassed =
     getFormattedDate(task.dueDate) <=
     getFormattedDate(new Date().toISOString());
@@ -79,7 +79,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
 
       <p className="text-sm font-bold">Project: {project.name}</p>
 
-      {task.status !== TaskStatusType.DONE && (
+      {task.status !== TaskStatus.DONE && (
         <h4 className="font-semibold text-sm">
           Due:{" "}
           <span className={hasDueDatePassed ? "text-red-600" : "text-gray-600"}>
@@ -127,10 +127,10 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
             <span className="font-bold">Edit</span>
           </button>
           <hr className="text-gray-300 mx-1" />
-          {showExtraOptions && task.status !== TaskStatusType.TODO && (
+          {showExtraOptions && task.status !== TaskStatus.TODO && (
             <>
               <button
-                onClick={() => handleChangeStatus(TaskStatusType.TODO)}
+                onClick={() => handleChangeStatus(TaskStatus.TODO)}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-red-200 hover:text-red-800 cursor-pointer"
               >
                 <BellIcon className="size-4 stroke-2" />
@@ -139,10 +139,10 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {showExtraOptions && task.status !== TaskStatusType.IN_PROGRESS && (
+          {showExtraOptions && task.status !== TaskStatus.IN_PROGRESS && (
             <>
               <button
-                onClick={() => handleChangeStatus(TaskStatusType.IN_PROGRESS)}
+                onClick={() => handleChangeStatus(TaskStatus.IN_PROGRESS)}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-yellow-200 hover:text-yellow-800 cursor-pointer"
               >
                 <BoltIcon className="size-4" />
@@ -151,10 +151,10 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {showExtraOptions && task.status !== TaskStatusType.DONE && (
+          {showExtraOptions && task.status !== TaskStatus.DONE && (
             <>
               <button
-                onClick={() => handleChangeStatus(TaskStatusType.DONE)}
+                onClick={() => handleChangeStatus(TaskStatus.DONE)}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-green-200 hover:text-green-800 cursor-pointer"
               >
                 <CheckIcon className="size-4 stroke-3" />

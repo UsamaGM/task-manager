@@ -1,5 +1,5 @@
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { TaskType } from "@/helpers/types";
+import { Task } from "type";
 
 const priorityConfig = {
   low: {
@@ -31,7 +31,7 @@ const statusConfig = {
   },
 };
 
-function TaskCard({ task }: { task: TaskType }) {
+function TaskCard({ task }: { task: Task }) {
   return (
     <div
       key={task._id}

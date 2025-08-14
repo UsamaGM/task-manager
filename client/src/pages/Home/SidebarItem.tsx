@@ -1,13 +1,8 @@
 import { createElement, ReactElement } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { SidebarItemProps } from "type";
 
-interface PropTypes {
-  icon: ReactElement;
-  title: string;
-  navigateTo: string;
-}
-
-function SidebarItem({ icon, title, navigateTo }: PropTypes) {
+function SidebarItem({ icon, title, navigateTo }: SidebarItemProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const isSelected = location.pathname.endsWith(navigateTo);

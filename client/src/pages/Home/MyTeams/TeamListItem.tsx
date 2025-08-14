@@ -1,6 +1,5 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { useProject } from "@/contexts/ProjectContext";
-import { TeamType } from "@/helpers/types";
+import useAuthStore from "@/stores/auth.store";
 import {
   ArrowRightStartOnRectangleIcon,
   CubeIcon,
@@ -13,9 +12,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
+import { Team } from "type";
 
 interface PropTypes {
-  team: TeamType;
+  team: Team;
   handleAddMember: () => void;
   handleRemoveMember: () => void;
   handleEditTeam: () => void;
@@ -32,9 +32,9 @@ function TeamListItem({
   handleLeaveTeam,
 }: PropTypes) {
   const { getProjectsTaskCount } = useProject();
-  const { user } = useAuth();
+  const userId = useAuthStore((state) => state.user?._id);
   const navigate = useNavigate();
-  const isAdmin = team.admin._id === user?._id;
+  const isAdmin = team.admin._id === userId;
 
   const taskCount = getProjectsTaskCount(team.projects);
 
@@ -44,7 +44,7 @@ function TeamListItem({
         <div>
           <h2 className="font-bold text-lg">{team.name}</h2>
           <h4 className="text-sm font-semibold">
-            Admin: {team.admin._id === user?._id ? "You" : team.admin.username}
+            Admin: {team.admin._id === userId ? "You" : team.admin.username}
           </h4>
         </div>
         {isAdmin ? (

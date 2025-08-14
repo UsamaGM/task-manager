@@ -1,12 +1,12 @@
 import { Card, NoXMessage } from "@/components";
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { DetailedProjectType } from "@/helpers/types";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { stagger, Timeline } from "animejs";
 import { useEffect } from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import TeamCard from "../UserDetails/TeamCard";
 import TaskCard from "./TaskCard";
+import { DetailedProject } from "type";
 
 const statusConfig = {
   active: {
@@ -24,7 +24,7 @@ const statusConfig = {
 };
 
 function ProjectDetails() {
-  const project: DetailedProjectType = useLoaderData();
+  const project: DetailedProject = useLoaderData();
 
   useEffect(() => {
     const tl = new Timeline({ delay: 400 });
@@ -41,7 +41,7 @@ function ProjectDetails() {
           duration: 300,
           ease: "inOutBounce",
         },
-        "-=200"
+        "-=200",
       )
       .add(
         ".task-card",
@@ -51,7 +51,7 @@ function ProjectDetails() {
           delay: stagger(200),
           ease: "inOutBounce",
         },
-        "-=200"
+        "-=200",
       );
 
     tl.play();

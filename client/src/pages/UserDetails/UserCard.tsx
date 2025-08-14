@@ -1,8 +1,8 @@
-import { UserType } from "@/helpers/types";
 import { Link } from "react-router-dom";
+import { User } from "type";
 
 interface UserCardPropTypes {
-  user: UserType;
+  user: User;
   isAdmin?: boolean;
 }
 

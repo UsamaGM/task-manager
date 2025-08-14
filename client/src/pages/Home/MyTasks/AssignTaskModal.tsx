@@ -4,14 +4,10 @@ import NoXMessage from "@/components/NoXMessage";
 import { useProject } from "@/contexts/ProjectContext";
 import { useTask } from "@/contexts/TaskContext";
 import { useTeam } from "@/contexts/TeamContext";
-import { ModalPropTypes, TaskType } from "@/helpers/types";
 import { toast } from "react-toastify";
+import { Task, TaskModalProps } from "type";
 
-interface PropTypes extends ModalPropTypes {
-  task: TaskType;
-}
-
-function AssignTaskModal({ isOpen, task, onClose }: PropTypes) {
+function AssignTaskModal({ isOpen, task, onClose }: TaskModalProps) {
   if (!isOpen) return null;
   return (
     <ModalContainer title={`Assign "${task.name}" to a Member`}>
@@ -24,7 +20,7 @@ function AssignTaskModal({ isOpen, task, onClose }: PropTypes) {
 export default AssignTaskModal;
 
 interface TeamMemberListPropTypes {
-  task: TaskType;
+  task: Task;
   onClose: () => void;
 }
 
@@ -32,7 +28,7 @@ function TeamMemberList({ task, onClose }: TeamMemberListPropTypes) {
   const project = useProject().getProjectWithTask(task._id);
   if (!project) {
     toast.warn(
-      "You need to assign the Project to a team and the team admin will handle tasks."
+      "You need to assign the Project to a team and the team admin will handle tasks.",
     );
     onClose();
   }

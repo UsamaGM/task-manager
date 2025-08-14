@@ -8,7 +8,6 @@ import ActionItem from "./ActionItem";
 import TaskList from "./TaskList";
 import { useEffect } from "react";
 import { animate, stagger } from "animejs";
-import { TaskStatusType } from "@/helpers/types";
 import { useNavigate } from "react-router-dom";
 import { useProject } from "@/contexts/ProjectContext";
 import { useTask } from "@/contexts/TaskContext";
@@ -16,18 +15,20 @@ import {
   getFormattedDate,
   getFormattedDateNDaysLater,
 } from "@/helpers/date-formatter";
-import { useAuth } from "@/contexts/AuthContext";
 import TitledSegment from "./TitledSegment";
 import { useTeam } from "@/contexts/TeamContext";
+import { TaskStatus } from "type";
+import useAuthStore from "@/stores/auth.store";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
   const { teams } = useTeam();
   const { projects } = useProject();
   const { tasks, getDoneTasksCount } = useTask();
 
   useEffect(() => {
+    console.log("Hi there");
     const animation = {
       translateY: [0, "-1.5rem"],
       opacity: 1,
@@ -40,22 +41,22 @@ function Dashboard() {
   }, []);
 
   const thisWeekTasks = tasks.filter(
-    (task) => getFormattedDate(task.dueDate) < getFormattedDateNDaysLater(7)
+    (task) => getFormattedDate(task.dueDate) < getFormattedDateNDaysLater(7),
   );
-  const todoTasks = tasks.filter((task) => task.status === TaskStatusType.TODO);
+  const todoTasks = tasks.filter((task) => task.status === TaskStatus.TODO);
   const assignedTasksCount = tasks.reduce(
     (acc, task) =>
       task.assignedTo && task.assignedTo._id === user?._id ? acc + 1 : acc,
-    0
+    0,
   );
   const doneTasksCount = tasks.reduce(
     (acc, task) =>
       task.assignedTo &&
       task.assignedTo._id === user?._id &&
-      task.status === TaskStatusType.DONE
+      task.status === TaskStatus.DONE
         ? acc + 1
         : acc,
-    0
+    0,
   );
 
   return (

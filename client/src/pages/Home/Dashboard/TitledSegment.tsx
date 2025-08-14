@@ -1,12 +1,6 @@
-import React, { ReactNode } from "react";
+import { TitledSegmentProps } from "type";
 
-function TitledSegment({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
+function TitledSegment({ title, children }: TitledSegmentProps) {
   return (
     <div className="flex flex-col space-y-3">
       <h3 className="text-xl font-bold">{title}</h3>

@@ -9,10 +9,9 @@ import CancelButton from "@/components/CancelButton";
 import PrioritySelectorWithLabel from "@/components/PrioritySelectorWithLabel";
 import { useProject } from "@/contexts/ProjectContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
-import { TaskPriorityType, TaskType } from "@/helpers/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { animate } from "animejs";
 import { useForm } from "react-hook-form";
+import { Task, TaskPriority } from "type";
 import { z } from "zod";
 
 interface PropTypes {
@@ -23,11 +22,11 @@ interface PropTypes {
     name: string;
     description: string;
     dueDate: string;
-    priority: TaskPriorityType;
+    priority: TaskPriority;
     project?: string;
   };
   onClose: () => void;
-  onSubmit: (data: Partial<TaskType> & { project: string }) => Promise<void>;
+  onSubmit: (data: Partial<Task> & { project: string }) => Promise<void>;
 }
 
 function TaskForm({
@@ -47,7 +46,7 @@ function TaskForm({
       .min(20, "Description must be 20 characters or more"),
     project: z.string(),
     dueDate: z.string(),
-    priority: z.custom<TaskPriorityType>(),
+    priority: z.custom<TaskPriority>(),
   });
 
   type formDataTypes = z.infer<typeof formSchema>;
@@ -99,7 +98,7 @@ function TaskForm({
         />
         <PrioritySelectorWithLabel
           label="Task Priority"
-          value={TaskPriorityType.MEDIUM}
+          value={TaskPriority.MEDIUM}
           {...register("priority")}
         />
       </div>

@@ -7,21 +7,15 @@ import CancelButton from "@/components/CancelButton";
 import ModalContainer from "@/components/ModalContainer";
 import { useTeam } from "@/contexts/TeamContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
-import { TeamType } from "@/helpers/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { Team, TeamModalProps } from "type";
 import { z } from "zod";
 
-interface PropTypes {
-  isOpen: boolean;
-  team: TeamType;
-  onClose: () => void;
-}
-
-function EditTeamModal({ isOpen, team, onClose }: PropTypes) {
+function EditTeamModal({ isOpen, team, onClose }: TeamModalProps) {
   useEffect(() => {
     if (isOpen) {
       animate(".base-container", {
@@ -43,7 +37,7 @@ function EditTeamModal({ isOpen, team, onClose }: PropTypes) {
 export default EditTeamModal;
 
 interface FormPropTypes {
-  team: TeamType;
+  team: Team;
   onClose: () => void;
 }
 

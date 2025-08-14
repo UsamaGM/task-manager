@@ -5,16 +5,16 @@ import TeamListItem from "./TeamListItem";
 import CreateTeamModal from "./CreateTeamModal";
 import { animate, stagger } from "animejs";
 import AddMemberModal from "./AddMemberModal";
-import { TeamType } from "@/helpers/types";
 import RemoveMemberModal from "./RemoveMemberModal";
 import EditTeamModal from "./EditTeamModal";
 import DeleteTeamModal from "./DeleteTeamModal";
 import LeaveTeamModal from "./LeaveTeamModal";
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import NoXMessage from "@/components/NoXMessage";
+import { Team } from "type";
 
 function MyTeams() {
-  const [selectedTeam, setSelectedTeam] = useState<TeamType | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [showRemoveMemberModal, setShowRemoveMemberModal] = useState(false);

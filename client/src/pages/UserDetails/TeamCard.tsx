@@ -1,7 +1,7 @@
-import { TeamType } from "@/helpers/types";
 import { Link } from "react-router-dom";
+import { Team } from "type";
 
-function TeamCard({ team, isAdmin }: { team: TeamType; isAdmin?: boolean }) {
+function TeamCard({ team, isAdmin }: { team: Team; isAdmin?: boolean }) {
   return (
     <Link
       to={`/team/${team._id}`}

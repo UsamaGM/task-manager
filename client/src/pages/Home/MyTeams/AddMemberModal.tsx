@@ -4,21 +4,15 @@ import ModalContainer from "@/components/ModalContainer";
 import api from "@/config/api";
 import { useTeam } from "@/contexts/TeamContext";
 import { apiErrorHandler } from "@/helpers/errorHandler";
-import { TeamType, UserType } from "@/helpers/types";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
+import { TeamModalProps, User } from "type";
 
-interface PropTypes {
-  isOpen: boolean;
-  team: TeamType;
-  onClose: () => void;
-}
-
-function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
+function AddMemberModal({ isOpen, team, onClose }: TeamModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<UserType[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
+  const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
   const { addMember } = useTeam();
 
@@ -34,8 +28,8 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
       if (e.target.value.trim().length) {
         setIsLoading(true);
         try {
-          const { data }: { data: UserType[] } = await api.get(
-            `/user/search/${e.target.value}`
+          const { data }: { data: User[] } = await api.get(
+            `/user/search/${e.target.value}`,
           );
           setSearchResults(data);
         } catch (error) {
@@ -47,7 +41,7 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
     }, 500);
   }
 
-  function addUserToSelection(user: UserType) {
+  function addUserToSelection(user: User) {
     setSelectedUsers((prev) => [...prev, user]);
     setQuery("");
     setSearchResults([]);
@@ -62,7 +56,7 @@ function AddMemberModal({ isOpen, team, onClose }: PropTypes) {
 
     await addMember(
       team!._id,
-      selectedUsers.map((u) => u._id)
+      selectedUsers.map((u) => u._id),
     );
     setSelectedUsers([]);
     setIsLoading(false);

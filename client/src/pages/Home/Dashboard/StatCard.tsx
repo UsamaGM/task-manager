@@ -1,12 +1,8 @@
 import * as anime from "animejs";
-import { ReactNode, Ref, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { StatCardProps } from "type";
 
-interface PropTypes {
-  stat: number;
-  description: string;
-}
-
-function StatCard({ stat, description }: PropTypes) {
+function StatCard({ stat, description }: StatCardProps) {
   useEffect(() => {
     const tl = new anime.Timeline({
       duration: 1000,
@@ -26,7 +22,7 @@ function StatCard({ stat, description }: PropTypes) {
         duration: 500,
         ease: "inOutSine",
       },
-      "-=200"
+      "-=200",
     );
   }, []);
   const bgRef = useRef<HTMLDivElement>(null);

@@ -1,18 +1,18 @@
 import { Card, NoXMessage } from "@/components";
-import { useAuth } from "@/contexts/AuthContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { DetailedTeamType } from "@/helpers/types";
 import { CubeTransparentIcon } from "@heroicons/react/24/outline";
 import { stagger, Timeline } from "animejs";
 import { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import ProjectCard from "./ProjectCard";
 import UserCard from "./UserCard";
+import { DetailedTeam } from "type";
+import useAuthStore from "@/stores/auth.store";
 
 function TeamDetails() {
-  const { user } = useAuth();
-  const team: DetailedTeamType = useLoaderData();
-  const isAdmin = user?._id === team.admin._id;
+  const userId = useAuthStore((state) => state.user?._id);
+  const team: DetailedTeam = useLoaderData();
+  const isAdmin = userId === team.admin._id;
 
   useEffect(() => {
     const tl = new Timeline({ delay: 400 });

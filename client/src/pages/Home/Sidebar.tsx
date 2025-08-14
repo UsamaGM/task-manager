@@ -12,12 +12,15 @@ import {
 import SidebarItem from "./SidebarItem";
 import { useEffect } from "react";
 import * as anime from "animejs";
-import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import useAuthStore from "@/stores/auth.store";
 
 function Sidebar() {
-  const { logout, user } = useAuth();
+  const { logout, user } = useAuthStore((state) => ({
+    logout: state.logout,
+    user: state.user,
+  }));
 
   useEffect(() => {
     anime.animate(".profile-container", {
@@ -66,7 +69,7 @@ function Sidebar() {
         autoClose: false,
         closeButton: false,
         position: "bottom-left",
-      }
+      },
     );
   }
 

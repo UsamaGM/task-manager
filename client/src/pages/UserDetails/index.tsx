@@ -1,5 +1,4 @@
 import { Card, NoXMessage } from "@/components";
-import { DetailedUserType } from "@/helpers/types";
 import {
   CubeTransparentIcon,
   UserGroupIcon,
@@ -10,9 +9,10 @@ import TeamCard from "./TeamCard";
 import { useState } from "react";
 import api from "@/config/api";
 import { toast } from "react-toastify";
+import { DetailedUser } from "type";
 
 function UserDetails() {
-  const user: DetailedUserType = useLoaderData();
+  const user = useLoaderData() as DetailedUser;
   const [profilePicture, setProfilePicture] = useState(user.profilePicture);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +42,11 @@ function UserDetails() {
         <div className="flex items-center space-x-4">
           <label htmlFor="profilePictureInput" className="cursor-pointer">
             <img
-              src={profilePicture ? `/uploads/${profilePicture}` : "https://via.placeholder.com/150"}
+              src={
+                profilePicture
+                  ? `/uploads/${profilePicture}`
+                  : "https://via.placeholder.com/150"
+              }
               alt="Profile"
               className="w-24 h-24 rounded-full object-cover"
             />

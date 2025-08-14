@@ -1,20 +1,16 @@
 import ModalContainer from "@/components/ModalContainer";
-import { ModalPropTypes, ProjectType } from "@/helpers/types";
 import ProjectForm from "./ProjectForm";
 import { useState } from "react";
 import { getFormattedDate } from "@/helpers/date-formatter";
 import { useProject } from "@/contexts/ProjectContext";
 import { toast } from "react-toastify";
+import { Project, ProjectModalProps } from "type";
 
-interface PropTypes extends ModalPropTypes {
-  project: ProjectType;
-}
-
-function EditProjectModal({ isOpen, project, onClose }: PropTypes) {
+function EditProjectModal({ isOpen, project, onClose }: ProjectModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { updateProject } = useProject();
 
-  async function handleSubmit(data: Partial<ProjectType>) {
+  async function handleSubmit(data: Partial<Project>) {
     const isUpdated =
       data.name !== project.name ||
       data.description !== project.description ||

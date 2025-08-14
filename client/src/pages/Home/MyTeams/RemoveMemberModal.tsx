@@ -1,24 +1,18 @@
 import { CancelButton, SubmitButton } from "@/components";
 import ModalContainer from "@/components/ModalContainer";
 import { useTeam } from "@/contexts/TeamContext";
-import { TeamType, UserType } from "@/helpers/types";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { animate } from "animejs";
 import { useState } from "react";
+import { Team, TeamModalProps, User } from "type";
 
-interface PropTypes {
-  isOpen: boolean;
-  team: TeamType;
-  onClose: () => void;
-}
-
-function RemoveMemberModal({ isOpen, team, onClose }: PropTypes) {
+function RemoveMemberModal({ isOpen, team, onClose }: TeamModalProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedMembers, setSelectedMembers] = useState<UserType[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
 
   const { removeMember } = useTeam();
 
-  function handleSelectMember(member: UserType) {
+  function handleSelectMember(member: User) {
     animate(`#unselected-${member._id}`, {
       translateX: "100%",
       duration: 400,
@@ -27,7 +21,7 @@ function RemoveMemberModal({ isOpen, team, onClose }: PropTypes) {
     });
   }
 
-  function handleUndoSelectMember(member: UserType) {
+  function handleUndoSelectMember(member: User) {
     animate(`#selected-${member._id}`, {
       translateX: "100%",
       duration: 400,
@@ -40,7 +34,7 @@ function RemoveMemberModal({ isOpen, team, onClose }: PropTypes) {
     setIsLoading(true);
     await removeMember(
       team._id,
-      selectedMembers.map((member) => member._id)
+      selectedMembers.map((member) => member._id),
     );
     setIsLoading(false);
     setSelectedMembers([]);
@@ -56,7 +50,7 @@ function RemoveMemberModal({ isOpen, team, onClose }: PropTypes) {
   if (!isOpen) return null;
 
   const filteredMembers = team.members.filter(
-    (m) => !selectedMembers.some((s) => s._id === m._id)
+    (m) => !selectedMembers.some((s) => s._id === m._id),
   );
 
   return (

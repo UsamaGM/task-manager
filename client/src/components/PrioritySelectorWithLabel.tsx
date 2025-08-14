@@ -1,9 +1,9 @@
-import { TaskPriorityType } from "@/helpers/types";
 import { forwardRef, useEffect, useState } from "react";
+import { TaskPriority } from "type";
 
 interface PrioritySliderProps {
   label: string;
-  value?: TaskPriorityType;
+  value?: TaskPriority;
   onChange?: (event: { target: { value: string; name?: string } }) => void;
   onBlur?: (event: { target: { value: string; name?: string } }) => void;
   name?: string;
@@ -12,16 +12,15 @@ interface PrioritySliderProps {
 const PrioritySelectorWithLabel = forwardRef<
   HTMLInputElement,
   PrioritySliderProps
->(({ label, value = TaskPriorityType.MEDIUM, onChange, onBlur, name }, ref) => {
-  const priorities = Object.values(TaskPriorityType);
-  const [selectedPriority, setSelectedPriority] =
-    useState<TaskPriorityType>(value);
+>(({ label, value = TaskPriority.MEDIUM, onChange, onBlur, name }, ref) => {
+  const priorities = Object.values(TaskPriority);
+  const [selectedPriority, setSelectedPriority] = useState<TaskPriority>(value);
 
   useEffect(() => {
     setSelectedPriority(value);
   }, [value]);
 
-  const handlePriorityChange = (priority: TaskPriorityType) => {
+  const handlePriorityChange = (priority: TaskPriority) => {
     setSelectedPriority(priority);
     onChange?.({
       target: {
@@ -60,8 +59,8 @@ const PrioritySelectorWithLabel = forwardRef<
                   ? priority === "low"
                     ? "bg-green-300 text-green-800"
                     : priority === "medium"
-                    ? "bg-yellow-300 text-yellow-800"
-                    : "bg-red-300 text-red-800"
+                      ? "bg-yellow-300 text-yellow-800"
+                      : "bg-red-300 text-red-800"
                   : "bg-transparent text-gray-500 hover:bg-gray-50 cursor-pointer"
               } ${index > 0 ? "border-l border-gray-300" : ""}`}
             >

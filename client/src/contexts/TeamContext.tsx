@@ -1,13 +1,13 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
-import { TeamType } from "@/helpers/types";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Team } from "type";
 
 interface TeamContextType {
-  teams: TeamType[];
-  findTeamWithProject: (projectId: string) => TeamType | undefined;
+  teams: Team[];
+  findTeamWithProject: (projectId: string) => Team | undefined;
   createTeam: (name: string, description: string) => Promise<void>;
   updateTeamData: (teamId: string, updatedData: any) => Promise<void>;
   assignProject: (projectId: string, teamId: string) => Promise<void>;
@@ -28,18 +28,18 @@ export function useTeam() {
 }
 
 function TeamProvider({ children }: { children: ReactNode }) {
-  const { teams: userTeams }: { teams: TeamType[] } = useLoaderData();
+  const { teams: userTeams }: { teams: Team[] } = useLoaderData();
   const [teams, setTeams] = useState(userTeams);
 
   function findTeamWithProject(projectId: string) {
     return teams.find((team) =>
-      team.projects.some((project) => project === projectId)
+      team.projects.some((project) => project === projectId),
     );
   }
 
   async function createTeam(name: string, description: string) {
     try {
-      const { data }: { data: TeamType } = await api.post("/team", {
+      const { data }: { data: Team } = await api.post("/team", {
         name,
         description,
       });
@@ -54,13 +54,13 @@ function TeamProvider({ children }: { children: ReactNode }) {
 
   async function updateTeamData(teamId: string, updatedData: any) {
     try {
-      const { data }: { data: TeamType } = await api.put("/team", {
+      const { data }: { data: Team } = await api.put("/team", {
         teamId,
         updatedData,
       });
 
       setTeams((prev) =>
-        prev.map((team) => (team._id === teamId ? data : team))
+        prev.map((team) => (team._id === teamId ? data : team)),
       );
 
       toast.success("Team Data Updated");
@@ -71,13 +71,13 @@ function TeamProvider({ children }: { children: ReactNode }) {
 
   async function assignProject(projectId: string, teamId: string) {
     try {
-      const { data }: { data: TeamType } = await api.put("/team/assign", {
+      const { data }: { data: Team } = await api.put("/team/assign", {
         projectId,
         teamId,
       });
 
       setTeams((prev) =>
-        prev.map((team) => (team._id === data._id ? data : team))
+        prev.map((team) => (team._id === data._id ? data : team)),
       );
       toast.success(`Team ${data.name} was assigned the project`);
     } catch (error) {
@@ -87,12 +87,12 @@ function TeamProvider({ children }: { children: ReactNode }) {
 
   async function addMember(teamId: string, members: string[]) {
     try {
-      const { data }: { data: TeamType } = await api.put("/team/add-member", {
+      const { data }: { data: Team } = await api.put("/team/add-member", {
         teamId,
         members,
       });
       setTeams((prev) =>
-        prev.map((team) => (team._id === teamId ? data : team))
+        prev.map((team) => (team._id === teamId ? data : team)),
       );
       toast.success(`New members added to team ${data.name}`);
     } catch (error) {
@@ -102,15 +102,12 @@ function TeamProvider({ children }: { children: ReactNode }) {
 
   async function removeMember(teamId: string, members: string[]) {
     try {
-      const { data }: { data: TeamType } = await api.put(
-        "/team/remove-member",
-        {
-          teamId,
-          members,
-        }
-      );
+      const { data }: { data: Team } = await api.put("/team/remove-member", {
+        teamId,
+        members,
+      });
       setTeams((prev) =>
-        prev.map((team) => (team._id === teamId ? data : team))
+        prev.map((team) => (team._id === teamId ? data : team)),
       );
       toast.success(`Members removed from team ${data.name}`);
     } catch (error) {

@@ -1,15 +1,11 @@
 import { CancelButton, Loader, SubmitButton } from "@/components";
 import ModalContainer from "@/components/ModalContainer";
 import { useProject } from "@/contexts/ProjectContext";
-import { ModalPropTypes, ProjectType } from "@/helpers/types";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { ProjectModalProps } from "type";
 
-interface PropTypes extends ModalPropTypes {
-  project: ProjectType;
-}
-
-function DeleteProjectModal({ isOpen, project, onClose }: PropTypes) {
+function DeleteProjectModal({ isOpen, project, onClose }: ProjectModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { deleteProject } = useProject();

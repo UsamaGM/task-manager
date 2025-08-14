@@ -1,18 +1,13 @@
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { TaskType } from "@/helpers/types";
 import {
   CheckIcon,
   BoltIcon,
   BellAlertIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
+import { TaskListProps } from "type";
 
-interface PropTypes {
-  title: string;
-  tasks: Array<TaskType>;
-}
-
-function TaskList({ title, tasks }: PropTypes) {
+function TaskList({ title, tasks }: TaskListProps) {
   return (
     <div className="flex flex-col flex-1 max-h-60 border border-gray-300 shadow rounded-2xl p-4 overflow-auto">
       <h2 className="text-gray-700 font-bold">{title}</h2>
@@ -48,8 +43,8 @@ function TaskList({ title, tasks }: PropTypes) {
                 task.priority === "high"
                   ? "bg-red-600"
                   : task.priority === "medium"
-                  ? "bg-yellow-500"
-                  : "bg-blue-400";
+                    ? "bg-yellow-500"
+                    : "bg-blue-400";
 
               return (
                 <tr className="border-t border-gray-300 h-2" key={index}>
