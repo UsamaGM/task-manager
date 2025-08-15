@@ -1,16 +1,16 @@
 import ModalContainer from "@/components/ModalContainer";
-import { useTask } from "@/contexts/TaskContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
 import { toast } from "react-toastify";
 import TaskForm from "./TaskForm";
-import { useEffect, useState } from "react";
-import { useProject } from "@/contexts/ProjectContext";
 import { Task, TaskModalProps } from "type";
+import useTaskStore from "@/stores/task.store";
+import useProjectStore from "@/stores/project.store";
 
 function EditTaskModal({ isOpen, task, onClose }: TaskModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const { updateTask } = useTask();
-  const { getProjectWithTask } = useProject();
+  const loading = useTaskStore((s) => s.loading);
+  const updateTask = useTaskStore((s) => s.updateTask);
+
+  const getProjectWithTask = useProjectStore((s) => s.getProjectWithTask);
   const project = isOpen ? getProjectWithTask(task._id) : null;
 
   async function onSubmit(formData: Partial<Task>) {
@@ -34,9 +34,7 @@ function EditTaskModal({ isOpen, task, onClose }: TaskModalProps) {
       return;
     }
 
-    setIsLoading(true);
     await updateTask(task._id, formData);
-    setIsLoading(false);
     onClose();
   }
 
@@ -45,7 +43,7 @@ function EditTaskModal({ isOpen, task, onClose }: TaskModalProps) {
   return (
     <ModalContainer title={`Update Task "${task.name}"`}>
       <TaskForm
-        isLoading={isLoading}
+        isLoading={loading}
         subtitle={`Project: ${project?.name} (${getFormattedDate(
           project!.startDate,
         )} - ${getFormattedDate(project!.endDate)})`}

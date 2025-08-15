@@ -7,8 +7,8 @@ import {
 } from "@/components";
 import CancelButton from "@/components/CancelButton";
 import PrioritySelectorWithLabel from "@/components/PrioritySelectorWithLabel";
-import { useProject } from "@/contexts/ProjectContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
+import useProjectStore from "@/stores/project.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Task, TaskPriority } from "type";
@@ -37,7 +37,7 @@ function TaskForm({
   onClose,
   onSubmit,
 }: PropTypes) {
-  const { projects } = useProject();
+  const projects = useProjectStore((s) => s.projects);
 
   const formSchema = z.object({
     name: z.string().min(3, "Name must be 3 characters or more"),

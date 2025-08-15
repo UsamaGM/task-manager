@@ -1,20 +1,17 @@
-import { CancelButton, Loader, SubmitButton } from "@/components";
+import { CancelButton, SubmitButton } from "@/components";
 import ModalContainer from "@/components/ModalContainer";
-import { useProject } from "@/contexts/ProjectContext";
-import { useState } from "react";
+import useProjectStore from "@/stores/project.store";
 import { toast } from "react-toastify";
 import { ProjectModalProps } from "type";
 
 function DeleteProjectModal({ isOpen, project, onClose }: ProjectModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const { deleteProject } = useProject();
+  const loading = useProjectStore((s) => s.loading);
+  const deleteProject = useProjectStore((s) => s.deleteProject);
 
   async function handleDeleteTeam() {
-    setIsLoading(true);
     const wasProjectDeleted = await deleteProject(project._id);
+
     if (wasProjectDeleted) toast.success(`Project "${project.name}" deleted`);
-    setIsLoading(false);
     onClose();
   }
 
@@ -31,7 +28,7 @@ function DeleteProjectModal({ isOpen, project, onClose }: ProjectModalProps) {
         <div className="flex space-x-5">
           <CancelButton onClick={onClose} />
           <SubmitButton
-            isLoading={isLoading}
+            isLoading={loading}
             title="Delete Project"
             onClick={handleDeleteTeam}
           />

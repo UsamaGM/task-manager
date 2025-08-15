@@ -1,5 +1,5 @@
-import { useProject } from "@/contexts/ProjectContext";
 import useAuthStore from "@/stores/auth.store";
+import useProjectStore from "@/stores/project.store";
 import {
   ArrowRightStartOnRectangleIcon,
   CubeIcon,
@@ -12,16 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
-import { Team } from "type";
-
-interface PropTypes {
-  team: Team;
-  handleAddMember: () => void;
-  handleRemoveMember: () => void;
-  handleEditTeam: () => void;
-  handleDeleteTeam: () => void;
-  handleLeaveTeam: () => void;
-}
+import { Team, TeamListItemProps } from "type";
 
 function TeamListItem({
   team,
@@ -30,13 +21,14 @@ function TeamListItem({
   handleEditTeam,
   handleDeleteTeam,
   handleLeaveTeam,
-}: PropTypes) {
-  const { getProjectsTaskCount } = useProject();
+}: TeamListItemProps) {
   const userId = useAuthStore((s) => s.user?._id);
-  const navigate = useNavigate();
   const isAdmin = team.admin._id === userId;
 
+  const getProjectsTaskCount = useProjectStore((s) => s.getProjectsTaskCount);
   const taskCount = getProjectsTaskCount(team.projects);
+
+  const navigate = useNavigate();
 
   return (
     <div className="team-list-item scale-90 -translate-y-32 opacity-0 flex flex-col space-y-5 w-full h-full rounded-2xl border border-gray-300 shadow sm:p-3 md:p-5">

@@ -1,8 +1,8 @@
 import CancelButton from "@/components/CancelButton";
 import ModalContainer from "@/components/ModalContainer";
 import NoXMessage from "@/components/NoXMessage";
-import { useProject } from "@/contexts/ProjectContext";
-import { useTask } from "@/contexts/TaskContext";
+import useProjectStore from "@/stores/project.store";
+import useTaskStore from "@/stores/task.store";
 import useTeamStore from "@/stores/team.store";
 import { toast } from "react-toastify";
 import { Task, TaskModalProps } from "type";
@@ -25,7 +25,7 @@ interface TeamMemberListPropTypes {
 }
 
 function TeamMemberList({ task, onClose }: TeamMemberListPropTypes) {
-  const project = useProject().getProjectWithTask(task._id);
+  const project = useProjectStore((s) => s.getProjectWithTask(task._id));
   if (!project) {
     toast.warn(
       "You need to assign the Project to a team and the team admin will handle tasks.",
@@ -33,7 +33,7 @@ function TeamMemberList({ task, onClose }: TeamMemberListPropTypes) {
     onClose();
   }
   const team = useTeamStore((s) => s.findTeamWithProject(project._id));
-  const { assignTask } = useTask();
+  const assignTask = useTaskStore((s) => s.assignTask);
 
   async function handleAssignment(memberId: string) {
     await assignTask(task._id, memberId);

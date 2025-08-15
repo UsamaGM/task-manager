@@ -1,5 +1,5 @@
-import { useProject } from "@/contexts/ProjectContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
+import useProjectStore from "@/stores/project.store";
 import useTeamStore from "@/stores/team.store";
 import {
   ChartBarIcon,
@@ -38,7 +38,7 @@ function ProjectListItem({
   onDelete,
 }: PropTypes) {
   const [isOpen, setIsOpen] = useState(false);
-  const { updateProject } = useProject();
+  const updateProject = useProjectStore((s) => s.updateProject);
 
   const findTeamWithProject = useTeamStore((s) => s.findTeamWithProject);
 

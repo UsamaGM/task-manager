@@ -1,20 +1,17 @@
 import { CancelButton, SubmitButton } from "@/components";
 import ModalContainer from "@/components/ModalContainer";
-import { useTask } from "@/contexts/TaskContext";
-import { useState } from "react";
+import useTaskStore from "@/stores/task.store";
 import { toast } from "react-toastify";
 import { TaskModalProps } from "type";
 
 function DeleteTaskModal({ isOpen, task, onClose }: TaskModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const { deleteTask } = useTask();
+  const loading = useTaskStore((s) => s.loading);
+  const deleteTask = useTaskStore((s) => s.deleteTask);
 
   async function handleDeleteTask() {
-    setIsLoading(true);
     const wasTaskDeleted = await deleteTask(task._id);
     if (wasTaskDeleted) toast.success(`Task "${task.name}" deleted`);
-    setIsLoading(false);
+
     onClose();
   }
 
@@ -30,7 +27,7 @@ function DeleteTaskModal({ isOpen, task, onClose }: TaskModalProps) {
         <div className="flex space-x-5">
           <CancelButton onClick={onClose} />
           <SubmitButton
-            isLoading={isLoading}
+            isLoading={loading}
             title="Delete Task"
             onClick={handleDeleteTask}
           />

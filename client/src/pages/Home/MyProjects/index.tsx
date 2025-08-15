@@ -1,4 +1,3 @@
-import { useProject } from "@/contexts/ProjectContext";
 import TaskListContainer from "@/components/ListContainer";
 import ProjectListItem from "./ProjectListItem";
 import Headline from "@/components/Headline";
@@ -10,6 +9,7 @@ import AssignTeamModal from "./AssignTeamModal";
 import { CubeTransparentIcon } from "@heroicons/react/24/outline";
 import NoXMessage from "@/components/NoXMessage";
 import { Project, ProjectStatus } from "type";
+import useProjectStore from "@/stores/project.store";
 
 function MyProjects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -17,7 +17,8 @@ function MyProjects() {
   const [showEditProjectModal, setShowEditProjectModal] = useState(false);
   const [showAssignProjectModal, setShowAssignProjectModal] = useState(false);
   const [showDeleteProjectModal, setShowDeleteProjectModal] = useState(false);
-  const { projects } = useProject();
+
+  const projects = useProjectStore((s) => s.projects);
 
   const activeProjects = projects.filter(
     (project) => project.status === ProjectStatus.ACTIVE,
@@ -51,6 +52,7 @@ function MyProjects() {
         rightButtonTitle="Create Project"
         rightButtonAction={() => setShowCreateProjectModal(true)}
       />
+
       {projects.length ? (
         <div className="flex h-full space-x-6 overflow-hidden">
           <TaskListContainer title={`Active (${activeProjects.length})`}>

@@ -2,13 +2,13 @@ import ModalContainer from "@/components/ModalContainer";
 import ProjectForm from "./ProjectForm";
 import { useState } from "react";
 import { getFormattedDate } from "@/helpers/date-formatter";
-import { useProject } from "@/contexts/ProjectContext";
 import { toast } from "react-toastify";
 import { Project, ProjectModalProps } from "type";
+import useProjectStore from "@/stores/project.store";
 
 function EditProjectModal({ isOpen, project, onClose }: ProjectModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const { updateProject } = useProject();
+  const loading = useProjectStore((s) => s.loading);
+  const updateProject = useProjectStore((s) => s.updateProject);
 
   async function handleSubmit(data: Partial<Project>) {
     const isUpdated =
@@ -21,11 +21,7 @@ function EditProjectModal({ isOpen, project, onClose }: ProjectModalProps) {
       return;
     }
 
-    console.log("Project", project, "Data", data);
-
-    setIsLoading(true);
     await updateProject(project._id, data);
-    setIsLoading(false);
     onClose();
   }
 
@@ -34,7 +30,7 @@ function EditProjectModal({ isOpen, project, onClose }: ProjectModalProps) {
   return (
     <ModalContainer title={`Update Project ${project.name}`}>
       <ProjectForm
-        isLoading={isLoading}
+        isLoading={loading}
         onClose={onClose}
         submitBtnTitle="Update"
         defaultValues={{

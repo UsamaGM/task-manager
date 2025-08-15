@@ -144,3 +144,17 @@ interface TitledSegmentProps {
   children: ReactNode;
   showLoading?: boolean;
 }
+
+interface ProjectActionItemProps {
+  project: Project;
+  index: number;
+}
+
+interface TeamListItemProps {
+  team: Team;
+  handleAddMember: () => void;
+  handleRemoveMember: () => void;
+  handleEditTeam: () => void;
+  handleDeleteTeam: () => void;
+  handleLeaveTeam: () => void;
+}

@@ -26,8 +26,6 @@ import {
   userDataLoader,
 } from "./dataLoaders";
 
-import TaskProvider from "@/contexts/TaskContext";
-import ProjectProvider from "@/contexts/ProjectContext";
 import useAuthStore from "@/stores/auth.store";
 
 const authRoutes = [
@@ -40,13 +38,7 @@ const authRoutes = [
 const authenticatedRoutes = [
   {
     path: "/",
-    element: (
-      <ProjectProvider>
-        <TaskProvider>
-          <Home />
-        </TaskProvider>
-      </ProjectProvider>
-    ),
+    element: <Home />,
     loader: dataLoader,
     hydrateFallbackElement: <Loader fullscreen />,
     children: [

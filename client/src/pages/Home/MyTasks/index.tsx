@@ -1,19 +1,15 @@
-import TaskListContainer from "../../../components/ListContainer";
+import TaskListContainer from "@/components/ListContainer";
 import TaskListItem from "./TaskListItem";
-import { useTask } from "@/contexts/TaskContext";
 import Headline from "@/components/Headline";
 import { useState } from "react";
 import CreateTaskModal from "./CreateTaskModal";
 import EditTaskModal from "./EditTaskModal";
 import DeleteTaskModal from "./DeleteTaskModal";
-import {
-  DocumentTextIcon,
-  KeyIcon,
-  TicketIcon,
-} from "@heroicons/react/24/outline";
+import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import NoXMessage from "@/components/NoXMessage";
 import AssignTaskModal from "./AssignTaskModal";
 import { Task, TaskStatus } from "type";
+import useTaskStore from "@/stores/task.store";
 
 function MyTasks() {
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
@@ -21,7 +17,8 @@ function MyTasks() {
   const [showAssignTaskModal, setShowAssignTaskModal] = useState(false);
   const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const { tasks } = useTask();
+
+  const tasks = useTaskStore((s) => s.tasks);
 
   const todoTasks = tasks.filter((task) => task.status === TaskStatus.TODO);
   const inProgressTasks = tasks.filter(
