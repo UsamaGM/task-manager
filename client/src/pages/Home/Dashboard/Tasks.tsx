@@ -1,4 +1,3 @@
-import { TaskStatus } from "type";
 import TaskList from "./TaskList";
 import TitledSegment from "./TitledSegment";
 import {
@@ -14,7 +13,7 @@ export default function Tasks() {
   const thisWeekTasks = tasks.filter(
     (task) => getFormattedDate(task.dueDate) < getFormattedDateNDaysLater(7),
   );
-  const todoTasks = tasks.filter((task) => task.status === TaskStatus.TODO);
+  const todoTasks = tasks.filter((task) => task.status === "todo");
 
   return (
     <TitledSegment title="Tasks" showLoading={tasksLoading}>

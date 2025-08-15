@@ -12,7 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
-import { Team, TeamListItemProps } from "type";
+import { TeamListItemProps } from "type";
 
 function TeamListItem({
   team,
@@ -31,7 +31,7 @@ function TeamListItem({
   const navigate = useNavigate();
 
   return (
-    <div className="team-list-item scale-90 -translate-y-32 opacity-0 flex flex-col space-y-5 w-full h-full rounded-2xl border border-gray-300 shadow sm:p-3 md:p-5">
+    <div className="flex flex-col space-y-5 w-full h-full rounded-2xl border border-gray-300 shadow sm:p-3 md:p-5">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="font-bold text-lg">{team.name}</h2>
@@ -43,28 +43,34 @@ function TeamListItem({
           <div className="flex space-x-3 items-center">
             <IconButton
               hint="Add new member(s) to this team"
-              onClick={handleAddMember}
+              onClick={() => handleAddMember(team)}
             >
               <UserPlusIcon className="ml-0.5 stroke-2" />
             </IconButton>
             <IconButton
               hint="Remove member(s) from this team"
-              onClick={handleRemoveMember}
+              onClick={() => handleRemoveMember(team)}
             >
               <UserMinusIcon className="m-[0.5px] stroke-2" />
             </IconButton>
             <IconButton
               hint="Edit team name or description"
-              onClick={handleEditTeam}
+              onClick={() => handleEditTeam(team)}
             >
               <PencilIcon className="stroke-2 m-[1.5px]" />
             </IconButton>
-            <IconButton hint="Delete this team" onClick={handleDeleteTeam}>
+            <IconButton
+              hint="Delete this team"
+              onClick={() => handleDeleteTeam(team)}
+            >
               <TrashIcon className="stroke-2 m-[0.5px]" />
             </IconButton>
           </div>
         ) : (
-          <IconButton hint="Leave this team" onClick={handleLeaveTeam}>
+          <IconButton
+            hint="Leave this team"
+            onClick={() => handleLeaveTeam(team)}
+          >
             <ArrowRightStartOnRectangleIcon />
           </IconButton>
         )}

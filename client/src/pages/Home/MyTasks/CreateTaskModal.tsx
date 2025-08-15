@@ -26,7 +26,7 @@ function CreateTaskModal({ isOpen, onClose }: ModalProps) {
           name: "",
           description: "",
           dueDate: today,
-          priority: TaskPriority.MEDIUM,
+          priority: "medium",
         }}
         onClose={onClose}
         onSubmit={handleSubmit}

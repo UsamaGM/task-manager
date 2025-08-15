@@ -2,7 +2,6 @@ import useAuthStore from "@/stores/auth.store";
 import useProjectStore from "@/stores/project.store";
 import useTaskStore from "@/stores/task.store";
 import useTeamStore from "@/stores/team.store";
-import { TaskStatus } from "type";
 import StatCard from "./StatCard";
 import TitledSegment from "./TitledSegment";
 
@@ -22,7 +21,7 @@ export default function Stats() {
     (acc, task) =>
       task.assignedTo &&
       task.assignedTo._id === userId &&
-      task.status === TaskStatus.DONE
+      task.status === "done"
         ? acc + 1
         : acc,
     0,

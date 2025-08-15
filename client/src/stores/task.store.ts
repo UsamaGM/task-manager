@@ -22,7 +22,7 @@ const useTaskStore = create<TaskStore>((set, get) => ({
 
   getDoneTasksCount: (tasks) =>
     get().tasks.filter(
-      (task) => tasks.includes(task._id) && task.status === TaskStatus.DONE,
+      (task) => tasks.includes(task._id) && task.status === "done",
     ).length,
 
   createTask: async (taskData) => {

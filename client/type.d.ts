@@ -37,11 +37,7 @@ interface DetailedTeam {
   updatedAt: string;
 }
 
-enum ProjectStatus {
-  ACTIVE = "active",
-  COMPLETED = "completed",
-  ON_HOLD = "on-hold",
-}
+type ProjectStatus = "active" | "completed" | "on-hold";
 
 interface Project {
   _id: string;
@@ -65,16 +61,9 @@ interface DetailedProject {
   assignedTo: Team | undefined;
 }
 
-enum TaskPriority {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-}
-enum TaskStatus {
-  TODO = "todo",
-  IN_PROGRESS = "in-progress",
-  DONE = "done",
-}
+type TaskPriority = "low" | "medium" | "high";
+type TaskStatus = "todo" | "in-progress" | "done";
+
 interface Task {
   _id: string;
   name: string;
@@ -150,11 +139,39 @@ interface ProjectActionItemProps {
   index: number;
 }
 
+type TeamFn = (team: Team) => void;
 interface TeamListItemProps {
   team: Team;
-  handleAddMember: () => void;
-  handleRemoveMember: () => void;
-  handleEditTeam: () => void;
-  handleDeleteTeam: () => void;
-  handleLeaveTeam: () => void;
+  handleAddMember: TeamFn;
+  handleRemoveMember: TeamFn;
+  handleEditTeam: TeamFn;
+  handleDeleteTeam: TeamFn;
+  handleLeaveTeam: TeamFn;
+}
+interface TeamsProps {
+  fns: {
+    addMemberToTeam: TeamFn;
+    removeMemberFromTeam: TeamFn;
+    editTeam: TeamFn;
+    deleteTeam: TeamFn;
+    leaveTeam: TeamFn;
+  };
+}
+
+type ProjectFn = (project: Project) => void;
+interface ProjectsProps {
+  fns: {
+    editProject: ProjectFn;
+    assignTeamToProject: ProjectFn;
+    deleteProject: ProjectFn;
+  };
+}
+
+type TaskFn = (task: Task) => void;
+interface TasksProps {
+  fns: {
+    editTask: TaskFn;
+    assignTask: TaskFn;
+    deleteTask: TaskFn;
+  };
 }

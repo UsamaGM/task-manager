@@ -118,10 +118,10 @@ function ProjectListItem({
             <span className="font-bold">Edit</span>
           </button>
           <hr className="text-gray-300 mx-1" />
-          {project.status !== ProjectStatus.ACTIVE && (
+          {project.status !== "active" && (
             <>
               <button
-                onClick={() => handleChangeStatus(ProjectStatus.ACTIVE)}
+                onClick={() => handleChangeStatus("active")}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-yellow-200 hover:text-green-800 cursor-pointer"
               >
                 <ChartBarIcon className="size-4 stroke-2" />
@@ -130,10 +130,10 @@ function ProjectListItem({
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {project.status !== ProjectStatus.ON_HOLD && (
+          {project.status !== "on-hold" && (
             <>
               <button
-                onClick={() => handleChangeStatus(ProjectStatus.ON_HOLD)}
+                onClick={() => handleChangeStatus("on-hold")}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-red-200 hover:text-yellow-800 cursor-pointer"
               >
                 <HandRaisedIcon className="size-4" />
@@ -142,10 +142,10 @@ function ProjectListItem({
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {project.status !== ProjectStatus.COMPLETED && (
+          {project.status !== "completed" && (
             <>
               <button
-                onClick={() => handleChangeStatus(ProjectStatus.COMPLETED)}
+                onClick={() => handleChangeStatus("completed")}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-green-200 hover:text-green-800 cursor-pointer"
               >
                 <CheckIcon className="size-4 stroke-3" />

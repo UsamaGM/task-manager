@@ -1,6 +1,5 @@
 import ModalContainer from "@/components/ModalContainer";
 import ProjectForm from "./ProjectForm";
-import { useState } from "react";
 import { getFormattedDate } from "@/helpers/date-formatter";
 import { toast } from "react-toastify";
 import { Project, ProjectModalProps } from "type";

@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
 import useAuthStore from "@/stores/auth.store";
-import { Task, TaskPriority, TaskStatus } from "type";
+import { Task, TaskStatus } from "type";
 import useTeamStore from "@/stores/team.store";
 import useTaskStore from "@/stores/task.store";
 import useProjectStore from "@/stores/project.store";
@@ -48,9 +48,9 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
   }
 
   const priorityConfig =
-    task.priority === TaskPriority.LOW
+    task.priority === "low"
       ? { title: "Low", color: "text-green-500" }
-      : task.priority === TaskPriority.MEDIUM
+      : task.priority === "medium"
         ? { title: "Medium", color: "text-yellow-600" }
         : { title: "High", color: "text-red-500" };
   const hasDueDatePassed =
@@ -83,7 +83,7 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
 
       <p className="text-sm font-bold">Project: {project.name}</p>
 
-      {task.status !== TaskStatus.DONE && (
+      {task.status !== "done" && (
         <h4 className="font-semibold text-sm">
           Due:{" "}
           <span className={hasDueDatePassed ? "text-red-600" : "text-gray-600"}>
@@ -131,10 +131,10 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
             <span className="font-bold">Edit</span>
           </button>
           <hr className="text-gray-300 mx-1" />
-          {showExtraOptions && task.status !== TaskStatus.TODO && (
+          {showExtraOptions && task.status !== "todo" && (
             <>
               <button
-                onClick={() => handleChangeStatus(TaskStatus.TODO)}
+                onClick={() => handleChangeStatus("todo")}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-red-200 hover:text-red-800 cursor-pointer"
               >
                 <BellIcon className="size-4 stroke-2" />
@@ -143,10 +143,10 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {showExtraOptions && task.status !== TaskStatus.IN_PROGRESS && (
+          {showExtraOptions && task.status !== "in-progress" && (
             <>
               <button
-                onClick={() => handleChangeStatus(TaskStatus.IN_PROGRESS)}
+                onClick={() => handleChangeStatus("in-progress")}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-yellow-200 hover:text-yellow-800 cursor-pointer"
               >
                 <BoltIcon className="size-4" />
@@ -155,10 +155,10 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
               <hr className="text-gray-300 mx-1" />
             </>
           )}
-          {showExtraOptions && task.status !== TaskStatus.DONE && (
+          {showExtraOptions && task.status !== "done" && (
             <>
               <button
-                onClick={() => handleChangeStatus(TaskStatus.DONE)}
+                onClick={() => handleChangeStatus("done")}
                 className="flex items-center space-x-2 pl-2 pr-4 py-1 hover:bg-green-200 hover:text-green-800 cursor-pointer"
               >
                 <CheckIcon className="size-4 stroke-3" />

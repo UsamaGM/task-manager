@@ -98,7 +98,7 @@ function TaskForm({
         />
         <PrioritySelectorWithLabel
           label="Task Priority"
-          value={TaskPriority.MEDIUM}
+          value={"medium"}
           {...register("priority")}
         />
       </div>
