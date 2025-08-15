@@ -1,6 +1,6 @@
 import { useProject } from "@/contexts/ProjectContext";
-import { useTeam } from "@/contexts/TeamContext";
 import { getFormattedDate } from "@/helpers/date-formatter";
+import useTeamStore from "@/stores/team.store";
 import {
   ChartBarIcon,
   CheckIcon,
@@ -39,7 +39,8 @@ function ProjectListItem({
 }: PropTypes) {
   const [isOpen, setIsOpen] = useState(false);
   const { updateProject } = useProject();
-  const { findTeamWithProject } = useTeam();
+
+  const findTeamWithProject = useTeamStore((s) => s.findTeamWithProject);
 
   const handleClickOutside = useCallback(function () {
     console.log("Click");

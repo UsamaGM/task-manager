@@ -1,6 +1,6 @@
 import { CancelButton, SubmitButton } from "@/components";
 import ModalContainer from "@/components/ModalContainer";
-import { useTeam } from "@/contexts/TeamContext";
+import useTeamStore from "@/stores/team.store";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { TeamModalProps } from "type";
@@ -8,7 +8,7 @@ import { TeamModalProps } from "type";
 function DeleteTeamModal({ isOpen, team, onClose }: TeamModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const { deleteTeam } = useTeam();
+  const deleteTeam = useTeamStore((s) => s.deleteTeam);
 
   async function handleDeleteTeam() {
     setIsLoading(true);

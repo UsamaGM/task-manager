@@ -1,10 +1,10 @@
 import ModalContainer from "@/components/ModalContainer";
-import { useTeam } from "@/contexts/TeamContext";
+import useTeamStore from "@/stores/team.store";
 import { toast } from "react-toastify";
 import { TeamModalProps } from "type";
 
 function LeaveTeamModal({ isOpen, team, onClose }: TeamModalProps) {
-  const { leaveTeam } = useTeam();
+  const leaveTeam = useTeamStore((s) => s.leaveTeam);
 
   async function handleLeaveTeam() {
     const hasLeftTeam = await leaveTeam(team._id);

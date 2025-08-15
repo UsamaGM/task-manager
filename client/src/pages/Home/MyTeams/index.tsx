@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useTeam } from "@/contexts/TeamContext";
 import { Headline } from "@/components";
 import TeamListItem from "./TeamListItem";
 import CreateTeamModal from "./CreateTeamModal";
@@ -12,6 +11,7 @@ import LeaveTeamModal from "./LeaveTeamModal";
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import NoXMessage from "@/components/NoXMessage";
 import { Team } from "type";
+import useTeamStore from "@/stores/team.store";
 
 function MyTeams() {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -22,7 +22,7 @@ function MyTeams() {
   const [showDeleteTeamModal, setShowDeleteTeamModal] = useState(false);
   const [showLeaveTeamModal, setShowLeaveTeamModal] = useState(false);
 
-  const { teams } = useTeam();
+  const teams = useTeamStore((s) => s.teams);
 
   useEffect(() => {
     animate(".team-list-item", {

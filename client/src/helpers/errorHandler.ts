@@ -1,8 +1,8 @@
-import { ErrorType } from "@/helpers/types";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { Error } from "type";
 
-export function formErrorsHandler(errors: ErrorType) {
+export function formErrorsHandler(errors: Error) {
   const errorEntries = Object.entries(errors);
   if (errorEntries.length) {
     errorEntries.forEach(([_, error]) => {

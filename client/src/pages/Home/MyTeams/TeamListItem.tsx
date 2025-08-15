@@ -32,7 +32,7 @@ function TeamListItem({
   handleLeaveTeam,
 }: PropTypes) {
   const { getProjectsTaskCount } = useProject();
-  const userId = useAuthStore((state) => state.user?._id);
+  const userId = useAuthStore((s) => s.user?._id);
   const navigate = useNavigate();
   const isAdmin = team.admin._id === userId;
 

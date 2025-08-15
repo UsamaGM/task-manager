@@ -1,11 +1,11 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
-import { createContext, ReactNode, useContext, useState } from "react";
-import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Team } from "type";
+import { create } from "zustand";
 
-interface TeamContextType {
+interface TeamStore {
+  loading: boolean;
   teams: Team[];
   findTeamWithProject: (projectId: string) => Team | undefined;
   createTeam: (name: string, description: string) => Promise<void>;
@@ -17,143 +17,151 @@ interface TeamContextType {
   deleteTeam: (teamId: string) => Promise<boolean>;
 }
 
-const TeamContext = createContext<TeamContextType | null>(null);
+const useTeamStore = create<TeamStore>((set, get) => ({
+  loading: true,
+  teams: [],
 
-export function useTeam() {
-  const context = useContext(TeamContext);
-
-  if (!context) throw new Error("useTeam can only be used within TeamProvider");
-
-  return context;
-}
-
-function TeamProvider({ children }: { children: ReactNode }) {
-  const { teams: userTeams }: { teams: Team[] } = useLoaderData();
-  const [teams, setTeams] = useState(userTeams);
-
-  function findTeamWithProject(projectId: string) {
-    return teams.find((team) =>
+  findTeamWithProject: (projectId) =>
+    get().teams.find((team) =>
       team.projects.some((project) => project === projectId),
-    );
-  }
+    ),
 
-  async function createTeam(name: string, description: string) {
+  createTeam: async (name, description) => {
+    set({ loading: true });
+
     try {
       const { data }: { data: Team } = await api.post("/team", {
         name,
         description,
       });
 
-      setTeams((prev) => [data, ...prev]);
+      set({ teams: [data, ...get().teams] });
 
       toast.success(`Created team: "${data.name}"`);
     } catch (error) {
       apiErrorHandler(error);
+    } finally {
+      set({ loading: false });
     }
-  }
+  },
 
-  async function updateTeamData(teamId: string, updatedData: any) {
+  updateTeamData: async (teamId, updatedData) => {
+    set({ loading: true });
     try {
       const { data }: { data: Team } = await api.put("/team", {
         teamId,
         updatedData,
       });
 
-      setTeams((prev) =>
-        prev.map((team) => (team._id === teamId ? data : team)),
+      const teams = get().teams.map((team) =>
+        team._id === teamId ? data : team,
       );
+      set({ teams });
 
       toast.success("Team Data Updated");
     } catch (error) {
       apiErrorHandler(error);
+    } finally {
+      set({ loading: false });
     }
-  }
+  },
 
-  async function assignProject(projectId: string, teamId: string) {
+  assignProject: async (projectId, teamId) => {
+    set({ loading: true });
     try {
       const { data }: { data: Team } = await api.put("/team/assign", {
         projectId,
         teamId,
       });
 
-      setTeams((prev) =>
-        prev.map((team) => (team._id === data._id ? data : team)),
+      const teams = get().teams.map((team) =>
+        team._id === data._id ? data : team,
       );
+      set({ teams });
+
       toast.success(`Team ${data.name} was assigned the project`);
     } catch (error) {
       apiErrorHandler(error);
+    } finally {
+      set({ loading: false });
     }
-  }
+  },
 
-  async function addMember(teamId: string, members: string[]) {
+  addMember: async (teamId, members) => {
+    set({ loading: true });
     try {
       const { data }: { data: Team } = await api.put("/team/add-member", {
         teamId,
         members,
       });
-      setTeams((prev) =>
-        prev.map((team) => (team._id === teamId ? data : team)),
+
+      const teams = get().teams.map((team) =>
+        team._id === teamId ? data : team,
       );
+      set({ teams });
+
       toast.success(`New members added to team ${data.name}`);
     } catch (error) {
       apiErrorHandler(error);
+    } finally {
+      set({ loading: false });
     }
-  }
+  },
 
-  async function removeMember(teamId: string, members: string[]) {
+  removeMember: async (teamId: string, members: string[]) => {
+    set({ loading: true });
     try {
       const { data }: { data: Team } = await api.put("/team/remove-member", {
         teamId,
         members,
       });
-      setTeams((prev) =>
-        prev.map((team) => (team._id === teamId ? data : team)),
+
+      const teams = get().teams.map((team) =>
+        team._id === teamId ? data : team,
       );
+      set({ teams });
+
       toast.success(`Members removed from team ${data.name}`);
     } catch (error) {
       apiErrorHandler(error);
+    } finally {
+      set({ loading: false });
     }
-  }
+  },
 
-  async function leaveTeam(teamId: string) {
+  leaveTeam: async (teamId: string) => {
+    set({ loading: true });
     try {
       await api.put(`/team/leave/${teamId}`);
-      setTeams((prev) => prev.filter((t) => t._id !== teamId));
+
+      const teams = get().teams.filter((t) => t._id !== teamId);
+      set({ teams });
+
       return true;
     } catch (error) {
       apiErrorHandler(error);
       return false;
+    } finally {
+      set({ loading: false });
     }
-  }
+  },
 
-  async function deleteTeam(teamId: string) {
+  deleteTeam: async (teamId: string) => {
+    set({ loading: true });
     try {
       await api.delete(`/team/${teamId}`);
-      setTeams((prev) => prev.filter((team) => team._id !== teamId));
+
+      const teams = get().teams.filter((team) => team._id !== teamId);
+      set({ teams });
+
       return true;
     } catch (error) {
       apiErrorHandler(error);
       return false;
+    } finally {
+      set({ loading: false });
     }
-  }
+  },
+}));
 
-  return (
-    <TeamContext.Provider
-      value={{
-        teams,
-        findTeamWithProject,
-        createTeam,
-        updateTeamData,
-        assignProject,
-        addMember,
-        removeMember,
-        leaveTeam,
-        deleteTeam,
-      }}
-    >
-      {children}
-    </TeamContext.Provider>
-  );
-}
-
-export default TeamProvider;
+export default useTeamStore;

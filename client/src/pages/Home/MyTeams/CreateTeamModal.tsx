@@ -5,8 +5,8 @@ import {
 } from "@/components";
 import CancelButton from "@/components/CancelButton";
 import ModalContainer from "@/components/ModalContainer";
-import { useTeam } from "@/contexts/TeamContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
+import useTeamStore from "@/stores/team.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ import { z } from "zod";
 
 function CreateTeamModal({ isOpen, onClose }: ModalProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { createTeam } = useTeam();
+  const createTeam = useTeamStore((s) => s.createTeam);
 
   const formSchema = z.object({
     name: z.string().min(3, "Name must be 3 characters or more"),

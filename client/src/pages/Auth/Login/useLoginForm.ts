@@ -11,7 +11,9 @@ import { loginSchema } from "@/validation/schemas";
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 export const useLoginForm = () => {
-  const { login, loading } = useAuthStore();
+  const login = useAuthStore((s) => s.login);
+  const loading = useAuthStore((s) => s.loading);
+
   const navigate = useNavigate();
 
   const form = useForm<LoginFormData>({

@@ -37,7 +37,7 @@ async function getUserById(req: AuthRequest, res: Response) {
 async function getQueriedUsers(req: AuthRequest, res: Response) {
   const { query } = req.params;
   const isEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(
-    query?.toLowerCase() || ""
+    query?.toLowerCase() || "",
   );
 
   try {
@@ -106,43 +106,4 @@ async function getUserData(req: AuthRequest, res: Response) {
   }
 }
 
-import path from "path";
-import fs from "fs/promises";
-
-async function updateProfilePicture(req: AuthRequest, res: Response) {
-  const userId = req.user?._id;
-  const file = req.file;
-
-  if (!file) {
-    res.status(400).json({ message: "No file uploaded" });
-    return;
-  }
-
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    const oldProfilePicture = user.profilePicture;
-    if (oldProfilePicture) {
-      try {
-        await fs.unlink(path.join("uploads", oldProfilePicture));
-      } catch (error) {
-        console.error("Error deleting old profile picture:", error);
-      }
-    }
-
-    const newProfilePicture = file.filename;
-    user.profilePicture = newProfilePicture;
-    await user.save();
-
-    res.status(200).json({ profilePicture: newProfilePicture });
-  } catch (error) {
-    console.error("PUT /user/profile-picture:", error);
-    res.sendStatus(500);
-  }
-}
-
-export { getUserById, getQueriedUsers, getUserData, updateProfilePicture };
+export { getUserById, getQueriedUsers, getUserData };

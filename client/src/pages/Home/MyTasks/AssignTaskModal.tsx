@@ -3,7 +3,7 @@ import ModalContainer from "@/components/ModalContainer";
 import NoXMessage from "@/components/NoXMessage";
 import { useProject } from "@/contexts/ProjectContext";
 import { useTask } from "@/contexts/TaskContext";
-import { useTeam } from "@/contexts/TeamContext";
+import useTeamStore from "@/stores/team.store";
 import { toast } from "react-toastify";
 import { Task, TaskModalProps } from "type";
 
@@ -32,7 +32,7 @@ function TeamMemberList({ task, onClose }: TeamMemberListPropTypes) {
     );
     onClose();
   }
-  const team = useTeam().findTeamWithProject(project._id);
+  const team = useTeamStore((s) => s.findTeamWithProject(project._id));
   const { assignTask } = useTask();
 
   async function handleAssignment(memberId: string) {

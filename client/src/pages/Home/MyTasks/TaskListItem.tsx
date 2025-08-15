@@ -9,8 +9,8 @@ import { useEffect, useRef, useState } from "react";
 import { useTask } from "@/contexts/TaskContext";
 import useAuthStore from "@/stores/auth.store";
 import { useProject } from "@/contexts/ProjectContext";
-import { useTeam } from "@/contexts/TeamContext";
 import { Task, TaskPriority, TaskStatus } from "type";
+import useTeamStore from "@/stores/team.store";
 
 interface PropTypes {
   task: Task;
@@ -24,8 +24,11 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
   const { changeTaskStatus } = useTask();
 
   const project = useProject().getProjectWithTask(task._id);
-  const adminId = useTeam().findTeamWithProject(project._id)?.admin._id;
-  const userId = useAuthStore((state) => state.user?._id);
+  const userId = useAuthStore((s) => s.user?._id);
+
+  const adminId = useTeamStore(
+    (s) => s.findTeamWithProject(project._id)?.admin._id,
+  );
   const isAdmin = adminId === userId;
   const showExtraOptions = isAdmin || task.assignedTo?._id === userId;
 

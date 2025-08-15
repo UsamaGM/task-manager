@@ -11,7 +11,10 @@ import { z } from "zod";
 export type RegisterFormDate = z.infer<typeof registerSchema>;
 
 export const useRegisterForm = () => {
-  const { register, login, loading } = useAuthStore();
+  const register = useAuthStore((s) => s.register);
+  const login = useAuthStore((s) => s.login);
+  const loading = useAuthStore((s) => s.loading);
+
   const navigate = useNavigate();
 
   const form = useForm<RegisterFormDate>({

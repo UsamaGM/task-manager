@@ -1,8 +1,8 @@
 import CancelButton from "@/components/CancelButton";
 import ModalContainer from "@/components/ModalContainer";
 import api from "@/config/api";
-import { useTeam } from "@/contexts/TeamContext";
 import { apiErrorHandler } from "@/helpers/errorHandler";
+import useTeamStore from "@/stores/team.store";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
 import { ProjectModalProps, Team } from "type";
@@ -12,7 +12,7 @@ function AssignTeamModal({ isOpen, project, onClose }: ProjectModalProps) {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Team[]>([]);
 
-  const { assignProject } = useTeam();
+  const assignProject = useTeamStore((s) => s.assignProject);
 
   const timeoutRef = useRef<any>(null);
 

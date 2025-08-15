@@ -16,19 +16,21 @@ import {
   getFormattedDateNDaysLater,
 } from "@/helpers/date-formatter";
 import TitledSegment from "./TitledSegment";
-import { useTeam } from "@/contexts/TeamContext";
 import { TaskStatus } from "type";
 import useAuthStore from "@/stores/auth.store";
+import useTeamStore from "@/stores/team.store";
 
 function Dashboard() {
-  const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
-  const { teams } = useTeam();
+  const user = useAuthStore((s) => s.user);
+
+  const teams = useTeamStore((s) => s.teams);
+  const teamsLoading = useTeamStore((s) => s.loading);
+
   const { projects } = useProject();
   const { tasks, getDoneTasksCount } = useTask();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Hi there");
     const animation = {
       translateY: [0, "-1.5rem"],
       opacity: 1,
@@ -126,7 +128,8 @@ function Dashboard() {
           })}
         </div>
       </TitledSegment>
-      <TitledSegment title="Teams">
+
+      <TitledSegment title="Teams" showLoading={teamsLoading}>
         <div className="teams-container flex w-full space-x-3 overflow-x-auto pb-2">
           {teams.map((team) => (
             <ActionItem

@@ -28,7 +28,6 @@ import {
 
 import TaskProvider from "@/contexts/TaskContext";
 import ProjectProvider from "@/contexts/ProjectContext";
-import TeamProvider from "@/contexts/TeamContext";
 import useAuthStore from "@/stores/auth.store";
 
 const authRoutes = [
@@ -42,13 +41,11 @@ const authenticatedRoutes = [
   {
     path: "/",
     element: (
-      <TeamProvider>
-        <ProjectProvider>
-          <TaskProvider>
-            <Home />
-          </TaskProvider>
-        </ProjectProvider>
-      </TeamProvider>
+      <ProjectProvider>
+        <TaskProvider>
+          <Home />
+        </TaskProvider>
+      </ProjectProvider>
     ),
     loader: dataLoader,
     hydrateFallbackElement: <Loader fullscreen />,
@@ -91,7 +88,7 @@ const authenticatedRoutes = [
 ];
 
 function AppRouterProvider() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const routes = isAuthenticated ? authenticatedRoutes : authRoutes;
 
   const router = createBrowserRouter(routes);

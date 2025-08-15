@@ -1,15 +1,18 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
+import useTeamStore from "@/stores/team.store";
 import { LoaderFunctionArgs } from "react-router-dom";
 
 export async function dataLoader() {
   try {
     const response = await api.get("/user/data");
 
+    useTeamStore.setState({ teams: response.data.teams, loading: false });
+
     return response.data;
   } catch (error) {
-    // BUG: This function should return a value in the catch block.
     apiErrorHandler(error);
+    return null;
   }
 }
 
@@ -19,8 +22,8 @@ export async function userDataLoader({ params }: LoaderFunctionArgs) {
 
     return response.data;
   } catch (error) {
-    // BUG: This function should return a value in the catch block.
     apiErrorHandler(error);
+    return null;
   }
 }
 
@@ -30,8 +33,8 @@ export async function teamDataLoader({ params }: LoaderFunctionArgs) {
 
     return response.data;
   } catch (error) {
-    // BUG: This function should return a value in the catch block.
     apiErrorHandler(error);
+    return null;
   }
 }
 
@@ -41,7 +44,7 @@ export async function projectDataLoader({ params }: LoaderFunctionArgs) {
 
     return response.data;
   } catch (error) {
-    // BUG: This function should return a value in the catch block.
     apiErrorHandler(error);
+    return null;
   }
 }

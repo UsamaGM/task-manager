@@ -142,4 +142,5 @@ interface SidebarItemProps {
 interface TitledSegmentProps {
   title: string;
   children: ReactNode;
+  showLoading?: boolean;
 }

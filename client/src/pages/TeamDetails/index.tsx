@@ -10,7 +10,7 @@ import { DetailedTeam } from "type";
 import useAuthStore from "@/stores/auth.store";
 
 function TeamDetails() {
-  const userId = useAuthStore((state) => state.user?._id);
+  const userId = useAuthStore((s) => s.user?._id);
   const team: DetailedTeam = useLoaderData();
   const isAdmin = userId === team.admin._id;
 

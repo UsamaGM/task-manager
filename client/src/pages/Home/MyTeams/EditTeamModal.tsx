@@ -5,8 +5,8 @@ import {
 } from "@/components";
 import CancelButton from "@/components/CancelButton";
 import ModalContainer from "@/components/ModalContainer";
-import { useTeam } from "@/contexts/TeamContext";
 import { formErrorsHandler } from "@/helpers/errorHandler";
+import useTeamStore from "@/stores/team.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
 import { useEffect, useState } from "react";
@@ -42,8 +42,9 @@ interface FormPropTypes {
 }
 
 function EditForm({ team, onClose }: FormPropTypes) {
-  const { updateTeamData } = useTeam();
   const [isLoading, setIsLoading] = useState(false);
+
+  const updateTeamData = useTeamStore((s) => s.updateTeamData);
 
   const formSchema = z.object({
     name: z.string().min(3, "Minimum 3 characters for name"),

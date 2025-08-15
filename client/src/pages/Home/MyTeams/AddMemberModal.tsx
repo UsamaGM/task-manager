@@ -2,8 +2,8 @@ import { Loader, SubmitButton } from "@/components";
 import CancelButton from "@/components/CancelButton";
 import ModalContainer from "@/components/ModalContainer";
 import api from "@/config/api";
-import { useTeam } from "@/contexts/TeamContext";
 import { apiErrorHandler } from "@/helpers/errorHandler";
+import useTeamStore from "@/stores/team.store";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef, useState } from "react";
 import { TeamModalProps, User } from "type";
@@ -14,7 +14,7 @@ function AddMemberModal({ isOpen, team, onClose }: TeamModalProps) {
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
-  const { addMember } = useTeam();
+  const addMember = useTeamStore((s) => s.addMember);
 
   const timeoutRef = useRef<any>(null);
 

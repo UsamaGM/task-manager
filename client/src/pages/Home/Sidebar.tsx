@@ -17,10 +17,8 @@ import { toast } from "react-toastify";
 import useAuthStore from "@/stores/auth.store";
 
 function Sidebar() {
-  const { logout, user } = useAuthStore((state) => ({
-    logout: state.logout,
-    user: state.user,
-  }));
+  const logout = useAuthStore((s) => s.logout);
+  const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     anime.animate(".profile-container", {
@@ -108,22 +106,22 @@ function Sidebar() {
         <SidebarItem
           icon={<HomeIcon />}
           title="Dashboard"
-          navigateTo="/home/dashboard"
+          navigateTo="/dashboard"
         />
         <SidebarItem
           icon={<UserGroupIcon />}
           title="My Teams"
-          navigateTo="/home/my-teams"
+          navigateTo="/my-teams"
         />
         <SidebarItem
           icon={<CubeIcon />}
           title="My Projects"
-          navigateTo="/home/my-projects"
+          navigateTo="/my-projects"
         />
         <SidebarItem
           icon={<DocumentTextIcon />}
           title="My Tasks"
-          navigateTo="/home/my-tasks"
+          navigateTo="/my-tasks"
         />
       </div>
       <div>

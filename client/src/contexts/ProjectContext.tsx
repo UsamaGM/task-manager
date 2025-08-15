@@ -1,6 +1,5 @@
 import api from "@/config/api";
 import { apiErrorHandler } from "@/helpers/errorHandler";
-import { ProjectType } from "@/helpers/types";
 import {
   createContext,
   Dispatch,
@@ -11,14 +10,15 @@ import {
 } from "react";
 import { useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Project } from "type";
 
 interface ProjectContextType {
-  projects: ProjectType[];
-  setProjects: Dispatch<SetStateAction<ProjectType[]>>;
-  getProjectsArray: (projectIds: string[]) => ProjectType[];
+  projects: Project[];
+  setProjects: Dispatch<SetStateAction<Project[]>>;
+  getProjectsArray: (projectIds: string[]) => Project[];
   getProjectsTaskCount: (projectIds: string[]) => number;
-  getProjectWithTask: (taskId: string) => ProjectType;
-  createProject: (data: ProjectType) => Promise<void>;
+  getProjectWithTask: (taskId: string) => Project;
+  createProject: (data: Project) => Promise<void>;
   updateProject: (projectId: string, updateData: any) => Promise<void>;
   deleteProject: (projectId: string) => Promise<boolean>;
 }
@@ -34,8 +34,7 @@ export function useProject() {
   return context;
 }
 function ProjectProvider({ children }: { children: ReactNode }) {
-  const { projects: userProjects }: { projects: ProjectType[] } =
-    useLoaderData();
+  const { projects: userProjects }: { projects: Project[] } = useLoaderData();
 
   const [projects, setProjects] = useState(userProjects);
 
@@ -49,22 +48,19 @@ function ProjectProvider({ children }: { children: ReactNode }) {
         projectIds.some((id) => id === project._id)
           ? project.tasks.length + acc
           : acc,
-      0
+      0,
     );
   }
 
   function getProjectWithTask(taskId: string) {
     return projects.find((project) =>
-      project.tasks.some((task) => task === taskId)
+      project.tasks.some((task) => task === taskId),
     )!;
   }
 
-  async function createProject(project: ProjectType) {
+  async function createProject(project: Project) {
     try {
-      const { data }: { data: ProjectType } = await api.post(
-        "/project",
-        project
-      );
+      const { data }: { data: Project } = await api.post("/project", project);
 
       setProjects((prev) => [data, ...prev]);
       toast.success(`Created the project "${data.name}"`);
@@ -75,13 +71,13 @@ function ProjectProvider({ children }: { children: ReactNode }) {
 
   async function updateProject(projectId: string, updatedData: any) {
     try {
-      const { data }: { data: ProjectType } = await api.put("/project", {
+      const { data }: { data: Project } = await api.put("/project", {
         id: projectId,
         data: updatedData,
       });
 
       setProjects((prev) =>
-        prev.map((p) => (p._id === data._id ? { ...p, ...data } : p))
+        prev.map((p) => (p._id === data._id ? { ...p, ...data } : p)),
       );
 
       if (!updatedData.status)

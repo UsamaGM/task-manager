@@ -1,16 +1,16 @@
 import { CancelButton, SubmitButton } from "@/components";
 import ModalContainer from "@/components/ModalContainer";
-import { useTeam } from "@/contexts/TeamContext";
+import useTeamStore from "@/stores/team.store";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { animate } from "animejs";
 import { useState } from "react";
-import { Team, TeamModalProps, User } from "type";
+import { TeamModalProps, User } from "type";
 
 function RemoveMemberModal({ isOpen, team, onClose }: TeamModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
 
-  const { removeMember } = useTeam();
+  const removeMember = useTeamStore((s) => s.removeMember);
 
   function handleSelectMember(member: User) {
     animate(`#unselected-${member._id}`, {

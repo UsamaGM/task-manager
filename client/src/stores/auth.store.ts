@@ -19,7 +19,7 @@ interface AuthState {
   logout: () => Promise<void>;
 }
 
-const useAuthStore = create<AuthState>((set, get) => ({
+const useAuthStore = create<AuthState>((set) => ({
   loading: true,
   isAuthenticated: false,
   user: null,
@@ -38,9 +38,11 @@ const useAuthStore = create<AuthState>((set, get) => ({
           set({ isAuthenticated: false });
           return;
         }
+
         const localUser = JSON.parse(localUserJSON);
         set({ user: localUser, isAuthenticated: true });
-        api.defaults.headers.options = { Authorization: `Bearer ${token}` };
+
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       } catch (error) {
         console.error(error);
         toast.error("Session expired, please log in again");
