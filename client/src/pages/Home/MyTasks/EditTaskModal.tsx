@@ -41,7 +41,7 @@ function EditTaskModal({ isOpen, task, onClose }: TaskModalProps) {
   if (!isOpen) return null;
 
   return (
-    <ModalContainer title={`Update Task "${task.name}"`}>
+    <ModalContainer title={`Update Task "${task.name}"`} onClose={onClose}>
       <TaskForm
         isLoading={loading}
         subtitle={`Project: ${project?.name} (${getFormattedDate(

@@ -77,7 +77,7 @@ function AddMemberModal({ isOpen, team, onClose }: TeamModalProps) {
     .filter((u) => !team?.members.some((s) => s._id === u._id));
 
   return (
-    <ModalContainer title={`Add member(s) to ${team.name}`}>
+    <ModalContainer title={`Add member(s) to ${team.name}`} onClose={onClose}>
       <div>
         <div className="flex items-center bg-gray-100 ring ring-gray-400 shadow focus-within:ring-blue-500 rounded-lg">
           <MagnifyingGlassIcon className="size-5 m-2" />

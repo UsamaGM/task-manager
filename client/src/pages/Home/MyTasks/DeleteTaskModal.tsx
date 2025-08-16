@@ -17,7 +17,7 @@ function DeleteTaskModal({ isOpen, task, onClose }: TaskModalProps) {
 
   if (!isOpen) return null;
   return (
-    <ModalContainer title={`Delete Task "${task.name}"`}>
+    <ModalContainer title={`Delete Task "${task.name}"`} onClose={onClose}>
       <div className="flex flex-col space-y-10 mt-4">
         <h3>
           Are you sure you want to delete the task "{task.name}"? This action is
@@ -30,6 +30,7 @@ function DeleteTaskModal({ isOpen, task, onClose }: TaskModalProps) {
             isLoading={loading}
             title="Delete Task"
             onClick={handleDeleteTask}
+            className="border-red-500 !text-red-500 hover:!bg-red-500 hover:!text-white"
           />
         </div>
       </div>

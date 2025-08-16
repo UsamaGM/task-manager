@@ -15,7 +15,7 @@ function LeaveTeamModal({ isOpen, team, onClose }: TeamModalProps) {
   if (!isOpen) return null;
 
   return (
-    <ModalContainer title={`Leave team ${team.name}`}>
+    <ModalContainer title={`Leave team ${team.name}`} onClose={onClose}>
       <h3>
         Are you sure you want to leave team "{team.name}"? You cannot rejoin
         without admin approval.

@@ -18,7 +18,7 @@ function CreateTaskModal({ isOpen, onClose }: ModalProps) {
 
   if (!isOpen) return null;
   return (
-    <ModalContainer title="Create Task">
+    <ModalContainer title="Create Task" onClose={onClose}>
       <TaskForm
         isLoading={loading}
         submitBtnTitle="Create"

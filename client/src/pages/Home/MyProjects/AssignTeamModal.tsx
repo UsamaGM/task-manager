@@ -53,7 +53,10 @@ function AssignTeamModal({ isOpen, project, onClose }: ProjectModalProps) {
   if (!isOpen) return null;
 
   return (
-    <ModalContainer title={`Assign ${project.name} to a team`}>
+    <ModalContainer
+      title={`Assign ${project.name} to a team`}
+      onClose={onClose}
+    >
       <div>
         <div className="flex items-center bg-gray-100 ring ring-gray-400 shadow focus-within:ring-blue-500 rounded-lg">
           <MagnifyingGlassIcon className="size-5 m-2" />

@@ -175,3 +175,16 @@ interface TasksProps {
     deleteTask: TaskFn;
   };
 }
+
+interface SubmitButtonProps {
+  isLoading: boolean;
+  onClick?: (e?: any) => void;
+  title: string;
+  className?: string;
+}
+
+interface ModalContainerProps {
+  title: string;
+  children: ReactNode;
+  onClose: () => void;
+}

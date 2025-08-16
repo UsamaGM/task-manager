@@ -73,7 +73,7 @@ function CreateTeamModal({ isOpen, onClose }: ModalProps) {
   }
 
   return (
-    <ModalContainer title="Create Team">
+    <ModalContainer title="Create Team" onClose={onClose}>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col space-y-5"

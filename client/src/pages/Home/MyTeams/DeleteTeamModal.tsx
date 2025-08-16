@@ -20,7 +20,7 @@ function DeleteTeamModal({ isOpen, team, onClose }: TeamModalProps) {
 
   if (!isOpen) return null;
   return (
-    <ModalContainer title={`Delete Team ${team.name}`}>
+    <ModalContainer title={`Delete Team ${team.name}`} onClose={onClose}>
       <div className="flex flex-col space-y-10 mt-4">
         <h3>
           Are you sure you want to delete team "{team.name}"? This action is
@@ -33,6 +33,7 @@ function DeleteTeamModal({ isOpen, team, onClose }: TeamModalProps) {
             isLoading={isLoading}
             title="Delete Team"
             onClick={handleDeleteTeam}
+            className="border-red-500 !text-red-500 hover:!bg-red-500 hover:!text-white"
           />
         </div>
       </div>

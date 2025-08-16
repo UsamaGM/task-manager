@@ -23,7 +23,7 @@ function CreateProjectModal({ isOpen, onClose }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <ModalContainer title="Create Project">
+    <ModalContainer title="Create Project" onClose={onClose}>
       <ProjectForm
         isLoading={loading}
         submitBtnTitle="Create"

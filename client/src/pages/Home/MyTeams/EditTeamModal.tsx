@@ -28,7 +28,7 @@ function EditTeamModal({ isOpen, team, onClose }: TeamModalProps) {
   if (!isOpen) return null;
 
   return (
-    <ModalContainer title={`Edit Team Data for ${team.name}`}>
+    <ModalContainer title={`Edit Team Data for ${team.name}`} onClose={onClose}>
       <EditForm team={team} onClose={onClose} />
     </ModalContainer>
   );

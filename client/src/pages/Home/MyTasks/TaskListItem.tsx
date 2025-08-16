@@ -47,12 +47,12 @@ function TaskListItem({ task, onEdit, onAssign, onDelete }: PropTypes) {
     await changeTaskStatus(task._id, newStatus);
   }
 
-  const priorityConfig =
-    task.priority === "low"
-      ? { title: "Low", color: "text-green-500" }
-      : task.priority === "medium"
-        ? { title: "Medium", color: "text-yellow-600" }
-        : { title: "High", color: "text-red-500" };
+  // const priorityConfig =
+  //   task.priority === "low"
+  //     ? { title: "Low", color: "text-green-500" }
+  //     : task.priority === "medium"
+  //       ? { title: "Medium", color: "text-yellow-600" }
+  //       : { title: "High", color: "text-red-500" };
   const hasDueDatePassed =
     getFormattedDate(task.dueDate) <=
     getFormattedDate(new Date().toISOString());

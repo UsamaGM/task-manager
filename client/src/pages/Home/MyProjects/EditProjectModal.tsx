@@ -27,7 +27,7 @@ function EditProjectModal({ isOpen, project, onClose }: ProjectModalProps) {
   if (!isOpen) return null;
 
   return (
-    <ModalContainer title={`Update Project ${project.name}`}>
+    <ModalContainer title={`Update Project ${project.name}`} onClose={onClose}>
       <ProjectForm
         isLoading={loading}
         onClose={onClose}

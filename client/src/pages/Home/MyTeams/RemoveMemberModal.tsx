@@ -54,7 +54,10 @@ function RemoveMemberModal({ isOpen, team, onClose }: TeamModalProps) {
   );
 
   return (
-    <ModalContainer title={`Remove member(s) from ${team.name}`}>
+    <ModalContainer
+      title={`Remove member(s) from ${team.name}`}
+      onClose={onClose}
+    >
       <div className="flex flex-col h-full overflow-hidden space-y-4">
         <div className="flex flex-col h-1/2 space-y-3 overflow-x-hidden">
           {filteredMembers.map((member) => (
