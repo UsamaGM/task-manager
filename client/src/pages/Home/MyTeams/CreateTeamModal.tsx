@@ -15,7 +15,7 @@ import { ModalProps } from "type";
 import { z } from "zod";
 
 function CreateTeamModal({ isOpen, onClose }: ModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const loading = useTeamStore((s) => s.loading);
   const createTeam = useTeamStore((s) => s.createTeam);
 
   const formSchema = z.object({
@@ -50,9 +50,7 @@ function CreateTeamModal({ isOpen, onClose }: ModalProps) {
   }, [isOpen]);
 
   async function onSubmit(formData: any) {
-    setIsLoading(true);
     await createTeam(formData.name, formData.description);
-    setIsLoading(false);
 
     handleClose();
   }
@@ -94,7 +92,7 @@ function CreateTeamModal({ isOpen, onClose }: ModalProps) {
         />
         <div className="flex justify-center items-center space-x-4">
           <CancelButton onClick={handleClose} />
-          <SubmitButton isLoading={isLoading} title="Create Team" />
+          <SubmitButton isLoading={loading} title="Create Team" />
         </div>
       </form>
     </ModalContainer>

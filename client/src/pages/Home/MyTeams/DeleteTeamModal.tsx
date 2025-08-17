@@ -1,20 +1,13 @@
 import { CancelButton, SubmitButton } from "@/components";
 import ModalContainer from "@/components/ModalContainer";
 import useTeamStore from "@/stores/team.store";
-import { useState } from "react";
-import { toast } from "react-toastify";
 import { TeamModalProps } from "type";
 
 function DeleteTeamModal({ isOpen, team, onClose }: TeamModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
-
   const deleteTeam = useTeamStore((s) => s.deleteTeam);
 
-  async function handleDeleteTeam() {
-    setIsLoading(true);
-    const isTeamDeleted = await deleteTeam(team._id);
-    if (isTeamDeleted) toast.success(`Team ${team.name} deleted`);
-    setIsLoading(false);
+  function handleDeleteTeam() {
+    deleteTeam(team._id);
     onClose();
   }
 
@@ -30,7 +23,7 @@ function DeleteTeamModal({ isOpen, team, onClose }: TeamModalProps) {
         <div className="flex space-x-5">
           <CancelButton onClick={onClose} />
           <SubmitButton
-            isLoading={isLoading}
+            isLoading={false}
             title="Delete Team"
             onClick={handleDeleteTeam}
             className="border-red-500 !text-red-500 hover:!bg-red-500 hover:!text-white"

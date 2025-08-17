@@ -8,7 +8,6 @@ import { ChangeEvent, useRef, useState } from "react";
 import { ProjectModalProps, Team } from "type";
 
 function AssignTeamModal({ isOpen, project, onClose }: ProjectModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Team[]>([]);
 
@@ -23,7 +22,6 @@ function AssignTeamModal({ isOpen, project, onClose }: ProjectModalProps) {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     timeoutRef.current = setTimeout(async () => {
-      setIsLoading(true);
       if (e.target.value.trim().length) {
         try {
           const { data }: { data: Team[] } = await api.get(
@@ -37,10 +35,8 @@ function AssignTeamModal({ isOpen, project, onClose }: ProjectModalProps) {
     }, 500);
   }
 
-  async function handleAssignment(teamId: string) {
-    setIsLoading(true);
-    await assignProject(project._id, teamId);
-    setIsLoading(false);
+  function handleAssignment(teamId: string) {
+    assignProject(project._id, teamId);
     handleClose();
   }
 

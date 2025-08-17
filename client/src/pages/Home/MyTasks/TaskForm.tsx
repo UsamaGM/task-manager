@@ -26,7 +26,7 @@ interface PropTypes {
     project?: string;
   };
   onClose: () => void;
-  onSubmit: (data: Partial<Task> & { project: string }) => Promise<void>;
+  onSubmit: (data: Partial<Task> & { project: string }) => Promise<void> | void;
 }
 
 function TaskForm({

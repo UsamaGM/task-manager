@@ -4,7 +4,6 @@ import NoXMessage from "@/components/NoXMessage";
 import useProjectStore from "@/stores/project.store";
 import useTaskStore from "@/stores/task.store";
 import useTeamStore from "@/stores/team.store";
-import { toast } from "react-toastify";
 import { Task, TaskModalProps } from "type";
 
 function AssignTaskModal({ isOpen, task, onClose }: TaskModalProps) {
@@ -29,14 +28,9 @@ interface TeamMemberListPropTypes {
 
 function TeamMemberList({ task, onClose }: TeamMemberListPropTypes) {
   const project = useProjectStore((s) => s.getProjectWithTask(task._id));
-  if (!project) {
-    toast.warn(
-      "You need to assign the Project to a team and the team admin will handle tasks.",
-    );
-    onClose();
-  }
   const team = useTeamStore((s) => s.findTeamWithProject(project._id));
   const assignTask = useTaskStore((s) => s.assignTask);
+  const loading = useTaskStore((s) => s.loading);
 
   async function handleAssignment(memberId: string) {
     await assignTask(task._id, memberId);

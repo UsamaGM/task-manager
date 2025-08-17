@@ -13,7 +13,7 @@ interface TaskStore {
   updateTask: (taskId: string, updatedData: Partial<Task>) => Promise<void>;
   changeTaskStatus: (taskId: string, newStatus: TaskStatus) => Promise<void>;
   assignTask: (taskId: string, userId: string) => Promise<void>;
-  deleteTask: (taskId: string) => Promise<boolean>;
+  deleteTask: (taskId: string) => Promise<void>;
 }
 
 const useTaskStore = create<TaskStore>((set, get) => ({
@@ -27,6 +27,7 @@ const useTaskStore = create<TaskStore>((set, get) => ({
 
   createTask: async (taskData) => {
     set({ loading: true });
+
     try {
       const { data }: { data: Task } = await api.post("/task", {
         taskData,
@@ -52,7 +53,15 @@ const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   updateTask: async (taskId, updatedData) => {
-    set({ loading: true });
+    const originalTasks = get().tasks;
+    const originalTask = originalTasks.find((t) => t._id === taskId);
+    if (!originalTask) return;
+
+    set({
+      tasks: originalTasks.map((t) =>
+        t._id === taskId ? { ...t, ...updatedData } : t,
+      ),
+    });
 
     try {
       const { data }: { data: Task } = await api.put("/task", {
@@ -64,26 +73,34 @@ const useTaskStore = create<TaskStore>((set, get) => ({
 
       toast.success("Task Updated successfully!");
     } catch (error) {
+      set({
+        tasks: get().tasks.map((t) => (t._id === taskId ? originalTask : t)),
+      });
       apiErrorHandler(error);
-    } finally {
-      set({ loading: false });
     }
   },
 
   changeTaskStatus: async (taskId, newStatus) => {
-    set({ loading: false });
+    const originalTasks = get().tasks;
+    const originalTask = originalTasks.find((t) => t._id === taskId);
+    if (!originalTask) return;
+
+    set({
+      tasks: originalTasks.map((t) =>
+        t._id === taskId ? { ...t, status: newStatus } : t,
+      ),
+    });
 
     try {
-      const { data }: { data: Task } = await api.put("/task", {
+      await api.put("/task", {
         id: taskId,
         updateData: { status: newStatus },
       });
-
-      set({ tasks: get().tasks.map((t) => (t._id === data._id ? data : t)) });
     } catch (error) {
+      set({
+        tasks: get().tasks.map((t) => (t._id === taskId ? originalTask : t)),
+      });
       apiErrorHandler(error);
-    } finally {
-      set({ loading: false });
     }
   },
 
@@ -96,7 +113,7 @@ const useTaskStore = create<TaskStore>((set, get) => ({
         userId,
       });
 
-      set({ tasks: get().tasks.map((t) => (t._id === data._id ? data : t)) });
+      set({ tasks: get().tasks.map((t) => (t._id === taskId ? data : t)) });
 
       toast.success(`Assigned ${data.name} to the member`);
     } catch (error) {
@@ -107,18 +124,19 @@ const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   deleteTask: async (taskId) => {
-    set({ loading: true });
+    const originalTasks = get().tasks;
+    const originalTask = originalTasks.find((t) => t._id === taskId);
+    if (!originalTask) return;
+
+    set({ tasks: originalTasks.filter((t) => t._id !== taskId) });
+
     try {
       await api.delete(`/task/${taskId}`);
 
-      set({ tasks: get().tasks.filter((t) => t._id !== taskId) });
-
-      return true;
+      toast.success(`Task "${originalTask.name}" deleted`);
     } catch (error) {
+      set({ tasks: [originalTask, ...get().tasks] });
       apiErrorHandler(error);
-      return false;
-    } finally {
-      set({ loading: false });
     }
   },
 }));

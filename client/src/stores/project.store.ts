@@ -12,7 +12,7 @@ interface ProjectStore {
   getProjectWithTask: (taskId: string) => Project;
   createProject: (data: Project) => Promise<void>;
   updateProject: (projectId: string, updateData: any) => Promise<void>;
-  deleteProject: (projectId: string) => Promise<boolean>;
+  deleteProject: (projectId: string) => Promise<void>;
 }
 
 const useProjectStore = create<ProjectStore>((set, get) => ({
@@ -52,7 +52,16 @@ const useProjectStore = create<ProjectStore>((set, get) => ({
   },
 
   updateProject: async (projectId, updatedData) => {
-    set({ loading: true });
+    const projects = get().projects;
+
+    const originalProject = projects.find((p) => p._id === projectId);
+    if (!originalProject) return;
+
+    set({
+      projects: projects.map((p) =>
+        p._id === projectId ? { ...p, ...updatedData } : p,
+      ),
+    });
 
     try {
       const { data }: { data: Project } = await api.put("/project", {
@@ -69,26 +78,30 @@ const useProjectStore = create<ProjectStore>((set, get) => ({
       if (!updatedData.status)
         toast.success(`Data Updated for Project "${data.name}"`);
     } catch (error) {
+      set({
+        projects: projects.map((p) =>
+          p._id === projectId ? originalProject : p,
+        ),
+      });
+
       apiErrorHandler(error);
-    } finally {
-      set({ loading: false });
     }
   },
 
   deleteProject: async (projectId) => {
-    set({ loading: true });
+    const originalProjects = get().projects;
+    const originalProject = originalProjects.find((p) => p._id === projectId);
+    if (!originalProject) return;
+
+    set({ projects: originalProjects.filter((p) => p._id !== projectId) });
 
     try {
       await api.delete(`/project/${projectId}`);
 
-      set({ projects: get().projects.filter((p) => p._id !== projectId) });
-
-      return true;
+      toast.success(`Project "${originalProject.name}" deleted`);
     } catch (error) {
+      set({ projects: [originalProject, ...get().projects] });
       apiErrorHandler(error);
-      return false;
-    } finally {
-      set({ loading: false });
     }
   },
 }));

@@ -38,8 +38,8 @@ const authRoutes = [
 const authenticatedRoutes = [
   {
     path: "/",
-    element: <Home />,
     loader: dataLoader,
+    element: <Home />,
     hydrateFallbackElement: <Loader fullscreen />,
     children: [
       { path: "/dashboard", element: <Dashboard /> },

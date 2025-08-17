@@ -14,6 +14,7 @@ function AddMemberModal({ isOpen, team, onClose }: TeamModalProps) {
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
+  const addingMember = useTeamStore((s) => s.loading);
   const addMember = useTeamStore((s) => s.addMember);
 
   const timeoutRef = useRef<any>(null);
@@ -146,7 +147,7 @@ function AddMemberModal({ isOpen, team, onClose }: TeamModalProps) {
       <div className="flex gap-3">
         <CancelButton onClick={handleClose} />
         <SubmitButton
-          isLoading={isLoading}
+          isLoading={addingMember}
           title="Add Selected"
           onClick={handleAddMembers}
         />

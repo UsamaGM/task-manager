@@ -7,13 +7,12 @@ import useTaskStore from "@/stores/task.store";
 import useProjectStore from "@/stores/project.store";
 
 function EditTaskModal({ isOpen, task, onClose }: TaskModalProps) {
-  const loading = useTaskStore((s) => s.loading);
   const updateTask = useTaskStore((s) => s.updateTask);
 
   const getProjectWithTask = useProjectStore((s) => s.getProjectWithTask);
   const project = isOpen ? getProjectWithTask(task._id) : null;
 
-  async function onSubmit(formData: Partial<Task>) {
+  function onSubmit(formData: Partial<Task>) {
     const isUpdated =
       formData.name !== task.name ||
       formData.description !== task.description ||
@@ -34,7 +33,7 @@ function EditTaskModal({ isOpen, task, onClose }: TaskModalProps) {
       return;
     }
 
-    await updateTask(task._id, formData);
+    updateTask(task._id, formData);
     onClose();
   }
 
@@ -43,7 +42,7 @@ function EditTaskModal({ isOpen, task, onClose }: TaskModalProps) {
   return (
     <ModalContainer title={`Update Task "${task.name}"`} onClose={onClose}>
       <TaskForm
-        isLoading={loading}
+        isLoading={false}
         subtitle={`Project: ${project?.name} (${getFormattedDate(
           project!.startDate,
         )} - ${getFormattedDate(project!.endDate)})`}

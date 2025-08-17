@@ -7,7 +7,6 @@ import { useState } from "react";
 import { TeamModalProps, User } from "type";
 
 function RemoveMemberModal({ isOpen, team, onClose }: TeamModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
 
   const removeMember = useTeamStore((s) => s.removeMember);
@@ -30,19 +29,16 @@ function RemoveMemberModal({ isOpen, team, onClose }: TeamModalProps) {
     });
   }
 
-  async function handleRemove() {
-    setIsLoading(true);
-    await removeMember(
+  function handleRemove() {
+    removeMember(
       team._id,
       selectedMembers.map((member) => member._id),
     );
-    setIsLoading(false);
     setSelectedMembers([]);
     onClose();
   }
 
   function handleClose() {
-    setIsLoading(false);
     setSelectedMembers([]);
     onClose();
   }
@@ -104,7 +100,7 @@ function RemoveMemberModal({ isOpen, team, onClose }: TeamModalProps) {
           <CancelButton onClick={handleClose} />
           <SubmitButton
             title="Remove Selected"
-            isLoading={isLoading}
+            isLoading={false}
             onClick={handleRemove}
           />
         </div>

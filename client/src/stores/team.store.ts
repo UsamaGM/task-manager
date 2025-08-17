@@ -13,8 +13,8 @@ interface TeamStore {
   assignProject: (projectId: string, teamId: string) => Promise<void>;
   addMember: (teamId: string, members: string[]) => Promise<void>;
   removeMember: (teamId: string, members: string[]) => Promise<void>;
-  leaveTeam: (teamId: string) => Promise<boolean>;
-  deleteTeam: (teamId: string) => Promise<boolean>;
+  leaveTeam: (teamId: string) => Promise<void>;
+  deleteTeam: (teamId: string) => Promise<void>;
 }
 
 const useTeamStore = create<TeamStore>((set, get) => ({
@@ -46,49 +46,60 @@ const useTeamStore = create<TeamStore>((set, get) => ({
   },
 
   updateTeamData: async (teamId, updatedData) => {
-    set({ loading: true });
+    const originalTeams = get().teams;
+    const originalTeam = originalTeams.find((t) => t._id === teamId);
+    if (!originalTeam) return;
+
+    set({
+      teams: originalTeams.map((t) =>
+        t._id === teamId ? { ...t, ...updatedData } : t,
+      ),
+    });
+
     try {
-      const { data }: { data: Team } = await api.put("/team", {
+      await api.put("/team", {
         teamId,
         updatedData,
       });
 
-      const teams = get().teams.map((team) =>
-        team._id === teamId ? data : team,
-      );
-      set({ teams });
-
       toast.success("Team Data Updated");
     } catch (error) {
+      set({
+        teams: get().teams.map((t) => (t._id === teamId ? originalTeam : t)),
+      });
       apiErrorHandler(error);
-    } finally {
-      set({ loading: false });
     }
   },
 
   assignProject: async (projectId, teamId) => {
-    set({ loading: true });
+    const originalTeams = get().teams;
+    const originalTeam = originalTeams.find((t) => t._id === teamId);
+    if (!originalTeam) return;
+
+    set({
+      teams: originalTeams.map((t) =>
+        t._id === teamId ? { ...t, projects: [...t.projects, projectId] } : t,
+      ),
+    });
+
     try {
-      const { data }: { data: Team } = await api.put("/team/assign", {
+      await api.put("/team/assign", {
         projectId,
         teamId,
       });
 
-      const teams = get().teams.map((team) =>
-        team._id === data._id ? data : team,
-      );
-      set({ teams });
-
-      toast.success(`Team ${data.name} was assigned the project`);
+      toast.success(`Team ${originalTeam.name} was assigned the project`);
     } catch (error) {
+      set({
+        teams: get().teams.map((t) => (t._id === teamId ? originalTeam : t)),
+      });
       apiErrorHandler(error);
-    } finally {
-      set({ loading: false });
     }
   },
 
   addMember: async (teamId, members) => {
     set({ loading: true });
+
     try {
       const { data }: { data: Team } = await api.put("/team/add-member", {
         teamId,
@@ -109,57 +120,62 @@ const useTeamStore = create<TeamStore>((set, get) => ({
   },
 
   removeMember: async (teamId: string, members: string[]) => {
-    set({ loading: true });
+    const originalTeam = get().teams.find((t) => t._id === teamId);
+    if (!originalTeam) return;
+
+    const updatedTeams = get().teams.map((t) =>
+      t._id === teamId
+        ? { ...t, members: t.members.filter((m) => !members.includes(m._id)) }
+        : t,
+    );
+    set({ teams: updatedTeams });
+
     try {
-      const { data }: { data: Team } = await api.put("/team/remove-member", {
+      await api.put("/team/remove-member", {
         teamId,
         members,
       });
 
-      const teams = get().teams.map((team) =>
-        team._id === teamId ? data : team,
-      );
-      set({ teams });
-
-      toast.success(`Members removed from team ${data.name}`);
+      toast.success(`Members removed from team ${originalTeam.name}`);
     } catch (error) {
+      set({
+        teams: get().teams.map((t) => (t._id === teamId ? originalTeam : t)),
+      });
       apiErrorHandler(error);
-    } finally {
-      set({ loading: false });
     }
   },
 
   leaveTeam: async (teamId: string) => {
-    set({ loading: true });
+    const originalTeams = get().teams;
+    const originalTeam = originalTeams.find((t) => t._id === teamId);
+    if (!originalTeam) return;
+
+    set({ teams: originalTeams.filter((t) => t._id !== teamId) });
+
     try {
       await api.put(`/team/leave/${teamId}`);
 
-      const teams = get().teams.filter((t) => t._id !== teamId);
-      set({ teams });
-
-      return true;
+      toast.success(`You left team ${originalTeam.name}`);
     } catch (error) {
+      set({ teams: [originalTeam, ...get().teams] });
       apiErrorHandler(error);
-      return false;
-    } finally {
-      set({ loading: false });
     }
   },
 
   deleteTeam: async (teamId: string) => {
-    set({ loading: true });
+    const originalTeams = get().teams;
+    const originalTeam = originalTeams.find((t) => t._id === teamId);
+    if (!originalTeam) return;
+
+    set({ teams: originalTeams.filter((t) => t._id !== teamId) });
+
     try {
       await api.delete(`/team/${teamId}`);
 
-      const teams = get().teams.filter((team) => team._id !== teamId);
-      set({ teams });
-
-      return true;
+      toast.success(`Team ${originalTeam.name} was deleted`);
     } catch (error) {
+      set({ teams: [originalTeam, ...get().teams] });
       apiErrorHandler(error);
-      return false;
-    } finally {
-      set({ loading: false });
     }
   },
 }));

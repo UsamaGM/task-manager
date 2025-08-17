@@ -9,7 +9,7 @@ import { formErrorsHandler } from "@/helpers/errorHandler";
 import useTeamStore from "@/stores/team.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { animate } from "animejs";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Team, TeamModalProps } from "type";
@@ -42,8 +42,6 @@ interface FormPropTypes {
 }
 
 function EditForm({ team, onClose }: FormPropTypes) {
-  const [isLoading, setIsLoading] = useState(false);
-
   const updateTeamData = useTeamStore((s) => s.updateTeamData);
 
   const formSchema = z.object({
@@ -66,7 +64,7 @@ function EditForm({ team, onClose }: FormPropTypes) {
     },
   });
 
-  async function onSubmit(formData: { name: string; description: string }) {
+  function onSubmit(formData: { name: string; description: string }) {
     const hasDataChanged =
       team.name !== formData.name.trim() ||
       team.description !== formData.description.trim();
@@ -76,9 +74,7 @@ function EditForm({ team, onClose }: FormPropTypes) {
       return;
     }
 
-    setIsLoading(true);
-    await updateTeamData(team._id, formData);
-    setIsLoading(false);
+    updateTeamData(team._id, formData);
     reset();
     onClose();
   }
@@ -118,7 +114,7 @@ function EditForm({ team, onClose }: FormPropTypes) {
       />
       <div className="flex space-x-5">
         <CancelButton onClick={handleClose} />
-        <SubmitButton isLoading={isLoading} title="Update Team Data" />
+        <SubmitButton isLoading={false} title="Update Team Data" />
       </div>
     </form>
   );
