@@ -1,6 +1,6 @@
 # Full-Stack Task Manager (MERB Stack)
 
-![task_manager](https://github.com/user-attachments/assets/520d3325-2eee-4e3a-a56a-3d1732fc97b4)
+![task_manager](https://github.com/user-attachments/assets/4e021aff-4ed5-425d-889f-178e035bb3c2)
 
 This is a comprehensive, full-stack task management application built with a modern "MERB" stack: **MongoDB, Express, React, and Bun**.
 
