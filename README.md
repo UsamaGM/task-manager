@@ -1,5 +1,7 @@
 # Full-Stack Task Manager (MERB Stack)
 
+![task_manager](https://github.com/user-attachments/assets/520d3325-2eee-4e3a-a56a-3d1732fc97b4)
+
 This is a comprehensive, full-stack task management application built with a modern "MERB" stack: **MongoDB, Express, React, and Bun**.
 
 This platform is a collaborative tool where users can manage projects, create and assign tasks, and build teams to work together efficiently. The entire project is written in **TypeScript** and leverages the **Bun** runtime for both the backend server and the frontend development environment, showcasing high performance and modern JavaScript/TypeScript tooling.
